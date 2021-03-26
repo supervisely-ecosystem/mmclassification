@@ -61,9 +61,10 @@
         <sly-field title="Weights initialization" description="Define how model is initialized before training">
             <el-radio-group class="mb15" v-model="state.modelWeightsOptions">
                 <el-radio :label="1">Pretrained on ImageNet</el-radio>
-                <el-radio :label="2">From custom model</el-radio>
+                <el-radio :label="2">Random weights</el-radio>
+                <el-radio :label="3">Custom model</el-radio>
             </el-radio-group>
-            <div v-show="state.modelWeightsOptions === 1">
+            <div v-show="state.modelWeightsOptions === 1 || state.modelWeightsOptions === 2">
                 <el-table
                         class="ultra-table"
                         :data="data.models"
@@ -80,7 +81,7 @@
                     <el-table-column label="Top-5 (%)" prop="top5" sortable></el-table-column>
                 </el-table>
             </div>
-            <div v-show="state.modelWeightsOptions === 2">
+            <div v-show="state.modelWeightsOptions === 3">
                 <sly-field title="Path to file" description="Copy path in Team Files">
                     <el-input v-model="state.weightsPath" placeholder="Path to .pt file in Team Files"></el-input>
                 </sly-field>
