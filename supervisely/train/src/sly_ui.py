@@ -82,21 +82,10 @@ def init_tags_stats(data, state, project_meta: sly.ProjectMeta):
 
 
 def init_model_settings(data, state):
-    # {"label": "MobileNetV2", "params": "7.3M", "flops": "0.319", "top1": "71.86", "top5": "90.42"
-    #                                                                                       "config": "configs/_base_/models/mobilenet_v2_1x.py", },
 
-    data["modelSizes"] = [
-        {"label": "yolov5m", "config": "yolov5m.yaml", "params": "21.4M"},
-        {"label": "yolov5l", "config": "yolov5l.yaml", "params": "47.0M"},
-        {"label": "yolov5x", "config": "yolov5x.yaml", "params": "87.7M"},
-    ]
-
-    state["modelSize"] = data["modelSizes"][0]["label"]
+    data["models"] = sly.json.load_json_file("models.json")
     state["modelWeightsOptions"] = 1
-    state["pretrainedWeights"] = f'{data["modelSizes"][0]["label"]}.pt'
-
-    # @TODO: for debug
-    #state["weightsPath"] = "/yolov5_train/coco128_002/2390/weights/best.pt"
+    state["selectedModel"] = ""
     state["weightsPath"] = ""
 
 

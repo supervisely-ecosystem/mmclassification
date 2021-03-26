@@ -24,6 +24,7 @@ def main():
     g.app.run(data=data, state=state)
 
 
+#@TODO: find configs for models ResNeSt-50 , ResNeSt-101, ResNeSt-200, ResNeSt-269
 if __name__ == "__main__":
     #sly.main_wrapper("main", main)
     main() # for debug
