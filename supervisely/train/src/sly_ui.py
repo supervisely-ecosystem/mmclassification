@@ -38,7 +38,17 @@ def init_tags_stats(data, state, project_meta: sly.ProjectMeta):
 
     data["tags"] = tags_json
     state["selectedTags"] = []
-    #state["tags"] = len(tags_json) * [True]
+
+    state["trainTagName"] = None
+    state["valTagName"] = None
+
+    train_tag = project_meta.tag_metas.get("train")
+    if train_tag is not None:
+        state["trainTagName"] = train_tag.name
+
+    val_tag = project_meta.tag_metas.get("val")
+    if val_tag is not None:
+        state["valTagName"] = val_tag.name
 
 #
 # def init_random_split(PROJECT, data, state):
@@ -69,24 +79,27 @@ def init_tags_stats(data, state, project_meta: sly.ProjectMeta):
 #     state["splitMethod"] = 1
 #     state["trainTagName"] = ""
 #     state["valTagName"] = ""
-#
-#
-# def init_model_settings(data, state):
-#     data["modelSizes"] = [
-#         {"label": "yolov5s", "config": "yolov5s.yaml", "params": "7.3M"},
-#         {"label": "yolov5m", "config": "yolov5m.yaml", "params": "21.4M"},
-#         {"label": "yolov5l", "config": "yolov5l.yaml", "params": "47.0M"},
-#         {"label": "yolov5x", "config": "yolov5x.yaml", "params": "87.7M"},
-#     ]
-#     state["modelSize"] = data["modelSizes"][0]["label"]
-#     state["modelWeightsOptions"] = 1
-#     state["pretrainedWeights"] = f'{data["modelSizes"][0]["label"]}.pt'
-#
-#     # @TODO: for debug
-#     state["weightsPath"] = "/yolov5_train/coco128_002/2390/weights/best.pt"
-#     #state["weightsPath"] = ""
-#
-#
+
+
+def init_model_settings(data, state):
+    # {"label": "MobileNetV2", "params": "7.3M", "flops": "0.319", "top1": "71.86", "top5": "90.42"
+    #                                                                                       "config": "configs/_base_/models/mobilenet_v2_1x.py", },
+
+    data["modelSizes"] = [
+        {"label": "yolov5m", "config": "yolov5m.yaml", "params": "21.4M"},
+        {"label": "yolov5l", "config": "yolov5l.yaml", "params": "47.0M"},
+        {"label": "yolov5x", "config": "yolov5x.yaml", "params": "87.7M"},
+    ]
+
+    state["modelSize"] = data["modelSizes"][0]["label"]
+    state["modelWeightsOptions"] = 1
+    state["pretrainedWeights"] = f'{data["modelSizes"][0]["label"]}.pt'
+
+    # @TODO: for debug
+    #state["weightsPath"] = "/yolov5_train/coco128_002/2390/weights/best.pt"
+    state["weightsPath"] = ""
+
+
 # def init_training_hyperparameters(state):
 #     state["epochs"] = 10
 #     state["batchSize"] = 16
@@ -132,7 +145,7 @@ def init(data, state):
     init_input_project(data, globals.project_info)
     init_tags_stats(data, state, globals.project_meta)
     # init_random_split(globals.project_info, data, state)
-    # init_model_settings(data, state)
+    init_model_settings(data, state)
     # init_training_hyperparameters(state)
     # init_start_state(state)
     # init_galleries(data)
