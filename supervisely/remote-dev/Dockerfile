@@ -17,7 +17,8 @@ RUN mkdir -p /run/sshd
 # MORE SECURE: use a trusted RSA key
 ARG home=/root
 RUN mkdir $home/.ssh
-COPY id_rsa.pub $home/.ssh/authorized_keys
+COPY $home/.ssh/authorized_keys $home/.ssh/authorized_keys
+#COPY id_rsa.pub $home/.ssh/authorized_keys
 RUN chown root:root $home/.ssh/authorized_keys && \
     chmod 600 $home/.ssh/authorized_keys
 
