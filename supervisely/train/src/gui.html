@@ -75,11 +75,13 @@
                 >
                     <el-table-column label="Model" prop="model" sortable>
                         <template scope="scope">
-                            <el-radio class="radio" v-model="state.selectedModel" :label="scope.row.model">{{scope.row.model}}</el-radio>
+                            <el-radio class="radio" v-model="state.selectedModel" :label="scope.row.model">
+                                {{scope.row.model}}
+                            </el-radio>
                         </template>
                     </el-table-column>
                     <el-table-column label="Params (M)" prop="params" sortable></el-table-column>
-                    <el-table-column label="Flops (G)" prop="flops" sortable ></el-table-column>
+                    <el-table-column label="Flops (G)" prop="flops" sortable></el-table-column>
                     <el-table-column label="Top-1 (%)" prop="top1" sortable></el-table-column>
                     <el-table-column label="Top-5 (%)" prop="top5" sortable></el-table-column>
                 </el-table>
@@ -89,6 +91,32 @@
                     <el-input v-model="state.weightsPath" placeholder="Path to .pt file in Team Files"></el-input>
                 </sly-field>
             </div>
+        </sly-field>
+    </sly-card>
+
+    <sly-card class="mt15"
+              title="5. Training hyperparameters"
+              subtitle="Define basic settings: input resolution, learning rate, batch size, ...">
+<!--        <sly-field title="Number of epochs">-->
+<!--            <el-input-number v-model="state.epochs" :min="1" :max="10000"></el-input-number>-->
+<!--        </sly-field>-->
+        <sly-field title="Target image size" description="Input resolution of neural network">
+            <sly-size v-model="state.imgSize.value" :options="state.imgSize.options"></sly-size>
+        </sly-field>
+        <sly-field title="Batch size"
+                   description="Number of samples per GPU">
+            <el-input-number v-model="state.batchSize" :min="4"></el-input-number>
+        </sly-field>
+        <sly-field title="Workers per gpu"
+                   description="Maximum number of dataloader workers per gpu">
+            <el-input-number v-model="state.workers" :min="0"></el-input-number>
+        </sly-field>
+        <sly-field title="GPU Devices ID"
+                   description="Cuda device, i.e. 0 or 0,1,2,3 or keep empty to select automatically">
+            <el-input v-model="state.device" style="width:250px;"></el-input>
+        </sly-field>
+        <sly-field title="Optimizer" description="Configure optimizer settings and learning policy">
+            <sly-editor v-model="state.optimizer" :options="{height: '300px', mode: 'ace/mode/python'}"></sly-editor>
         </sly-field>
     </sly-card>
 

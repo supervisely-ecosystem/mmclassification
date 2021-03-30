@@ -18,6 +18,8 @@ remote_artifacts_dir = None
 project_info = None
 project_meta = None
 
+models_info = sly.json.load_json_file("models.json")
+model_info_by_name = {info["model"]: info for info in models_info}
 
 root_source_path = str(Path(sys.argv[0]).parents[3])
 sly.logger.info(f"Root source directory: {root_source_path}")
@@ -29,3 +31,4 @@ def init_project_info_and_meta():
     project_info = api.project.get_info_by_id(project_id)
     project_meta_json = api.project.get_meta(project_id)
     project_meta = sly.ProjectMeta.from_json(project_meta_json)
+

@@ -23,6 +23,7 @@ def main():
 
     g.app.run(data=data, state=state)
 
+# topk=(1, 5) - configure?
 
 # # settings:
 # _base_/models
@@ -59,9 +60,9 @@ def main():
 # load_from = None
 # resume_from = None
 
+# add to readme - added value + keep main ideology
 #@TODO: total tags, selected tags
-
-
+#@TODO: minimum instance versio - new widgets sly-size
 #@TODO: find configs for models ResNeSt-50 , ResNeSt-101, ResNeSt-200, ResNeSt-269
 #@TODO: for custom weights - load from and resume from???
 if __name__ == "__main__":

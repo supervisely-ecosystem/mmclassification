@@ -19,8 +19,5 @@
     "context_root": "Neural Networks",
     "context_category": "MM Classification"
   },
-  "unused": {
-    "instance_version": "6.4.4"
-  }
-
+  "instance_version": "6.4.8"
 }

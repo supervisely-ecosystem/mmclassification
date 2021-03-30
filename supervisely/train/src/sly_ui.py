@@ -2,7 +2,9 @@ import os
 import supervisely_lib as sly
 
 import sly_globals as globals
-#import sly_metrics as metrics
+
+
+# import sly_metrics as metrics
 
 
 # empty_gallery = {
@@ -50,6 +52,7 @@ def init_tags_stats(data, state, project_meta: sly.ProjectMeta):
     if val_tag is not None:
         state["valTagName"] = val_tag.name
 
+
 #
 # def init_random_split(PROJECT, data, state):
 #     data["randomSplit"] = [
@@ -82,27 +85,33 @@ def init_tags_stats(data, state, project_meta: sly.ProjectMeta):
 
 
 def init_model_settings(data, state):
-
-    data["models"] = sly.json.load_json_file("models.json")
+    data["models"] = globals.models_info
     state["modelWeightsOptions"] = 1
     state["selectedModel"] = ""
     state["weightsPath"] = ""
 
 
-# def init_training_hyperparameters(state):
-#     state["epochs"] = 10
-#     state["batchSize"] = 16
-#     state["imgSize"] = 640
-#     state["multiScale"] = False
-#     state["singleClass"] = False
-#     state["device"] = '0'
-#     state["workers"] = 8 # 0 - for debug
-#     state["activeTabName"] = "General"
-#     state["hyp"] = {
-#         "scratch": globals.scratch_str,
-#         "finetune": globals.finetune_str,
-#     }
-#     state["hypRadio"] = "scratch"
+def init_training_hyperparameters(state):
+    state["imgSize"] = {
+        "value": {
+            "width": 256,
+            "height": 256,
+            "proportional": True
+        },
+        "options": {
+            "proportions": {
+                "width": 256,
+                "height": 256
+            }
+        }
+    }
+
+    state["epochs"] = 10
+    state["batchSize"] = 32
+    state["device"] = '0'
+    state["workers"] = 2
+
+
 #
 #
 # def init_start_state(state):
@@ -135,14 +144,22 @@ def init(data, state):
     init_tags_stats(data, state, globals.project_meta)
     # init_random_split(globals.project_info, data, state)
     init_model_settings(data, state)
-    # init_training_hyperparameters(state)
+    init_training_hyperparameters(state)
+    init_optimizer(state)
+
     # init_start_state(state)
     # init_galleries(data)
     # init_progress(data)
     # init_output(data)
-    #metrics.init(data, state)
+    # metrics.init(data, state)
 
-#
+
+def init_optimizer(state):
+    with open('../../../configs/_base_/schedules/supervisely_schedule.py', 'r') as file:
+        data = file.read()
+    state["optimizer"] = data
+
+
 # def set_output():
 #     file_info = globals.api.file.get_info_by_path(globals.team_id,
 #                                                   os.path.join(globals.remote_artifacts_dir, 'results.png'))
@@ -152,4 +169,3 @@ def init(data, state):
 #     ]
 #     globals.api.app.set_fields(globals.task_id, fields)
 #     globals.api.task.set_output_directory(globals.task_id, file_info.id, globals.remote_artifacts_dir)
-
