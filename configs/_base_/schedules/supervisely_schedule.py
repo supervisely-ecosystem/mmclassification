@@ -1,7 +1,9 @@
 # optimizer - learn more in pytorch docs
 # https://pytorch.org/docs/1.7.1/optim.html?module-torch.optim
 optimizer = dict(type='SGD', lr=0.001, momentum=0.9, weight_decay=0.0001)
-# optimizer = dict(type='Adam', lr=0.001, weight_decay=0.0001)
+
+optimizer = dict(type='Adam', lr=0.001, weight_decay=0.0001)
+
 optimizer_config = dict(grad_clip=None)
 
 # learning policy:

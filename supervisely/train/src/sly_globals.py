@@ -29,6 +29,7 @@ sys.path.append(root_source_path)
 def init_project_info_and_meta():
     global project_info, project_meta
     project_info = api.project.get_info_by_id(project_id)
+    sly.logger.debug("Project info", extra={"project": project_info._asdict()})
     project_meta_json = api.project.get_meta(project_id)
     project_meta = sly.ProjectMeta.from_json(project_meta_json)
 

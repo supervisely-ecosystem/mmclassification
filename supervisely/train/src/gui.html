@@ -53,6 +53,15 @@
                     :options="{'showLabel': false}">
             </sly-select-tag>
         </sly-field>
+        <sly-field title="Training augmentations" description="Path to your configuration created by app ImgAug Studio">
+            <el-radio-group class="mb15" v-model="state.augsMode">
+                <el-radio :label="default">Default</el-radio>
+                <el-radio :label="custom">Custom</el-radio>
+            </el-radio-group>
+        </sly-field>
+        <div v-show="state.augsMode === 'default'">
+
+        </div>
     </sly-card>
 
     <sly-card class="mt15"

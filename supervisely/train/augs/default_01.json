@@ -1,0 +1,58 @@
+{
+    "pipeline": [
+        {
+            "category": "blur",
+            "name": "GaussianBlur",
+            "params": {
+                "sigma": [
+                    0,
+                    3
+                ]
+            },
+            "sometimes": 0.5,
+            "python": "iaa.Sometimes(0.5, iaa.blur.GaussianBlur(sigma=(0, 3)))"
+        },
+        {
+            "category": "arithmetic",
+            "name": "AdditiveGaussianNoise",
+            "params": {
+                "scale": [
+                    0,
+                    15
+                ],
+                "per_channel": false
+            },
+            "sometimes": 0.5,
+            "python": "iaa.Sometimes(0.5, iaa.arithmetic.AdditiveGaussianNoise(scale=(0, 15), per_channel=False))"
+        },
+        {
+            "category": "imgcorruptlike",
+            "name": "MotionBlur",
+            "params": {
+                "severity": [
+                    1,
+                    5
+                ]
+            },
+            "sometimes": 0.5,
+            "python": "iaa.Sometimes(0.5, iaa.imgcorruptlike.MotionBlur(severity=(1, 5)))"
+        },
+        {
+            "category": "geometric",
+            "name": "Rotate",
+            "params": {
+                "rotate": [
+                    -30,
+                    30
+                ],
+                "order": 1,
+                "cval": 0,
+                "mode": "reflect",
+                "fit_output": false
+            },
+            "sometimes": 0.5,
+            "python": "iaa.Sometimes(0.5, iaa.geometric.Rotate(rotate=(-30, 30), order=1, cval=0, mode='reflect', fit_output=False))"
+        }
+    ],
+    "random_order": true
+}
