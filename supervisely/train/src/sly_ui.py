@@ -124,11 +124,9 @@ def init_training_hyperparameters(state):
     state["workers"] = 2
 
 
-#
-#
-# def init_start_state(state):
-#     state["started"] = False
-#     state["activeNames"] = []
+def init_start_state(state):
+    state["started"] = False
+    #state["activeNames"] = []
 #
 #
 # def init_galleries(data):
@@ -160,7 +158,7 @@ def init(data, state):
     init_training_hyperparameters(state)
     init_optimizer(state)
 
-    # init_start_state(state)
+    init_start_state(state)
     # init_galleries(data)
     # init_progress(data)
     # init_output(data)

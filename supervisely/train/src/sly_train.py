@@ -2,6 +2,15 @@ import os
 import supervisely_lib as sly
 import sly_ui as ui
 import sly_globals as g
+from sly_train_utils import init_script_arguments
+import tools.train as mmtrain
+
+
+@g.app.callback("train")
+@sly.timeit
+def train(api: sly.Api, task_id, context, state, app_logger):
+    init_script_arguments()
+    mmtrain.main()
 
 
 def main():
@@ -67,5 +76,7 @@ def main():
 #@TODO: find configs for models ResNeSt-50 , ResNeSt-101, ResNeSt-200, ResNeSt-269
 #@TODO: for custom weights - load from and resume from???
 #@TODO: custom augmentations
+# "../configs/resnet/resnet34_supervisely.py" --work-dir "/data"
+# "../configs/resnet/resnet34_b16x8_cifar10.py" --work-dir "/data"
 if __name__ == "__main__":
     sly.main_wrapper("main", main)
