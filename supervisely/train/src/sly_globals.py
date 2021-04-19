@@ -46,5 +46,5 @@ def read_text_from_file(path):
 def init_default_augs():
     augs_path = os.path.join(root_source_path, "supervisely/train/augs/default_01.json")
     augs_config = sly.json.load_json_file(augs_path)
-
-    sly.aug.load_imgaug(augs_config)
+    augs = sly.aug.load_imgaug(augs_config)
+    x = 10
