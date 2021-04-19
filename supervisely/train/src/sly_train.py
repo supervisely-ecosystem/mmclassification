@@ -78,5 +78,7 @@ def main():
 #@TODO: custom augmentations
 # "../configs/resnet/resnet34_supervisely.py" --work-dir "/data"
 # "../configs/resnet/resnet34_b16x8_cifar10.py" --work-dir "/data"
+#@TODO: click on tab card
+
 if __name__ == "__main__":
     sly.main_wrapper("main", main)
