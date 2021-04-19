@@ -17,6 +17,7 @@ def main():
 
     # read project information and meta (classes + tags)
     g.init_project_info_and_meta()
+    g.init_default_augs()
 
     # init data for UI widgets
     ui.init(data, state)
@@ -65,5 +66,6 @@ def main():
 #@TODO: minimum instance versio - new widgets sly-size
 #@TODO: find configs for models ResNeSt-50 , ResNeSt-101, ResNeSt-200, ResNeSt-269
 #@TODO: for custom weights - load from and resume from???
+#@TODO: custom augmentations
 if __name__ == "__main__":
     sly.main_wrapper("main", main)

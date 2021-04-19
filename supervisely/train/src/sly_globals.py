@@ -26,6 +26,9 @@ sly.logger.info(f"Root source directory: {root_source_path}")
 sys.path.append(root_source_path)
 
 
+augs_json = None
+
+
 def init_project_info_and_meta():
     global project_info, project_meta
     project_info = api.project.get_info_by_id(project_id)
@@ -33,3 +36,15 @@ def init_project_info_and_meta():
     project_meta_json = api.project.get_meta(project_id)
     project_meta = sly.ProjectMeta.from_json(project_meta_json)
 
+
+def read_text_from_file(path):
+    with open(os.path.join(root_source_path, path), 'r') as file:
+        data = file.read()
+    return data
+
+
+def init_default_augs():
+    augs_path = os.path.join(root_source_path, "supervisely/train/augs/default_01.json")
+    augs_config = sly.json.load_json_file(augs_path)
+
+    sly.aug.load_imgaug(augs_config)

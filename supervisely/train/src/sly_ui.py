@@ -4,7 +4,7 @@ from pathlib import Path
 import supervisely_lib as sly
 
 import sly_globals as globals
-root_source_path = str(Path(sys.argv[0]).parents[3])
+
 
 # import sly_metrics as metrics
 
@@ -15,12 +15,6 @@ root_source_path = str(Path(sys.argv[0]).parents[3])
 #         "layout": []
 #     }
 # }
-
-
-def read_text_from_file(path):
-    with open(os.path.join(root_source_path, path), 'r') as file:
-        data = file.read()
-    return data
 
 
 def init_input_project(data, project_info):
@@ -92,7 +86,7 @@ def init_data_settings(data, state, project_meta: sly.ProjectMeta):
         state["valTagName"] = val_tag.name
 
     state["augsMode"] = "default"
-    data["pyAugs"] = read_text_from_file("supervisely/train/augs/default_01.py")
+    data["pyAugs"] = globals.read_text_from_file("supervisely/train/augs/default_01.py")
     data["pyViewOptions"] = {
         "mode": 'ace/mode/python',
         "showGutter": False,
