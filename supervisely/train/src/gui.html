@@ -12,6 +12,7 @@
         align-items: start;
         /*margin-bottom: 10px;*/
         margin-left: 0;
+        white-space: normal;
         }
 
         #mmclassification .el-radio__label div {
@@ -21,8 +22,10 @@
 
         #mmclassification .el-tabs.el-tabs-cards { border-radius: 4px; box-shadow: none; }
         #mmclassification .el-tabs.el-tabs-cards .el-tabs__header { background-color: #f6fafd; }
-        #mmclassification .el-tabs.el-tabs-cards .el-tabs__nav { float: none; display: flex; justify-content: space-between; }
-        #mmclassification .el-tabs.el-tabs-cards .el-tabs__item { flex: 1; margin-bottom: -3px; padding: 9px 16px 13px; height: auto; line-height: normal; border-radius: 4px; }
+        #mmclassification .el-tabs.el-tabs-cards .el-tabs__nav { float: none; display: flex; justify-content:
+        space-between; }
+        #mmclassification .el-tabs.el-tabs-cards .el-tabs__item { flex: 1; margin-bottom: -3px; padding: 9px 16px 13px;
+        height: auto; line-height: normal; border-radius: 4px; }
     </sly-style>
 
     <sly-card title="1. Input Project" subtitle="This project will be used for training">
@@ -79,39 +82,24 @@
                     :options="{'showLabel': false}">
             </sly-select-tag>
         </sly-field>
-        <sly-field title="Training augmentations" description="Path to your configuration created by app ImgAug Studio">
-            <!--            <el-radio v-model="state.augsMode" label="default">-->
-            <!--                Default-->
-            <!--                <div>abc</div>-->
-            <!--            </el-radio>-->
-            <!--            <div v-show="state.augsMode === 'default'">-->
-            <!--                <sly-copy-to-clipboard :data="data.pyAugs">-->
-            <!--                    <sly-editor v-model="data.pyAugs" :options="data.pyViewOptions"></sly-editor>-->
-            <!--                </sly-copy-to-clipboard>-->
-            <!--            </div>-->
-            <!--            <el-radio v-model="state.augsMode" label="custom">-->
-            <!--                Custom-->
-            <!--                <div>123</div>-->
-            <!--            </el-radio>-->
-            <!--            <div v-show="state.augsMode === 'custom'">-->
-            <!--                <el-input v-model="state.weightsPath" placeholder="Path to .pt file in Team Files"></el-input>-->
-            <!--            </div>-->
+        <sly-field title="Training augmentations" description="Use app ImgAug Studio to create custom augmentation pipeline">
             <el-tabs type="border-card" class="el-tabs-cards">
                 <el-tab-pane>
                     <el-radio slot="label" v-model="state.augsMode" label="default">
                         Default
-                        <div>Some description</div>
+                        <div>Basic augmentations, can be used to quickly build baseline</div>
                     </el-radio>
-                    abc
+                    <sly-copy-to-clipboard :data="data.pyAugs">
+                        <sly-editor v-model="data.pyAugs" :options="data.pyViewOptions"></sly-editor>
+                    </sly-copy-to-clipboard>
                 </el-tab-pane>
                 <el-tab-pane label="Config">
                     <el-radio slot="label" v-model="state.augsMode" label="custom">
                         Custom
-                        <div>Some description</div>
+                        <div>Use ImgAug Studio app to create custom augs pipeline</div>
                     </el-radio>
-                    def
+                    <el-input v-model="state.weightsPath" placeholder="Path to json config in Team Files"></el-input>
                 </el-tab-pane>
-                <el-tab-pane label="Role">Role</el-tab-pane>
             </el-tabs>
         </sly-field>
     </sly-card>
