@@ -1,11 +1,12 @@
 import os
+import sys
+from pathlib import Path
 import supervisely_lib as sly
 
 import sly_globals as globals
-
+root_source_path = str(Path(sys.argv[0]).parents[3])
 
 # import sly_metrics as metrics
-
 
 # empty_gallery = {
 #     "content": {
@@ -14,6 +15,12 @@ import sly_globals as globals
 #         "layout": []
 #     }
 # }
+
+
+def read_text_from_file(path):
+    with open(os.path.join(root_source_path, path), 'r') as file:
+        data = file.read()
+    return data
 
 
 def init_input_project(data, project_info):
@@ -40,17 +47,6 @@ def init_tags_stats(data, state, project_meta: sly.ProjectMeta):
 
     data["tags"] = tags_json
     state["selectedTags"] = []
-
-    state["trainTagName"] = None
-    state["valTagName"] = None
-
-    train_tag = project_meta.tag_metas.get("train")
-    if train_tag is not None:
-        state["trainTagName"] = train_tag.name
-
-    val_tag = project_meta.tag_metas.get("val")
-    if val_tag is not None:
-        state["valTagName"] = val_tag.name
 
 
 #
@@ -82,6 +78,28 @@ def init_tags_stats(data, state, project_meta: sly.ProjectMeta):
 #     state["splitMethod"] = 1
 #     state["trainTagName"] = ""
 #     state["valTagName"] = ""
+
+def init_data_settings(data, state, project_meta: sly.ProjectMeta):
+    state["trainTagName"] = None
+    state["valTagName"] = None
+
+    train_tag = project_meta.tag_metas.get("train")
+    if train_tag is not None:
+        state["trainTagName"] = train_tag.name
+
+    val_tag = project_meta.tag_metas.get("val")
+    if val_tag is not None:
+        state["valTagName"] = val_tag.name
+
+    state["augsMode"] = "default"
+    data["pyAugs"] = read_text_from_file("supervisely/train/augs/default_01.py")
+    data["pyViewOptions"] = {
+        "mode": 'ace/mode/python',
+        "showGutter": False,
+        "readOnly": True,
+        "maxLines": 50,
+        "highlightActiveLine": False
+    }
 
 
 def init_model_settings(data, state):
@@ -143,6 +161,7 @@ def init(data, state):
     init_input_project(data, globals.project_info)
     init_tags_stats(data, state, globals.project_meta)
     # init_random_split(globals.project_info, data, state)
+    init_data_settings(data, state, globals.project_meta)
     init_model_settings(data, state)
     init_training_hyperparameters(state)
     init_optimizer(state)

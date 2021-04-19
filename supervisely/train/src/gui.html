@@ -1,4 +1,13 @@
-<div>
+<div id="mmclassification">
+    <sly-style>
+        #mmclassification .sly-copy-to-clipboard-widget {
+        background: #eeffcc;
+        }
+        #mmclassification .sly-copy-to-clipboard-widget .content .ace-chrome {
+        background-color: #eeffcc;
+        }
+    </sly-style>
+
     <sly-card title="1. Input Project" subtitle="This project will be used for training">
         <sly-field title="" description="Project">
             <a slot="title" target="_blank"
@@ -36,9 +45,9 @@
     </sly-card>
 
     <sly-card class="mt15"
-              title="3. Train / Validation splits"
-              subtitle="Define how to split your data to train/val subsets. If image does not have selected tags,
-                        it will be assigned to training set">
+              title="3. Training data"
+              subtitle="Define how to split your data to train/val subsets and configure augmentations. If image does
+              not have selected tags, it will be assigned to training set">
         <sly-field title="Train tag" description="all images with this tag are considered as training">
             <sly-select-tag
                     :project-id="data.projectId"
@@ -55,13 +64,15 @@
         </sly-field>
         <sly-field title="Training augmentations" description="Path to your configuration created by app ImgAug Studio">
             <el-radio-group class="mb15" v-model="state.augsMode">
-                <el-radio :label="default">Default</el-radio>
-                <el-radio :label="custom">Custom</el-radio>
+                <el-radio label="default">Default</el-radio>
+                <el-radio label="custom">Custom</el-radio>
             </el-radio-group>
+            <div v-show="state.augsMode === 'default'">
+                <sly-copy-to-clipboard :data="data.pyAugs">
+                    <sly-editor v-model="data.pyAugs" :options="data.pyViewOptions"></sly-editor>
+                </sly-copy-to-clipboard>
+            </div>
         </sly-field>
-        <div v-show="state.augsMode === 'default'">
-
-        </div>
     </sly-card>
 
     <sly-card class="mt15"
@@ -106,9 +117,9 @@
     <sly-card class="mt15"
               title="5. Training hyperparameters"
               subtitle="Define basic settings: input resolution, learning rate, batch size, ...">
-<!--        <sly-field title="Number of epochs">-->
-<!--            <el-input-number v-model="state.epochs" :min="1" :max="10000"></el-input-number>-->
-<!--        </sly-field>-->
+        <!--        <sly-field title="Number of epochs">-->
+        <!--            <el-input-number v-model="state.epochs" :min="1" :max="10000"></el-input-number>-->
+        <!--        </sly-field>-->
         <sly-field title="Target image size" description="Input resolution of neural network">
             <sly-size v-model="state.imgSize.value" :options="state.imgSize.options"></sly-size>
         </sly-field>
