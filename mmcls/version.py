@@ -1,10 +1,11 @@
 # Copyright (c) Open-MMLab. All rights reserved.
 
-__version__ = '0.9.0'
+__version__ = '0.11.0'
 
 
 def parse_version_info(version_str):
     """Parse a version string into a tuple.
+
     Args:
         version_str (str): The version string.
     Returns:
