@@ -17,30 +17,12 @@ import sly_globals as globals
 # }
 
 
-def init_input_project(data, project_info):
-    data["projectId"] = globals.project_id
-    data["projectName"] = project_info.name
-    data["projectImagesCount"] = project_info.items_count
-    data["projectPreviewUrl"] = globals.api.image.preview_url(project_info.reference_image_url, 100, 100)
-
-
-def init_tags_stats(data, state, project_meta: sly.ProjectMeta):
-    stats = globals.api.project.get_stats(globals.project_id)
-    images_with_tag = {}
-    for item in stats["imageTags"]["items"]:
-        images_with_tag[item["tagMeta"]["name"]] = item["total"]
-
-    tags_json = []
-
-    for tag_meta in project_meta.tag_metas.to_json():
-        tag_meta["imagesCount"] = images_with_tag[tag_meta["name"]]
-        tag_meta["valueType"] = tag_meta["value_type"]
-        if tag_meta["valueType"] != sly.TagValueType.NONE or tag_meta["name"] in ["train", "val"]:
-            continue
-        tags_json.append(tag_meta)
-
-    data["tags"] = tags_json
-    state["selectedTags"] = []
+# def init_input_project(data, project_info):
+#     data["projectId"] = globals.project_id
+#     data["projectName"] = project_info.name
+#     data["projectImagesCount"] = project_info.items_count
+#     data["projectPreviewUrl"] = globals.api.image.preview_url(project_info.reference_image_url, 100, 100)
+#
 
 
 #
@@ -72,60 +54,60 @@ def init_tags_stats(data, state, project_meta: sly.ProjectMeta):
 #     state["splitMethod"] = 1
 #     state["trainTagName"] = ""
 #     state["valTagName"] = ""
-
-def init_data_settings(data, state, project_meta: sly.ProjectMeta):
-    state["trainTagName"] = None
-    state["valTagName"] = None
-
-    train_tag = project_meta.tag_metas.get("train")
-    if train_tag is not None:
-        state["trainTagName"] = train_tag.name
-
-    val_tag = project_meta.tag_metas.get("val")
-    if val_tag is not None:
-        state["valTagName"] = val_tag.name
-
-    state["augsMode"] = "default"
-    data["pyAugs"] = globals.read_text_from_file("supervisely/train/augs/default_01.py")
-    data["pyViewOptions"] = {
-        "mode": 'ace/mode/python',
-        "showGutter": False,
-        "readOnly": True,
-        "maxLines": 50,
-        "highlightActiveLine": False
-    }
-
-
-def init_model_settings(data, state):
-    data["models"] = globals.models_info
-    state["modelWeightsOptions"] = 1
-    state["selectedModel"] = ""
-    state["weightsPath"] = ""
-
-
-def init_training_hyperparameters(state):
-    state["imgSize"] = {
-        "value": {
-            "width": 256,
-            "height": 256,
-            "proportional": True
-        },
-        "options": {
-            "proportions": {
-                "width": 256,
-                "height": 256
-            }
-        }
-    }
-
-    state["epochs"] = 10
-    state["batchSize"] = 32
-    state["device"] = '0'
-    state["workers"] = 2
-
-
-def init_start_state(state):
-    state["started"] = False
+#
+# def init_data_settings(data, state, project_meta: sly.ProjectMeta):
+#     state["trainTagName"] = None
+#     state["valTagName"] = None
+#
+#     train_tag = project_meta.tag_metas.get("train")
+#     if train_tag is not None:
+#         state["trainTagName"] = train_tag.name
+#
+#     val_tag = project_meta.tag_metas.get("val")
+#     if val_tag is not None:
+#         state["valTagName"] = val_tag.name
+#
+#     state["augsMode"] = "default"
+#     data["pyAugs"] = globals.read_text_from_file("supervisely/train/augs/default_01.py")
+#     data["pyViewOptions"] = {
+#         "mode": 'ace/mode/python',
+#         "showGutter": False,
+#         "readOnly": True,
+#         "maxLines": 50,
+#         "highlightActiveLine": False
+#     }
+#
+#
+# def init_model_settings(data, state):
+#     data["models"] = globals.models_info
+#     state["modelWeightsOptions"] = 1
+#     state["selectedModel"] = ""
+#     state["weightsPath"] = ""
+#
+#
+# def init_training_hyperparameters(state):
+#     state["imgSize"] = {
+#         "value": {
+#             "width": 256,
+#             "height": 256,
+#             "proportional": True
+#         },
+#         "options": {
+#             "proportions": {
+#                 "width": 256,
+#                 "height": 256
+#             }
+#         }
+#     }
+#
+#     state["epochs"] = 10
+#     state["batchSize"] = 32
+#     state["device"] = '0'
+#     state["workers"] = 2
+#
+#
+# def init_start_state(state):
+#     state["started"] = False
     #state["activeNames"] = []
 #
 #
@@ -149,26 +131,26 @@ def init_start_state(state):
 #     data["outputName"] = ""
 
 
-def init(data, state):
-    init_input_project(data, globals.project_info)
-    init_tags_stats(data, state, globals.project_meta)
-    # init_random_split(globals.project_info, data, state)
-    init_data_settings(data, state, globals.project_meta)
-    init_model_settings(data, state)
-    init_training_hyperparameters(state)
-    init_optimizer(state)
+# def init(data, state):
+#     init_input_project(data, globals.project_info)
+#     init_tags_stats(data, state, globals.project_meta)
+#     # init_random_split(globals.project_info, data, state)
+#     init_data_settings(data, state, globals.project_meta)
+#     init_model_settings(data, state)
+#     init_training_hyperparameters(state)
+#     init_optimizer(state)
+#
+#     init_start_state(state)
+#     # init_galleries(data)
+#     # init_progress(data)
+#     # init_output(data)
+#     # metrics.init(data, state)
 
-    init_start_state(state)
-    # init_galleries(data)
-    # init_progress(data)
-    # init_output(data)
-    # metrics.init(data, state)
 
-
-def init_optimizer(state):
-    with open('../../../configs/_base_/schedules/supervisely_schedule.py', 'r') as file:
-        data = file.read()
-    state["optimizer"] = data
+# def init_optimizer(state):
+#     with open('../../../configs/_base_/schedules/supervisely_schedule.py', 'r') as file:
+#         data = file.read()
+#     state["optimizer"] = data
 
 
 # def set_output():

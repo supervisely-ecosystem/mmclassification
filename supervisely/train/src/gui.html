@@ -1,4 +1,36 @@
-<div>
-  {% include 'supervisely/train/src/ui/input_project.html' %}
+<div id="mmclassification-train">
+    <sly-style>
+        #mmclassification-train .el-tabs.el-tabs-cards .el-radio {
+        display: flex;
+        align-items: start;
+        /*margin-bottom: 10px;*/
+        margin-left: 0;
+        white-space: normal;
+        }
 
+        #mmclassification-train .el-tabs.el-tabs-cards .el-radio__label div {
+        color: #7f858e;
+        font-size: 13px;
+        }
+
+        .beautiful-table { border-collapse: collapse; }
+        .beautiful-table tr:nth-child(2n) { background-color: #f6f8fa; }
+        .beautiful-table td, .beautiful-table th {
+            border: 1px solid #dfe2e5;
+            padding: 6px 13px;
+            text-align: center;
+            line-height: 20px;
+        }
+
+        #mmclassification-train .el-tabs.el-tabs-cards { border-radius: 4px; box-shadow: none; }
+        #mmclassification-train .el-tabs.el-tabs-cards .el-tabs__header { background-color: #f6fafd; }
+        #mmclassification-train .el-tabs.el-tabs-cards .el-tabs__nav { float: none; display: flex; justify-content:
+        space-between; }
+        #mmclassification-train .el-tabs.el-tabs-cards .el-tabs__item { flex: 1; margin-bottom: -3px; padding: 9px 16px 13px;
+        height: auto; line-height: normal; border-radius: 4px; }
+    </sly-style>
+
+    {% include 'supervisely/train/src/ui/input_project.html' %}
+    {% include 'supervisely/train/src/ui/tags.html' %}
+    {% include 'supervisely/train/src/ui/splits.html' %}
 </div>
