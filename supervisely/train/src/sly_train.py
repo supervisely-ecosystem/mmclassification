@@ -22,5 +22,6 @@ def main():
     g.my_app.run(data=data, state=state)
 
 
+#@TODO: random weights initialization?
 if __name__ == "__main__":
     sly.main_wrapper("main", main)
