@@ -37,8 +37,6 @@ def init(project_info, project_meta: sly.ProjectMeta, data, state):
 
     state["trainDatasets"] = []
     state["valDatasets"] = []
-
-    state["unlabeledImages"] = "ignore"
     state["untaggedImages"] = "train"
 
 
