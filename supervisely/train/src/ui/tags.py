@@ -23,7 +23,7 @@ def init(data, state):
         tags_json.append(tag_meta)
     data["tags"] = tags_json
     state["selectedTags"] = []
-    cache_images_examples(data)
+    #cache_images_examples(data)
 
 
 def cache_images_examples(data):
