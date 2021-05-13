@@ -5,8 +5,13 @@ import sly_globals as g
 tag2images = defaultdict(list)
 tag2urls = defaultdict(list)
 
-_preview_height = 100
-_max_examples_count = 5
+_preview_height = 150
+_max_examples_count = 9
+
+image_slider_options = {
+    "selectable": False,
+    "height": f"{_preview_height}px"
+}
 
 
 def init(data, state):
@@ -25,12 +30,13 @@ def init(data, state):
     data["tags"] = tags_json
     state["selectedTags"] = []
     cache_images_examples(data)
+    data["imageSliderOptions"] = image_slider_options
 
 
 def cache_images_examples(data):
     id_to_tagmeta = g.project_meta.tag_metas.get_id_mapping()
     progress = sly.Progress("Caching image examples for tags", g.api.project.get_images_count(g.project_id))
-    for dataset in g.api.dataset.get_list(g.project_id)[:5]: #@TODO: for debug
+    for dataset in g.api.dataset.get_list(g.project_id):
         ds_images = g.api.image.get_list(dataset.id)
         for img_info in ds_images:
             tags = sly.TagCollection.from_api_response(img_info.tags, g.project_meta.tag_metas, id_to_tagmeta)

@@ -24,7 +24,8 @@
                     </div>
                     <sly-image-slider
                             v-if="data.tag2urls.hasOwnProperty(scope.row.name)"
-                            :data="data.tag2urls[scope.row.name]">
+                            :data="data.tag2urls[scope.row.name]"
+                            :options="data.imageSliderOptions">
                     </sly-image-slider>
                 </template>
             </el-table-column>
