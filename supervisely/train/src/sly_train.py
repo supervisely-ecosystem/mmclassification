@@ -12,6 +12,12 @@ def main():
         "modal.state.slyProjectId": g.project_id,
     })
 
+    img_info = g.api.image.get_info_by_id(859567)
+    id_to_tagmeta = g.project_meta.tag_metas.get_id_mapping()
+    print(img_info.tags)
+    tags = sly.TagCollection.from_api_response(img_info.tags, g.project_meta.tag_metas, id_to_tagmeta)
+    print(tags)
+
     g.my_app.compile_template(g.root_source_dir)
 
     data = {}
