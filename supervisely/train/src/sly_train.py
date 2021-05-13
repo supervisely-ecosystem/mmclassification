@@ -22,6 +22,7 @@ def main():
     g.my_app.run(data=data, state=state)
 
 
+#@TODO: image slider - 150px
 #@TODO: preview augentations
 #@TODO: random weights initialization?
 if __name__ == "__main__":
