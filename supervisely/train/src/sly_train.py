@@ -23,6 +23,7 @@ def main():
 
 
 #@TODO: image slider - 150px
+#@TODO: some tags do not have examples
 #@TODO: preview augentations
 #@TODO: random weights initialization?
 if __name__ == "__main__":
