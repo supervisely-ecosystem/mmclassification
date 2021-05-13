@@ -1,3 +1,4 @@
+import supervisely_lib as sly
 import sly_globals as g
 import input_project as input_project
 import tags
@@ -9,6 +10,7 @@ import architectures as model_architectures
 # import artifacts as artifacts
 
 
+@sly.timeit
 def init(data, state):
     input_project.init(data)
     tags.init(data, state)
