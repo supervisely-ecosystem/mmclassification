@@ -30,7 +30,7 @@ def init(data, state):
 def cache_images_examples(data):
     id_to_tagmeta = g.project_meta.tag_metas.get_id_mapping()
     progress = sly.Progress("Caching image examples for tags", g.api.project.get_images_count(g.project_id))
-    for dataset in g.api.dataset.get_list(g.project_id):
+    for dataset in g.api.dataset.get_list(g.project_id)[:5]: #@TODO: for debug
         ds_images = g.api.image.get_list(dataset.id)
         for img_info in ds_images:
             tags = sly.TagCollection.from_api_response(img_info.tags, g.project_meta.tag_metas, id_to_tagmeta)

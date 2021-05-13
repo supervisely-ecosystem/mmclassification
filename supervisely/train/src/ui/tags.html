@@ -1,9 +1,9 @@
 <div>
     <sly-card class="mt15"
-              :title="`2. Training tags (total ${data.tags.length}, selected ${state.selectedTags.length})`"
+              :title="`2. Target tags (total ${data.tags.length}, selected ${state.selectedTags.length})`"
               subtitle="Select image tags, that should be used for training. Training supports only tags of type NONE (without values)
                         and tags that have at least one image example, other tags are not shown in table.
-                        train / val tags are skipped and will be used later">
+                        train / val tags are also skipped and will be used later">
         <el-table
                 class="ultra-table"
                 :data="data.tags"
