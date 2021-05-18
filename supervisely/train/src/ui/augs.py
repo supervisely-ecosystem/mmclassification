@@ -21,6 +21,9 @@ _templates = [
     },
 ]
 
+_custom_pipeline_path = None
+custom_pipeline = None
+
 
 def _load_template(json_path):
     config = sly.json.load_json_file(json_path)
@@ -66,3 +69,22 @@ def init(data, state):
         "maxLines": 100,
         "highlightActiveLine": False
     }
+
+    state["customAugsPath"] = "/mmclass-heavy-no-fliplr.json"  # @TODO: for debug
+    data["customAugsPy"] = None
+
+
+@g.my_app.callback("load_existing_pipeline")
+@sly.timeit
+@g.my_app.ignore_errors_and_show_dialog_window()
+def load_existing_pipeline(api: sly.Api, task_id, context, state, app_logger):
+    global _custom_pipeline_path, custom_pipeline
+
+    api.task.set_field(task_id, "data.customAugsPy", None)
+
+    remote_path = state["customAugsPath"]
+    _custom_pipeline_path = os.path.join(g.my_app.data_dir, sly.fs.get_file_name_with_ext(remote_path))
+    api.file.download(g.team_id, remote_path, _custom_pipeline_path)
+
+    custom_pipeline, py_code = _load_template(_custom_pipeline_path)
+    api.task.set_field(task_id, "data.customAugsPy", py_code)

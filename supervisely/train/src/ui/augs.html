@@ -1,4 +1,4 @@
-<div>
+<sly-field>
     <sly-style>
         .sly-copy-to-clipboard-widget {
         background: #eeffcc;
@@ -27,8 +27,8 @@
                         </el-option>
                     </el-select>
                 </sly-field>
-                <sly-field title="Python representation">
-                    <sly-copy-to-clipboard :data="state.previewPy">
+                <sly-field title="Preview python representation">
+                    <sly-copy-to-clipboard :data="data.augPythonCode[state.augsTemplateName]">
                         <sly-editor v-model="data.augPythonCode[state.augsTemplateName]"
                                     :options="data.pyViewOptions">
                         </sly-editor>
@@ -40,11 +40,27 @@
                     Custom pipeline
                     <div>Use ImgAug Studio app to configure and save custom augmentations</div>
                 </el-radio>
-                <div>456</div>
-                <!--            <sly-field title="Path to weights file" description="Copy path in Team Files">-->
-                <!--                <el-input v-model="state.weightsPath" placeholder="Path to .pt file in Team Files"></el-input>-->
-                <!--            </sly-field>-->
+                <sly-field title="Path to JSON configuration" description="Copy path in Team Files">
+                    <div class="fflex">
+                        <el-input v-model="state.customAugsPath"
+                                  placeholder="Path to .json file in Team Files"></el-input>
+                        <el-button
+                                style="margin-left: 5px;"
+                                type="primary" class="regular" size="small"
+                                :disabled="state.customAugsPath.length === 0"
+                                @click="command('load_existing_pipeline')">
+                            Load
+                        </el-button>
+                    </div>
+                </sly-field>
+                <sly-field title="Preview python representation" v-if="data.customAugsPy">
+                    <sly-copy-to-clipboard :data="data.customAugsPy">
+                        <sly-editor v-model="data.customAugsPy"
+                                    :options="data.pyViewOptions">
+                        </sly-editor>
+                    </sly-copy-to-clipboard>
+                </sly-field>
             </el-tab-pane>
         </el-tabs>
     </sly-card>
-</div>
+    </div>
