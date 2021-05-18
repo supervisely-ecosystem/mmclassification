@@ -14,8 +14,6 @@ def get_aug_templates_list():
             "geometric": 123,
             "fliplr": False,
             "flipud": False,
-            "top1": "68.75",
-            "top5": "88.87"
         },
     ]
 
