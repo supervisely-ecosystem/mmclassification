@@ -1,8 +1,10 @@
+import os
 from collections import defaultdict
+import shelve
 import supervisely_lib as sly
 import sly_globals as g
 
-tag2images = defaultdict(list)
+#tag2images = defaultdict(list)
 tag2urls = defaultdict(list)
 
 _preview_height = 150
@@ -12,6 +14,11 @@ image_slider_options = {
     "selectable": False,
     "height": f"{_preview_height}px"
 }
+
+
+#speedup during debug (has no effects in production)
+cache_base_filename = os.path.join(g.my_app.data_dir, f"{g.project_id}")
+cache_path = cache_base_filename + ".db"
 
 
 def init(data, state):
@@ -34,21 +41,35 @@ def init(data, state):
 
 
 def cache_images_examples(data):
-    id_to_tagmeta = g.project_meta.tag_metas.get_id_mapping()
-    progress = sly.Progress("Caching image examples for tags", g.api.project.get_images_count(g.project_id))
-    for dataset in g.api.dataset.get_list(g.project_id):
-        ds_images = g.api.image.get_list(dataset.id)
-        for img_info in ds_images:
-            tags = sly.TagCollection.from_api_response(img_info.tags, g.project_meta.tag_metas, id_to_tagmeta)
-            for tag in tags:
-                if len(tag2urls[tag.name]) >= _max_examples_count:
-                    continue
-                tag2images[tag.name].append(img_info)
-                tag2urls[tag.name].append({
-                    "moreExamples": [img_info.full_storage_url],
-                    "preview": g.api.image.preview_url(img_info.full_storage_url, height=_preview_height)
-                })
-            progress.iter_done_report()
+    global tag2urls  # tag2images
+
+    if sly.fs.file_exists(cache_path):
+        sly.logger.info("Cache exists, read tags and images info from cache")
+        with shelve.open(cache_base_filename, flag='r') as s:
+            tag2urls = s["tag2urls"]
+            #tag2images = s["tag2images"]
+    else:
+        id_to_tagmeta = g.project_meta.tag_metas.get_id_mapping()
+        progress = sly.Progress("Caching image examples for tags", g.api.project.get_images_count(g.project_id))
+        for dataset in g.api.dataset.get_list(g.project_id):
+            ds_images = g.api.image.get_list(dataset.id)
+            for img_info in ds_images:
+                tags = sly.TagCollection.from_api_response(img_info.tags, g.project_meta.tag_metas, id_to_tagmeta)
+                for tag in tags:
+                    if len(tag2urls[tag.name]) >= _max_examples_count:
+                        continue
+                    #tag2images[tag.name].append(img_info)
+                    tag2urls[tag.name].append({
+                        "moreExamples": [img_info.full_storage_url],
+                        "preview": g.api.image.preview_url(img_info.full_storage_url, height=_preview_height)
+                    })
+                progress.iter_done_report()
+
+        with shelve.open(cache_base_filename) as s:
+            s["tag2urls"] = tag2urls
+            #s["tag2images"] = tag2images
+        sly.logger.info(f"Cache for project id={g.project_id} has been successfully created")
+
     data["tag2urls"] = tag2urls
-    data["tag2images"] = tag2images
+    #data["tag2images"] = tag2images
 

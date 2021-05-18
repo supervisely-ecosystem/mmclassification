@@ -22,8 +22,6 @@ def main():
     g.my_app.run(data=data, state=state)
 
 #@TODO: augs templates
-#@TODO: image slider - 150px
-#@TODO: some tags do not have examples
 #@TODO: preview augentations
 #@TODO: random weights initialization?
 if __name__ == "__main__":

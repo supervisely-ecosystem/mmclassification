@@ -1,18 +1,54 @@
 <sly-card class="mt15"
           title="4. Training augmentations"
-          subtitle="Choose one of the prepared templates or define custom pipleine">
-    <el-radio-group v-model="state.augsType">
-        <el-radio-button label="template">ready to use template</el-radio-button>
-        <el-radio-button label="custom">custom pipeline</el-radio-button>
-    </el-radio-group>
-    <div v-if="state.augsType === 'template'">
-<!--        <el-select v-model="value" placeholder="Select">-->
-<!--            <el-option-->
-<!--                    v-for="item in options"-->
-<!--                    :key="item.value"-->
-<!--                    :label="item.label"-->
-<!--                    :value="item.value">-->
-<!--            </el-option>-->
-<!--        </el-select>-->
-    </div>
+          subtitle="Choose one of the prepared templates or provide custom pipeline">
+<!--    <el-radio-group v-model="state.augsType">-->
+<!--        <el-radio-button label="template">ready to use template</el-radio-button>-->
+<!--        <el-radio-button label="custom">custom pipeline</el-radio-button>-->
+<!--    </el-radio-group>-->
+
+    <el-tabs type="border-card" class="el-tabs-cards" v-model="state.augsType">
+        <el-tab-pane name="template">
+            <el-radio slot="label" v-model="state.augsType" label="template">
+                Default templates
+                <div>Choose one of the prepared templates</div>
+            </el-radio>
+            <div>123</div>
+<!--            <table class="beautiful-table">-->
+<!--                <thead>-->
+<!--                <tr>-->
+<!--                    <th v-for="row in data.modelColumns">-->
+<!--                        <div v-html="row['title']"></div>-->
+<!--                        <div style="color: #7f858e; font-weight: normal; font-size: 12px;">-->
+<!--                            {{row["subtitle"]}}-->
+<!--                        </div>-->
+<!--                    </th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+<!--                <tr v-for="model in data.models">-->
+<!--                    <td v-for="column in data.modelColumns">-->
+<!--                        <div v-if="column.title === 'Model'">-->
+<!--                            <el-radio class="radio" v-model="state.selectedModel" :label="model[column.key]">-->
+<!--                                {{model[column.key]}}-->
+<!--                            </el-radio>-->
+<!--                        </div>-->
+<!--                        <div v-else>-->
+<!--                            {{model[column.key]}}-->
+<!--                        </div>-->
+<!--                    </td>-->
+<!--                </tr>-->
+<!--                </tbody>-->
+<!--            </table>-->
+        </el-tab-pane>
+        <el-tab-pane name="custom">
+            <el-radio slot="label" v-model="state.augsType" label="custom">
+                Custom pipeline
+                <div>Use ImgAug Studio app to configure and save custom augmentations</div>
+            </el-radio>
+            <div>456</div>
+<!--            <sly-field title="Path to weights file" description="Copy path in Team Files">-->
+<!--                <el-input v-model="state.weightsPath" placeholder="Path to .pt file in Team Files"></el-input>-->
+<!--            </sly-field>-->
+        </el-tab-pane>
+    </el-tabs>
 </sly-card>
