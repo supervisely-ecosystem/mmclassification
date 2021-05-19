@@ -1,6 +1,9 @@
 import os
 import supervisely_lib as sly
 import sly_globals as g
+from tags import get_random_image
+from supervisely_lib.app.widgets import CompareGallery
+
 
 _templates = [
     {
@@ -23,6 +26,8 @@ _templates = [
 
 _custom_pipeline_path = None
 custom_pipeline = None
+gallery: CompareGallery = None
+remote_preview_path = "/temp/preview_augs.jpg"
 
 
 def _load_template(json_path):
@@ -73,6 +78,10 @@ def init(data, state):
     state["customAugsPath"] = "/mmclass-heavy-no-fliplr.json"  # @TODO: for debug
     data["customAugsPy"] = None
 
+    global gallery
+    gallery = CompareGallery(g.task_id, g.api, "data.gallery", g.project_meta)
+    data["gallery"] = gallery.to_json()
+
 
 @g.my_app.callback("load_existing_pipeline")
 @sly.timeit
@@ -88,3 +97,28 @@ def load_existing_pipeline(api: sly.Api, task_id, context, state, app_logger):
 
     custom_pipeline, py_code = _load_template(_custom_pipeline_path)
     api.task.set_field(task_id, "data.customAugsPy", py_code)
+
+
+@g.my_app.callback("preview_augs")
+@sly.timeit
+@g.my_app.ignore_errors_and_show_dialog_window()
+def preview_augs(api: sly.Api, task_id, context, state, app_logger):
+    global gallery
+    image_info = get_random_image()
+    if state["augsType"] == "template":
+        augs_ppl = get_template_by_name(state["augsTemplateName"])
+    else:
+        augs_ppl = custom_pipeline
+
+    img = api.image.download_np(image_info.id)
+    ann_json = api.annotation.download(image_info.id).annotation
+    ann = sly.Annotation.from_json(ann_json, g.project_meta)
+    gallery.set_left("before", image_info.full_storage_url, ann)
+    _, res_img, res_ann = sly.imgaug_utils.apply(augs_ppl, g.project_meta, img, ann)
+    local_image_path = os.path.join(g.my_app.data_dir, "preview_augs.jpg")
+    sly.image.write(local_image_path, res_img)
+    if api.file.exists(g.team_id, remote_preview_path):
+        api.file.remove(g.team_id, remote_preview_path)
+    file_info = api.file.upload(g.team_id, local_image_path, remote_preview_path)
+    gallery.set_right("after", file_info.full_storage_url, res_ann)
+    gallery.update()

@@ -20,7 +20,9 @@ def main():
     ui.init(data, state)  # init data for UI widgets
 
     g.my_app.run(data=data, state=state)
+    sly.upload_project()
 
+#@TODO: disable preview button if custom pipeline is not defined
 #@TODO: augs templates
 #@TODO: preview augentations
 #@TODO: random weights initialization?

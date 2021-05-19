@@ -1,4 +1,4 @@
-<sly-field>
+<div>
     <sly-style>
         .sly-copy-to-clipboard-widget {
         background: #eeffcc;
@@ -63,4 +63,33 @@
             </el-tab-pane>
         </el-tabs>
     </sly-card>
-    </div>
+
+    <sly-card class="mt15"
+              title="5. Preview augmentations on random image"
+              subtitle="Press preview button to apply augmentations to random image">
+        <el-button v-if="state.initMode === 'new'"
+                   type="primary" class="regular" size="small"
+                   @click="command('clear_pipeline')">
+            New
+        </el-button>
+        <div slot="header">
+            <el-button type="primary" class="regular"
+                       @click="command('preview_augs')">
+                Preview
+            </el-button>
+        </div>
+        <div v-if="!data.gallery">
+            Press preview button to aply augmentations to random image
+        </div>
+        <sly-grid-gallery
+                v-if="data.gallery"
+                :content="data.gallery.content"
+                :options="data.gallery.options">
+            <template v-slot:card-footer="{ annotation }">
+                <div class="mt5" style="text-align: center">
+                    <el-tag type="primary">{{annotation.title}}</el-tag>
+                </div>
+            </template>
+        </sly-grid-gallery>
+    </sly-card>
+</div>
