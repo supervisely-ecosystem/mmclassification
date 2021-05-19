@@ -22,6 +22,7 @@ def main():
     g.my_app.run(data=data, state=state)
     sly.upload_project()
 
+#@TODO: separate - update content and options in comparegallery
 #@TODO: disable preview button if custom pipeline is not defined
 #@TODO: augs templates
 #@TODO: preview augentations
