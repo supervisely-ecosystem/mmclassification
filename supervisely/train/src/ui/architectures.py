@@ -362,10 +362,11 @@ def prepare_weights(state):
         model_name = state['selectedModel'].lower()
         weights_url = get_pretrained_weights_by_name(state["selectedModel"])
         weights_path_local = os.path.join(g.my_app.data_dir, sly.fs.get_file_name_with_ext(weights_url))
-        response = requests.head(weights_url, allow_redirects=True)
-        sizeb = int(response.headers.get('content-length', 0))
-        progress_cb = get_progress_cb("Download weights", sizeb, is_size=True)
-        sly.fs.download(weights_url, weights_path_local, g.my_app.cache, progress_cb)
+        if sly.fs.file_exists(weights_path_local) is False: # speedup for debug, has no effects in production
+            response = requests.head(weights_url, allow_redirects=True)
+            sizeb = int(response.headers.get('content-length', 0))
+            progress_cb = get_progress_cb("Download weights", sizeb, is_size=True)
+            sly.fs.download(weights_url, weights_path_local, g.my_app.cache, progress_cb)
 
         state["weightsPath"] = weights_path_local
         sly.logger.info("Pretrained ImageNet weights has been successfully downloaded")
