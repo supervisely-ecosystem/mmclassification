@@ -1,8 +1,9 @@
-# import errno
-# import os
-# import sly_globals as g
-# # from sly_utils import get_progress_cb
-# import supervisely_lib as sly
+import errno
+import os
+import requests
+import sly_globals as g
+from sly_train_progress import get_progress_cb
+import supervisely_lib as sly
 
 
 def get_models_list():
@@ -317,6 +318,18 @@ def get_table_columns():
     ]
 
 
+def get_model_info_by_name(name):
+    models = get_models_list()
+    for info in models:
+        if info["model"] == name:
+            return info
+    raise KeyError(f"Model {name} not found")
+
+
+def get_pretrained_weights_by_name(name):
+    return get_model_info_by_name(name)["weightsUrl"]
+
+
 def init(data, state):
     data["models"] = get_models_list()
     data["modelColumns"] = get_table_columns()
@@ -329,23 +342,30 @@ def init(data, state):
 
 
 def prepare_weights(state):
-    raise NotImplementedError()
-    # if state["weightsInitialization"] == "custom":
-    #     # download custom weights
-    #     weights_path_remote = state["weightsPath"]
-    #     if not weights_path_remote.endswith(".pt"):
-    #         raise ValueError(f"Weights file has unsupported extension {sly.fs.get_file_ext(weights_path_remote)}. "
-    #                          f"Supported: '.pt'")
-    #     weights_path_local = os.path.join(g.my_app.data_dir, sly.fs.get_file_name_with_ext(weights_path_remote))
-    #     file_info = g.api.file.get_info_by_path(g.team_id, weights_path_remote)
-    #     if file_info is None:
-    #         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), weights_path_remote)
-    #     progress_cb = get_progress_cb("Download weights", file_info.sizeb, is_size=True)
-    #     g.api.file.download(g.team_id, weights_path_remote, weights_path_local, g.my_app.cache, progress_cb)
-    #
-    #     state["_weightsPath"] = weights_path_remote
-    #     state["weightsPath"] = weights_path_local
-    # else:
-    #     model_name = state['selectedModel'].lower()
-    #     state["weightsPath"] = f"{model_name}.pt"
-    #     sly.logger.info("Pretrained COCO weights will be added automatically")
+    model_name = state["selectedModel"]
+    if state["weightsInitialization"] == "custom":
+        # download custom weights
+        weights_path_remote = state["weightsPath"]
+        if not weights_path_remote.endswith(".pt"):
+            raise ValueError(f"Weights file has unsupported extension {sly.fs.get_file_ext(weights_path_remote)}. "
+                             f"Supported: '.pt'")
+        weights_path_local = os.path.join(g.my_app.data_dir, sly.fs.get_file_name_with_ext(weights_path_remote))
+        file_info = g.api.file.get_info_by_path(g.team_id, weights_path_remote)
+        if file_info is None:
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), weights_path_remote)
+        progress_cb = get_progress_cb("Download weights", file_info.sizeb, is_size=True)
+        g.api.file.download(g.team_id, weights_path_remote, weights_path_local, g.my_app.cache, progress_cb)
+
+        state["_weightsPath"] = weights_path_remote
+        state["weightsPath"] = weights_path_local
+    else:
+        model_name = state['selectedModel'].lower()
+        weights_url = get_pretrained_weights_by_name(state["selectedModel"])
+        weights_path_local = os.path.join(g.my_app.data_dir, sly.fs.get_file_name_with_ext(weights_url))
+        response = requests.head(weights_url, allow_redirects=True)
+        sizeb = int(response.headers.get('content-length', 0))
+        progress_cb = get_progress_cb("Download weights", sizeb, is_size=True)
+        sly.fs.download(weights_url, weights_path_local, g.my_app.cache, progress_cb)
+
+        state["weightsPath"] = weights_path_local
+        sly.logger.info("Pretrained ImageNet weights has been successfully downloaded")

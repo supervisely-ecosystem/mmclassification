@@ -1,19 +1,22 @@
 <sly-card class="mt15"
           title="6. Training progress"
           subtitle="Task progress, detailed logs, metrics charts, and other visualizations">
-<!--    :disabled="state.selectedClasses.length === 0 ||-->
-<!--                              (state.modelWeightsOptions === 2 && state.weightsPath === '') ||-->
-<!--                              state.started === true"-->
+
     <el-button type="primary"
-               @click="state.started = true; command('train')">
+               @click="state.started = true; command('train')"
+               :disabled="state.selectedTags.length === 0 ||
+                          (state.weightsInitialization === 'custom' && state.weightsPath === '') ||
+                          state.started === true"
+    >
         Start training
     </el-button>
-<!--    <div v-show="state.selectedClasses.length === 0" class="mt10" style="color: red">-->
-<!--        0 training classes are selected-->
-<!--    </div>-->
-<!--    <div v-show="state.modelWeightsOptions === 2 && state.weightsPath === ''" style="color: red">-->
-<!--        Path to model weights is not defined-->
-<!--    </div>-->
+    <div v-show="state.selectedTags.length === 0" class="mt10" style="color: red">
+        0 training tags are selected
+    </div>
+    <div v-show="state.weightsInitialization === 'custom' && state.weightsPath === ''" style="color: red">
+        Path to model weights is not defined
+    </div>
+
 <!--    <div v-if="data.progressName.length > 0" class="mt10">-->
 <!--        <div style="color: #20a0ff">{{data.progressName}}: {{data.currentProgressLabel}} /-->
 <!--            {{data.totalProgressLabel}}-->

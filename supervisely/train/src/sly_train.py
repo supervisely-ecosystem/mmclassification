@@ -3,7 +3,7 @@ import supervisely_lib as sly
 
 import sly_globals as g
 import ui as ui
-from architectures import prepare_weights
+import architectures
 from sly_train_progress import get_progress_cb
 from splits import get_train_val_sets, verify_train_val_sets
 
@@ -12,8 +12,7 @@ from splits import get_train_val_sets, verify_train_val_sets
 @sly.timeit
 def train(api: sly.Api, task_id, context, state, app_logger):
     try:
-        #@TODO: uncomment
-        #prepare_weights(state)
+        architectures.prepare_weights(state)
 
         # prepare directory for original Supervisely project
         project_dir = os.path.join(g.my_app.data_dir, "sly_project")
@@ -32,6 +31,13 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         verify_train_val_sets(train_set, val_set)
         sly.logger.info(f"Train set: {len(train_set)} images")
         sly.logger.info(f"Val set: {len(val_set)} images")
+
+        # save selectedTags -> ground-truth labels
+        tag_names = state["selectedTags"]
+        gt_labels = {tag_name: idx for idx, tag_name in enumerate(tag_names)}
+        sly.json.dump_json_file(gt_labels, os.path.join(project_dir, "gt_labels.json"))
+
+
 
 
         # preprocessing: transform labels to bboxes, filter classes, ...
@@ -104,7 +110,7 @@ def main():
 #     workers_per_gpu=2,
 # evaluation = dict(interval=1, metric='accuracy')
 
-#@TODO: add predicted tags to model file
+#@TODO: add predicted tags (gt_labels.json) to model file
 #@TODO: separate - update content and options in comparegallery
 #@TODO: disable preview button if custom pipeline is not defined
 #@TODO: augs templates
