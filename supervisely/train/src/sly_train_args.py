@@ -6,8 +6,8 @@ import sly_globals as g
 
 def init_script_arguments(state, project_dir):
     sys.argv.append(os.path.join(g.root_source_dir, "configs/resnet/resnet18_b16x8_cifar10.py"))
-    #sys.argv.extend(["--config", "configs/resnet/resnet18_b16x8_cifar10.py"])
     sys.argv.extend(["--work-dir", "/data"])
+
 
     # global local_artifacts_dir, remote_artifacts_dir
     # sys.argv.append("--sly")

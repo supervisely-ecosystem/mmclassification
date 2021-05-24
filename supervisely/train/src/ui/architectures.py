@@ -342,7 +342,6 @@ def init(data, state):
 
 
 def prepare_weights(state):
-    model_name = state["selectedModel"]
     if state["weightsInitialization"] == "custom":
         # download custom weights
         weights_path_remote = state["weightsPath"]
@@ -359,7 +358,6 @@ def prepare_weights(state):
         state["_weightsPath"] = weights_path_remote
         state["weightsPath"] = weights_path_local
     else:
-        model_name = state['selectedModel'].lower()
         weights_url = get_pretrained_weights_by_name(state["selectedModel"])
         weights_path_local = os.path.join(g.my_app.data_dir, sly.fs.get_file_name_with_ext(weights_url))
         if sly.fs.file_exists(weights_path_local) is False: # speedup for debug, has no effects in production

@@ -7,7 +7,7 @@ import architectures
 from sly_train_progress import get_progress_cb
 from sly_train_args import init_script_arguments
 from splits import get_train_val_sets, verify_train_val_sets
-from tools.train import main as mm_train
+from generate_config import create_config
 
 
 @g.my_app.callback("train")
@@ -44,8 +44,42 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         # yolov5_format.transform(project_dir, train_data_dir, train_set, val_set, progress_cb)
         #
         # init sys.argv for main training script
+
+        model_name = state["selectedModel"]
+        model_info = architectures.get_model_info_by_name(model_name)
+        model_config_path = os.path.join(g.root_source_dir, model_info["config"])
+
+        #res_config_path = os.path.join(g.my_app.data_dir, "train_config.py")
+        #create_config(model_config_path, res_config_path)
+
         init_script_arguments(state, project_dir)
 
+        from tools.train import main as mm_train #@TODO: move to imports section on top
+        # _base_ = [
+        #     '../_base_/models/resnet18.py', '../_base_/datasets/imagenet_bs32.py',
+        #     '../_base_/schedules/imagenet_bs256.py', '../_base_/default_runtime.py'
+        # ]
+
+        # models:
+        # cfg.model.head.num_classes
+
+        # datasets:
+        # samples_per_gpu=32,
+        # workers_per_gpu=2,
+        # evaluation = dict(interval=1, metric='accuracy')
+        # target_size = 256
+
+        # schedules:
+        optimizer = dict(type='SGD', lr=0.1, momentum=0.9, weight_decay=0.0001)
+        optimizer_config = dict(grad_clip=None)
+        lr_config = dict(policy='step', step=[30, 60, 90])
+        lr_config = dict(policy='CosineAnnealing', min_lr=0)
+        lr_config = dict(policy='step', gamma=0.98, step=1)
+        runner = dict(type='EpochBasedRunner', max_epochs=100)
+
+        # runtime:
+        # hooks = logging hook
+        # log interval=100,
         mm_train()
 
         #
