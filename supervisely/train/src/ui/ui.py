@@ -5,7 +5,7 @@ import tags
 import splits as train_val_split
 import augs
 import architectures as model_architectures
-# import hyperparameters as hyperparameters
+import hyperparameters as hyperparameters
 # import monitoring as monitoring
 # import artifacts as artifacts
 
@@ -17,6 +17,6 @@ def init(data, state):
     train_val_split.init(g.project_info, g.project_meta, data, state)
     augs.init(data, state)
     model_architectures.init(data, state)
-    # hyperparameters.init(state)
+    hyperparameters.init(state)
     # monitoring.init(data, state)
     # artifacts.init(data)
