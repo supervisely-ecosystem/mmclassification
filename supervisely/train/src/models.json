@@ -129,42 +129,6 @@
         "top1": "78.63",
         "top5": "94.16"
     },
-//    {
-//        "config": "",
-//        "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnest/resnest50_imagenet_converted-1ebf0afe.pth",
-//        "model": "ResNeSt-50*",
-//        "params": "27.48",
-//        "flops": "5.41",
-//        "top1": "81.13",
-//        "top5": "95.59"
-//    },
-//    {
-//        "config": "",
-//        "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnest/resnest101_imagenet_converted-032caa52.pth",
-//        "model": "ResNeSt-101*",
-//        "params": "48.28",
-//        "flops": "10.27",
-//        "top1": "82.32",
-//        "top5": "96.24"
-//    },
-//    {
-//        "config": "",
-//        "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnest/resnest200_imagenet_converted-581a60f2.pth",
-//        "model": "ResNeSt-200*",
-//        "params": "70.2",
-//        "flops": "17.53",
-//        "top1": "82.41",
-//        "top5": "96.22"
-//    },
-//    {
-//        "config": "",
-//        "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnest/resnest269_imagenet_converted-59930960.pth",
-//        "model": "ResNeSt-269*",
-//        "params": "110.93",
-//        "flops": "22.58",
-//        "top1": "82.70",
-//        "top5": "96.28"
-//    },
     {
         "modelConfig": "configs/_base_/models/resnetv1d50.py",
         "config": "configs/resnet/resnetv1d50_b32x8_imagenet.py",

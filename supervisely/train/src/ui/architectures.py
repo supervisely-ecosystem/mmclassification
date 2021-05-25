@@ -9,6 +9,7 @@ import supervisely_lib as sly
 def get_models_list():
     return [
         {
+            "modelConfig": "configs/_base_/models/vgg11.py",
             "config": "configs/vgg/vgg11_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/vgg/vgg11_batch256_imagenet_20210208-4271cd6c.pth",
             "model": "VGG-11",
@@ -18,6 +19,7 @@ def get_models_list():
             "top5": "88.87"
         },
         {
+            "modelConfig": "configs/_base_/models/vgg13.py",
             "config": "configs/vgg/vgg13_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/vgg/vgg13_batch256_imagenet_20210208-4d1d6080.pth",
             "model": "VGG-13",
@@ -27,6 +29,7 @@ def get_models_list():
             "top5": "89.46"
         },
         {
+            "modelConfig": "configs/_base_/models/vgg16.py",
             "config": "configs/vgg/vgg16_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/vgg/vgg16_batch256_imagenet_20210208-db26f1a5.pth",
             "model": "VGG-16",
@@ -36,6 +39,7 @@ def get_models_list():
             "top5": "90.49"
         },
         {
+            "modelConfig": "configs/_base_/models/vgg19.py",
             "config": "configs/vgg/vgg19_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/vgg/vgg19_bn_batch256_imagenet_20210208-da620c4f.pth",
             "model": "VGG-19",
@@ -45,6 +49,7 @@ def get_models_list():
             "top5": "90.80"
         },
         {
+            "modelConfig": "configs/_base_/models/vgg11bn.py",
             "config": "configs/vgg/vgg11bn_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/vgg/vgg11_bn_batch256_imagenet_20210207-f244902c.pth",
             "model": "VGG-11-BN",
@@ -54,6 +59,7 @@ def get_models_list():
             "top5": "90.12"
         },
         {
+            "modelConfig": "configs/_base_/models/vgg13bn.py",
             "config": "configs/vgg/vgg13bn_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/vgg/vgg13_bn_batch256_imagenet_20210207-1a8b7864.pth",
             "model": "VGG-13-BN",
@@ -63,7 +69,8 @@ def get_models_list():
             "top5": "90.71"
         },
         {
-            "config": "configs/vgg/vgg16_b32x8_imagenet.py",
+            "modelConfig": "configs/_base_/models/vgg16bn.py",
+            "config": "configs/vgg/vgg16bn_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/vgg/vgg16_bn_batch256_imagenet_20210208-7e55cd29.pth",
             "model": "VGG-16-BN",
             "params": "138.37",
@@ -72,6 +79,7 @@ def get_models_list():
             "top5": "91.68"
         },
         {
+            "modelConfig": "configs/_base_/models/vgg19bn.py",
             "config": "configs/vgg/vgg19bn_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/vgg/vgg19_bn_batch256_imagenet_20210208-da620c4f.pth",
             "model": "VGG-19-BN",
@@ -81,6 +89,7 @@ def get_models_list():
             "top5": "92.24"
         },
         {
+            "modelConfig": "configs/_base_/models/resnet18.py",
             "config": "configs/resnet/resnet18_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnet/resnet18_batch256_imagenet_20200708-34ab8f90.pth",
             "model": "ResNet-18",
@@ -90,6 +99,7 @@ def get_models_list():
             "top5": "89.44"
         },
         {
+            "modelConfig": "configs/_base_/models/resnet34.py",
             "config": "configs/resnet/resnet34_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnet/resnet34_batch256_imagenet_20200708-32ffb4f7.pth",
             "model": "ResNet-34",
@@ -99,6 +109,7 @@ def get_models_list():
             "top5": "91.53"
         },
         {
+            "modelConfig": "configs/_base_/models/resnet50.py",
             "config": "configs/resnet/resnet50_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnet/resnet50_batch256_imagenet_20200708-cfb998bf.pth",
             "model": "ResNet-50",
@@ -108,6 +119,7 @@ def get_models_list():
             "top5": "93.15"
         },
         {
+            "modelConfig": "configs/_base_/models/resnet101.py",
             "config": "configs/resnet/resnet101_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnet/resnet101_batch256_imagenet_20200708-753f3608.pth",
             "model": "ResNet-101",
@@ -117,6 +129,7 @@ def get_models_list():
             "top5": "94.03"
         },
         {
+            "modelConfig": "configs/_base_/models/resnet152.py",
             "config": "configs/resnet/resnet152_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnet/resnet152_batch256_imagenet_20200708-ec25b1f9.pth",
             "model": "ResNet-152",
@@ -125,43 +138,44 @@ def get_models_list():
             "top1": "78.63",
             "top5": "94.16"
         },
+        # {
+        #     "config": "",
+        #     "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnest/resnest50_imagenet_converted-1ebf0afe.pth",
+        #     "model": "ResNeSt-50*",
+        #     "params": "27.48",
+        #     "flops": "5.41",
+        #     "top1": "81.13",
+        #     "top5": "95.59"
+        # },
+        # {
+        #     "config": "",
+        #     "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnest/resnest101_imagenet_converted-032caa52.pth",
+        #     "model": "ResNeSt-101*",
+        #     "params": "48.28",
+        #     "flops": "10.27",
+        #     "top1": "82.32",
+        #     "top5": "96.24"
+        # },
+        # {
+        #     "config": "",
+        #     "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnest/resnest200_imagenet_converted-581a60f2.pth",
+        #     "model": "ResNeSt-200*",
+        #     "params": "70.2",
+        #     "flops": "17.53",
+        #     "top1": "82.41",
+        #     "top5": "96.22"
+        # },
+        # {
+        #     "config": "",
+        #     "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnest/resnest269_imagenet_converted-59930960.pth",
+        #     "model": "ResNeSt-269*",
+        #     "params": "110.93",
+        #     "flops": "22.58",
+        #     "top1": "82.70",
+        #     "top5": "96.28"
+        # },
         {
-            "config": "",
-            "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnest/resnest50_imagenet_converted-1ebf0afe.pth",
-            "model": "ResNeSt-50*",
-            "params": "27.48",
-            "flops": "5.41",
-            "top1": "81.13",
-            "top5": "95.59"
-        },
-        {
-            "config": "",
-            "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnest/resnest101_imagenet_converted-032caa52.pth",
-            "model": "ResNeSt-101*",
-            "params": "48.28",
-            "flops": "10.27",
-            "top1": "82.32",
-            "top5": "96.24"
-        },
-        {
-            "config": "",
-            "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnest/resnest200_imagenet_converted-581a60f2.pth",
-            "model": "ResNeSt-200*",
-            "params": "70.2",
-            "flops": "17.53",
-            "top1": "82.41",
-            "top5": "96.22"
-        },
-        {
-            "config": "",
-            "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnest/resnest269_imagenet_converted-59930960.pth",
-            "model": "ResNeSt-269*",
-            "params": "110.93",
-            "flops": "22.58",
-            "top1": "82.70",
-            "top5": "96.28"
-        },
-        {
+            "modelConfig": "configs/_base_/models/resnetv1d50.py",
             "config": "configs/resnet/resnetv1d50_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnet/resnetv1d50_batch256_imagenet_20200708-1ad0ce94.pth",
             "model": "ResNetV1D-50",
@@ -171,6 +185,7 @@ def get_models_list():
             "top5": "93.66"
         },
         {
+            "modelConfig": "configs/_base_/models/resnetv1d101.py",
             "config": "configs/resnet/resnetv1d101_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnet/resnetv1d101_batch256_imagenet_20200708-9cb302ef.pth",
             "model": "ResNetV1D-101",
@@ -180,6 +195,7 @@ def get_models_list():
             "top5": "94.38"
         },
         {
+            "modelConfig": "configs/_base_/models/resnetv1d152.py",
             "config": "configs/resnet/resnetv1d152_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnet/resnetv1d152_batch256_imagenet_20200708-e79cb6a2.pth",
             "model": "ResNetV1D-152",
@@ -189,6 +205,7 @@ def get_models_list():
             "top5": "94.61"
         },
         {
+            "modelConfig": "configs/_base_/models/resnext50_32x4d.py",
             "config": "configs/resnext/resnext50_32x4d_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnext/resnext50_32x4d_batch256_imagenet_20200708-c07adbb7.pth",
             "model": "ResNeXt-32x4d-50",
@@ -198,6 +215,7 @@ def get_models_list():
             "top5": "93.74"
         },
         {
+            "modelConfig": "configs/_base_/models/resnext101_32x4d.py",
             "config": "configs/resnext/resnext101_32x4d_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnext/resnext101_32x4d_batch256_imagenet_20200708-87f2d1c9.pth",
             "model": "ResNeXt-32x4d-101",
@@ -207,6 +225,7 @@ def get_models_list():
             "top5": "94.34"
         },
         {
+            "modelConfig": "configs/_base_/models/resnext101_32x8d.py",
             "config": "configs/resnext/resnext101_32x8d_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnext/resnext101_32x8d_batch256_imagenet_20200708-1ec34aa7.pth",
             "model": "ResNeXt-32x8d-101",
@@ -216,6 +235,7 @@ def get_models_list():
             "top5": "94.52"
         },
         {
+            "modelConfig": "configs/_base_/models/resnext152_32x4d.py",
             "config": "configs/resnext/resnext152_32x4d_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnext/resnext152_32x4d_batch256_imagenet_20200708-aab5034c.pth",
             "model": "ResNeXt-32x4d-152",
@@ -225,6 +245,7 @@ def get_models_list():
             "top5": "94.47"
         },
         {
+            "modelConfig": "configs/_base_/models/seresnet50.py",
             "config": "configs/seresnet/seresnet50_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/se-resnet/se-resnet50_batch256_imagenet_20200804-ae206104.pth",
             "model": "SE-ResNet-50",
@@ -234,6 +255,7 @@ def get_models_list():
             "top5": "93.84"
         },
         {
+            "modelConfig": "configs/_base_/models/seresnet101.py",
             "config": "configs/seresnet/seresnet101_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/se-resnet/se-resnet101_batch256_imagenet_20200804-ba5b51d4.pth",
             "model": "SE-ResNet-101",
@@ -243,6 +265,7 @@ def get_models_list():
             "top5": "94.07"
         },
         {
+            "modelConfig": "configs/_base_/models/shufflenet_v1_1x.py",
             "config": "configs/shufflenet_v1/shufflenet_v1_1x_b64x16_linearlr_bn_nowd_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/shufflenet_v1/shufflenet_v1_batch1024_imagenet_20200804-5d6cec73.pth",
             "model": "ShuffleNetV1 1.0x (group=3)",
@@ -252,6 +275,7 @@ def get_models_list():
             "top5": "87.81"
         },
         {
+            "modelConfig": "configs/_base_/models/shufflenet_v2_1x.py",
             "config": "configs/shufflenet_v2/shufflenet_v2_1x_b64x16_linearlr_bn_nowd_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/shufflenet_v2/shufflenet_v2_batch1024_imagenet_20200812-5bf4721e.pth",
             "model": "ShuffleNetV2 1.0x",
@@ -261,6 +285,7 @@ def get_models_list():
             "top5": "88.92"
         },
         {
+            "modelConfig": "configs/_base_/models/mobilenet_v2_1x.py",
             "config": "configs/mobilenet_v2/mobilenet_v2_b32x8_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/mobilenet_v2/mobilenet_v2_batch256_imagenet_20200708-3b2dc3af.pth",
             "model": "MobileNet V2",
@@ -270,6 +295,7 @@ def get_models_list():
             "top5": "90.42"
         },
         {
+            "modelConfig": "configs/_base_/models/vit_base_patch16_384_finetune.py",
             "config": "configs/vision_transformer/vit_base_patch16_384_finetune_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/vit/vit_base_patch16_384.pth",
             "model": "ViT-B/16*",
@@ -279,6 +305,7 @@ def get_models_list():
             "top5": "97.18"
         },
         {
+            "modelConfig": "configs/_base_/models/vit_base_patch32_384_finetune.py",
             "config": "configs/vision_transformer/vit_base_patch32_384_finetune_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/vit/vit_base_patch32_384.pth",
             "model": "ViT-B/32*",
@@ -288,6 +315,7 @@ def get_models_list():
             "top5": "96.13"
         },
         {
+            "modelConfig": "configs/_base_/models/vit_large_patch16_384_finetune.py",
             "config": "configs/vision_transformer/vit_large_patch16_384_finetune_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/vit/vit_large_patch16_384.pth",
             "model": "ViT-L/16*",
@@ -297,6 +325,7 @@ def get_models_list():
             "top5": "97.38"
         },
         {
+            "modelConfig": "configs/_base_/models/vit_large_patch32_384_finetune.py",
             "config": "configs/vision_transformer/vit_large_patch32_384_finetune_imagenet.py",
             "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/vit/vit_large_patch32_384.pth",
             "model": "ViT-L/32*",
@@ -330,8 +359,25 @@ def get_pretrained_weights_by_name(name):
     return get_model_info_by_name(name)["weightsUrl"]
 
 
+def _validate_models_configs(models):
+    res = []
+    for model in models:
+        model_config_path = os.path.join(g.root_source_dir, model["modelConfig"])
+        train_config_path = os.path.join(g.root_source_dir, model["config"])
+        if not sly.fs.file_exists(model_config_path):
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), model_config_path)
+        if not sly.fs.file_exists(train_config_path):
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), train_config_path)
+        res.append(model)
+    return res
+
+
+
 def init(data, state):
-    data["models"] = get_models_list()
+    models = get_models_list()
+    #@TODO: validate models configs
+    _validate_models_configs(models)
+    data["models"] = models
     data["modelColumns"] = get_table_columns()
     state["selectedModel"] = "ResNet-34"
     state["weightsInitialization"] = "imagenet"
@@ -360,7 +406,7 @@ def prepare_weights(state):
     else:
         weights_url = get_pretrained_weights_by_name(state["selectedModel"])
         weights_path_local = os.path.join(g.my_app.data_dir, sly.fs.get_file_name_with_ext(weights_url))
-        if sly.fs.file_exists(weights_path_local) is False: # speedup for debug, has no effects in production
+        if sly.fs.file_exists(weights_path_local) is False:  # speedup for debug, has no effects in production
             response = requests.head(weights_url, allow_redirects=True)
             sizeb = int(response.headers.get('content-length', 0))
             progress_cb = get_progress_cb("Download weights", sizeb, is_size=True)
