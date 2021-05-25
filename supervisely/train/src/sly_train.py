@@ -7,7 +7,7 @@ import architectures
 from sly_train_progress import get_progress_cb
 from sly_train_args import init_script_arguments
 from splits import get_train_val_sets, verify_train_val_sets
-from generate_config import create_config
+import train_config
 
 
 @g.my_app.callback("train")
@@ -45,12 +45,7 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         #
         # init sys.argv for main training script
 
-        model_name = state["selectedModel"]
-        model_info = architectures.get_model_info_by_name(model_name)
-        model_config_path = os.path.join(g.root_source_dir, model_info["config"])
-
-        #res_config_path = os.path.join(g.my_app.data_dir, "train_config.py")
-        #create_config(model_config_path, res_config_path)
+        train_config.generate(state)
 
         init_script_arguments(state, project_dir)
         #Config._validate_py_syntax(filename)
