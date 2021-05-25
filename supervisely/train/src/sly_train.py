@@ -60,6 +60,10 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         #     '../_base_/schedules/imagenet_bs256.py', '../_base_/default_runtime.py'
         # ]
 
+        # settings:
+        # --gpus
+        # --gpu-ids
+
         # models:
         # cfg.model.head.num_classes
 
