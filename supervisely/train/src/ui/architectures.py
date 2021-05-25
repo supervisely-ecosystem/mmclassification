@@ -7,7 +7,7 @@ import supervisely_lib as sly
 
 
 def get_models_list():
-    return [
+    res = [
         {
             "modelConfig": "configs/_base_/models/vgg11.py",
             "config": "configs/vgg/vgg11_b32x8_imagenet.py",
@@ -335,6 +335,8 @@ def get_models_list():
             "top5": "96.06"
         }
     ]
+    _validate_models_configs(res)
+    return res
 
 
 def get_table_columns():
@@ -372,11 +374,8 @@ def _validate_models_configs(models):
     return res
 
 
-
 def init(data, state):
     models = get_models_list()
-    #@TODO: validate models configs
-    _validate_models_configs(models)
     data["models"] = models
     data["modelColumns"] = get_table_columns()
     state["selectedModel"] = "ResNet-34"
