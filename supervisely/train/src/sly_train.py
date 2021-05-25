@@ -53,7 +53,7 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         #create_config(model_config_path, res_config_path)
 
         init_script_arguments(state, project_dir)
-
+        #Config._validate_py_syntax(filename)
         from tools.train import main as mm_train #@TODO: move to imports section on top
         # _base_ = [
         #     '../_base_/models/resnet18.py', '../_base_/datasets/imagenet_bs32.py',
@@ -70,12 +70,12 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         # target_size = 256
 
         # schedules:
-        optimizer = dict(type='SGD', lr=0.1, momentum=0.9, weight_decay=0.0001)
-        optimizer_config = dict(grad_clip=None)
-        lr_config = dict(policy='step', step=[30, 60, 90])
-        lr_config = dict(policy='CosineAnnealing', min_lr=0)
-        lr_config = dict(policy='step', gamma=0.98, step=1)
-        runner = dict(type='EpochBasedRunner', max_epochs=100)
+        # optimizer = dict(type='SGD', lr=0.1, momentum=0.9, weight_decay=0.0001)
+        # optimizer_config = dict(grad_clip=None)
+        # lr_config = dict(policy='step', step=[30, 60, 90])
+        # lr_config = dict(policy='CosineAnnealing', min_lr=0)
+        # lr_config = dict(policy='step', gamma=0.98, step=1)
+        # runner = dict(type='EpochBasedRunner', max_epochs=100)
 
         # runtime:
         # hooks = logging hook

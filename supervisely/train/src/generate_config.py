@@ -1,3 +1,6 @@
+def generate_config(save_path):
+    pass
+
 def create_config(model_config_path, save_path):
     import importlib
     spec = importlib.util.spec_from_file_location("model_config", model_config_path)
