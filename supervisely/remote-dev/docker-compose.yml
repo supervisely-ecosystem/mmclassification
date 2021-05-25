@@ -1,6 +1,6 @@
 version: "2.2"
 services:
-  devssh:
+  mmcls:
     shm_size: '2gb'
     runtime: nvidia
     build: 
