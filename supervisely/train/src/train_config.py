@@ -24,7 +24,7 @@ def generate_model_config(configs_dir, state):
                        lambda m: _replace_function("num_classes", num_tags, "{}={},", m),
                        py_config, 0, re.MULTILINE)
 
-    config_path = os.path.join(configs_dir, f"{sly.fs.get_file_name(model_config_path)}_sly.py")
+    config_path = os.path.join(configs_dir, f"{sly.fs.get_file_name(model_config_path)}_model.py")
     with open(config_path, 'w') as f:
         f.write(py_config)
     return config_path
@@ -51,7 +51,7 @@ def generate_dataset_config(configs_dir, state):
                        lambda m: _replace_function("validation_interval", state["valInterval"], "{} = {}", m),
                        py_config, 0, re.MULTILINE)
 
-    config_path = os.path.join(configs_dir, "my_sly_dataset.py")
+    config_path = os.path.join(configs_dir, f"{g.project_info.name}_data.py")
     with open(config_path, 'w') as f:
         f.write(py_config)
     return config_path

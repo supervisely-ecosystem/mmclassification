@@ -1,12 +1,12 @@
 <sly-card class="mt15"
               title="5. Traning hyperparameters"
               subtitle="Task progress, detailed logs, metrics charts, and other visualizations">
-    <sly-field title="Number of epochs">
-        <el-input-number v-model="state.epochs" :min="1" :max="10000"></el-input-number>
-    </sly-field>
-    <sly-field title="Device"
+    <sly-field title="GPU device id(s)"
                description="Cuda device(s), i.e. 0 or 0,1,2,3">
         <el-input v-model="state.gpusIds" style="width:250px;"></el-input>
+    </sly-field>
+    <sly-field title="Number of epochs">
+        <el-input-number v-model="state.epochs" :min="1" :max="10000"></el-input-number>
     </sly-field>
     <sly-field title="Input image size (in pixels)"
                description="Image is resized to square">
