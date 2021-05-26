@@ -73,4 +73,11 @@
         </div>
     </sly-field>
 
+    <sly-field title="Learning Policy">
+        <el-select v-model="state.policy">
+            <el-option key="step" label="step" value="step"></el-option>
+            <el-option key="Adam" label="Adam" value="Adam"></el-option>
+            <el-option key="AdamW" label="AdamW" value="AdamW"></el-option>
+        </el-select>
+    </sly-field>
 </sly-card>
