@@ -20,8 +20,8 @@ def generate_model_config(configs_dir, state):
         py_config = f.read()
 
     num_tags = len(state["selectedTags"])
-    py_config = re.sub(r"num_classes*=(.*),",
-                       lambda m: _replace_function("num_classes", num_tags, "{} = {},", m),
+    py_config = re.sub(r"num_classes*=(\d+),",
+                       lambda m: _replace_function("num_classes", num_tags, "{}={},", m),
                        py_config, 0, re.MULTILINE)
 
     config_path = os.path.join(configs_dir, f"{sly.fs.get_file_name(model_config_path)}_sly.py")

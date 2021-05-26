@@ -57,7 +57,10 @@ def train(api: sly.Api, task_id, context, state, app_logger):
 
 
         # settings:
-        # --gpus
+        #--device=cuda
+        # --gpus # number of jpus (count automatically)
+        # --gpus-ids
+
         # --gpu-ids
 
         # models:

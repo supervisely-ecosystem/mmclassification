@@ -40,26 +40,6 @@
     {% include 'supervisely/train/src/ui/splits.html' %}
     {% include 'supervisely/train/src/ui/augs.html' %}
     {% include 'supervisely/train/src/ui/architectures.html' %}
-
-    <sly-card class="mt15"
-              title="5. Traning hyperparameters"
-              subtitle="Task progress, detailed logs, metrics charts, and other visualizations">
-        <el-tabs type="border-card" class="el-tabs-cards" v-model="state.hypMode">
-            <el-tab-pane name="ui">
-                <el-radio slot="label" v-model="state.hypMode" label="ui">
-                    🚀 Basic settings (recommended)
-                    <div>use UI to configure most of the training settings</div>
-                </el-radio>
-                {% include 'supervisely/train/src/ui/hyperparameters.html' %}
-            </el-tab-pane>
-            <el-tab-pane name="py">
-                <el-radio slot="label" v-model="state.hypMode" label="py">
-                    🐍 Advanced configuration using python
-                    <div>Original way to configure mmclassification toolbox</div>
-                </el-radio>
-            </el-tab-pane>
-        </el-tabs>
-    </sly-card>
-
+    {% include 'supervisely/train/src/ui/hyperparameters.html' %}
     {% include 'supervisely/train/src/ui/monitoring.html' %}
 </div>
