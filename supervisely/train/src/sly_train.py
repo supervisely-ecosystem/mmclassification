@@ -55,6 +55,7 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         #     '../_base_/schedules/imagenet_bs256.py', '../_base_/default_runtime.py'
         # ]
 
+
         # settings:
         # --gpus
         # --gpu-ids
@@ -118,16 +119,8 @@ def main():
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
+# @TODO: check if it is used correctly: validation_interval vs (and) logging frequence
 #@TODO: custom weights - load-from option
-#@ __todo_ base models - '../_base_/models/resnet50_supe.py'
-# num_classes=XXX
-# topk=(1, 5), - option
-# backbone=dict(type='ResNet_CIFAR'
-#
-#mmcls - sly_dataset
-# samples_per_gpu=32,
-#     workers_per_gpu=2,
-# evaluation = dict(interval=1, metric='accuracy')
 
 #@TODO: * in model name - что это?
 #@TODO: add predicted tags (gt_labels.json) to model file
