@@ -79,6 +79,7 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         # runtime:
         # hooks = logging hook
         # log interval=100,
+        # checkpoint_config = dict(interval=1)
         mm_train()
 
         #
@@ -114,7 +115,7 @@ def main():
     state = {}
     data["taskId"] = g.task_id
     ui.init(data, state)  # init data for UI widgets
-
+    #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
 #@TODO: custom weights - load-from option
