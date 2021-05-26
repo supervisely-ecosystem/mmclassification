@@ -57,6 +57,10 @@ def generate_dataset_config(configs_dir, state):
     return config_path
 
 
+def generate_schedule_config(configs_dir, state):
+    pass
+
+
 def generate(state):
     configs_dir = os.path.join(g.my_app.data_dir, "configs")
     sly.fs.mkdir(configs_dir)

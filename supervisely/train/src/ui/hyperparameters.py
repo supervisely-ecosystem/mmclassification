@@ -8,6 +8,14 @@ def init(state):
     state["valInterval"] = 1
     state["metricsPeriod"] = 1
 
+    state["optimizer"] = "SGD"
+    state["lr"] = 0.001
+    state["momentum"] = 0.9
+    state["weightDecay"] = 0.0001
+    state["nesterov"] = False
+    state["gradClip"] = False
+    state["maxNorm"] = 1
+
     state["activeTabName"] = "General"
     # state["hyp"] = {
     #     "scratch": g.scratch_str,
