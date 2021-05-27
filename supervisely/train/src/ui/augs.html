@@ -58,11 +58,6 @@
     <sly-card class="mt15"
               title="5. Preview augmentations on random image"
               subtitle="Press preview button to apply augmentations to random image">
-        <el-button v-if="state.initMode === 'new'"
-                   type="primary" class="regular" size="small"
-                   @click="command('clear_pipeline')">
-            New
-        </el-button>
         <div slot="header">
             <el-button type="primary" class="regular"
                        @click="command('preview_augs')">
@@ -70,7 +65,7 @@
             </el-button>
         </div>
         <div v-if="!data.gallery">
-            Press preview button to aply augmentations to random image
+            <i class="zmdi zmdi-help" style="color: orange"></i> Press preview button to aply augmentations to random image
         </div>
         <sly-grid-gallery
                 v-if="data.gallery"

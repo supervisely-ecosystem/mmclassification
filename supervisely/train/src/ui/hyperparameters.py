@@ -2,7 +2,7 @@ import os
 import sly_globals as g
 
 
-def init(state):
+def init(data, state):
     state["epochs"] = 10
     state["gpusIds"] = '0'
 
@@ -28,5 +28,10 @@ def init(state):
 
     state["metricsPeriod"] = 1
     state["valInterval"] = 1
+
+    data["modelPyConfig"] = ""
+    data["datasetPyConfig"] = ""
+    data["schedulePyConfig"] = ""
+    data["runtimePyConfig"] = ""
 
     #state["activeTabName"] = "General"

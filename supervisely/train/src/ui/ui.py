@@ -17,6 +17,6 @@ def init(data, state):
     train_val_split.init(g.project_info, g.project_meta, data, state)
     augs.init(data, state)
     model_architectures.init(data, state)
-    hyperparameters.init(state)
+    hyperparameters.init(data, state)
     # monitoring.init(data, state)
     # artifacts.init(data)
