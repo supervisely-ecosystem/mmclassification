@@ -4,7 +4,10 @@
 # https://mmcv.readthedocs.io/en/latest/_modules/mmcv/runner/hooks/lr_updater.html
 # Note 1: `step` argument should be less than the number of epochs
 
-# Configs examples:
+# ***********************************************
+# Configs examples (PLEASE, KEEP IT IN ONE LINE):
+# ***********************************************
+
 # lr_config = dict(policy='step', step=[100, 150])
 # lr_config = dict(policy='step', step=[30, 60, 90])
 # lr_config = dict(policy='step', step=[40, 80, 120])

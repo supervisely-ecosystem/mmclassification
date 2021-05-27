@@ -67,7 +67,42 @@ def generate_dataset_config(state):
 
 
 def generate_schedule_config(state):
-    pass
+    optimizer = f"optimizer = dict(type='{state['optimizer']}', " \
+                f"lr={state['lr']}, " \
+                f"momentum={state['momentum']}, " \
+                f"weight_decay={state['weightDecay']}" \
+                f"{', nesterov=True' if (state['nesterov'] is True and state.optimizer == 'SGD') else ''})"
+
+    grad_clip = f"optimizer_config = dict(grad_clip=None)"
+    if state["gradClipEnabled"] is True:
+        grad_clip = f"optimizer_config = dict(grad_clip=dict(max_norm={state['maxNorm']}))"
+
+    ls_updater = ""
+    if state["lrPolicyEnabled"] is True:
+        py_text = state["lrPolicyPyConfig"]
+        py_lines = py_text.splitlines()
+        num_uncommented = 0
+        for line in py_lines:
+            res_line = line.strip()
+            if res_line != "" and res_line[0] != "#":
+                ls_updater += res_line
+                num_uncommented += 1
+        if num_uncommented == 0:
+            raise ValueError("LR policy is enabled but not defined, please uncomment and modify one of the provided examples")
+        if num_uncommented > 1:
+            raise ValueError("several LR policies were uncommented, please keep only one")
+
+    runner = f"runner = dict(type='EpochBasedRunner', max_epochs={state['epochs']})"
+
+    py_config = optimizer + os.linesep + \
+                grad_clip + os.linesep + \
+                ls_updater + os.linesep + \
+                runner + os.linesep
+
+    config_path = os.path.join(configs_dir, schedule_config_name)
+    with open(config_path, 'w') as f:
+        f.write(py_config)
+    return config_path, py_config
 
 
 def generate(state):
