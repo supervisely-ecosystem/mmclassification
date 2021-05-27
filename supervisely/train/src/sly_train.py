@@ -134,5 +134,6 @@ def main():
 #@TODO: random weights initialization?
 #@TODO: --resume-from - continue training
 #@TODO: readme - add py-configs to training artifacts
+#@TODO: train button disable before preview configs button (or regenerate before train)
 if __name__ == "__main__":
     sly.main_wrapper("main", main)

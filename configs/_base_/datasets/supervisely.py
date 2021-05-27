@@ -11,7 +11,11 @@ img_norm_cfg = dict(
 
 train_pipeline = [
     dict(type='LoadImageFromFile'),
-    # you custom augs (defined in UI) will be applied here
+
+    # *****************************************************
+    # your custom augs (defined in UI at step #4) will be applied here
+    # *****************************************************
+
     dict(type='Resize', size=(input_size, input_size)),
     dict(type='Normalize', **img_norm_cfg),
     dict(type='ImageToTensor', keys=['img']),

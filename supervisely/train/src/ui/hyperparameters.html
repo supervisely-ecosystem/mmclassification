@@ -89,12 +89,16 @@
               Team Files along with other training artifacts. Learn more in app readme.">
     <div slot="header">
         <el-button type="primary" class="regular"
-                   @click="command('preview_configs')">
+                   @click="command('preview_configs')"
+                   :disabled="state.selectedTags.length === 0 || state.started === true">
             Preview
         </el-button>
     </div>
     <div v-if="data.modelPyConfig.length === 0">
         <i class="zmdi zmdi-help" style="color: orange"></i> Press Preview button to generate and visualize training configuration (python scripts)
+    </div>
+    <div v-show="state.selectedTags.length === 0" class="mt10" style="color: red">
+        0 training tags are selected at step #2
     </div>
     <sly-field title="Model config" v-if="data.modelPyConfig.length > 0">
         <sly-copy-to-clipboard :data="data.modelPyConfig">
@@ -124,4 +128,12 @@
             </sly-editor>
         </sly-copy-to-clipboard>
     </sly-field>
+    <sly-field title="Train config" v-if="data.trainPyConfig.length > 0">
+        <sly-copy-to-clipboard :data="data.trainPyConfig">
+            <sly-editor v-model="data.trainPyConfig"
+                        :options="data.pyViewOptions">
+            </sly-editor>
+        </sly-copy-to-clipboard>
+    </sly-field>
+
 </sly-card>

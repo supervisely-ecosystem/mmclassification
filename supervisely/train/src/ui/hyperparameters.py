@@ -1,5 +1,7 @@
 import os
+import supervisely_lib as sly
 import sly_globals as g
+import train_config
 
 
 def init(data, state):
@@ -33,5 +35,19 @@ def init(data, state):
     data["datasetPyConfig"] = ""
     data["schedulePyConfig"] = ""
     data["runtimePyConfig"] = ""
+    data["trainPyConfig"] = ""
 
     #state["activeTabName"] = "General"
+
+
+@g.my_app.callback("preview_configs")
+@sly.timeit
+def preview_configs(api: sly.Api, task_id, context, state, app_logger):
+    model_config_path, model_py_config = train_config.generate_model_config(state)
+    dataset_config_path, dataset_py_config = train_config.generate_dataset_config(state)
+
+    fields = [
+        {"field": "data.modelPyConfig", "payload": model_py_config},
+        {"field": "data.datasetPyConfig", "payload": dataset_py_config},
+    ]
+    api.task.set_fields(task_id, fields)

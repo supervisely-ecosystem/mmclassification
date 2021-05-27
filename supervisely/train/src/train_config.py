@@ -5,6 +5,15 @@ import supervisely_lib as sly
 import sly_globals as g
 import architectures
 
+model_config_name = "model_config.py"
+dataset_config_name = "dataset_config.py"
+schedule_config_name = "schedule_config.py"
+runtime_config_name = "runtime_config.py"
+train_config_name = "train_config.py"
+configs_dir = os.path.join(g.my_app.data_dir, "configs")
+sly.fs.mkdir(configs_dir)
+sly.fs.clean_dir(configs_dir)  # for debug
+
 
 def _replace_function(var_name, var_value, template, match):
     m0 = match.group(0)
@@ -12,7 +21,7 @@ def _replace_function(var_name, var_value, template, match):
     return template.format(var_name, var_value)
 
 
-def generate_model_config(configs_dir, state):
+def generate_model_config(state):
     model_name = state["selectedModel"]
     model_info = architectures.get_model_info_by_name(model_name)
     model_config_path = os.path.join(g.root_source_dir, model_info["modelConfig"])
@@ -24,13 +33,13 @@ def generate_model_config(configs_dir, state):
                        lambda m: _replace_function("num_classes", num_tags, "{}={},", m),
                        py_config, 0, re.MULTILINE)
 
-    config_path = os.path.join(configs_dir, f"{sly.fs.get_file_name(model_config_path)}_model.py")
+    config_path = os.path.join(configs_dir, model_config_name)
     with open(config_path, 'w') as f:
         f.write(py_config)
-    return config_path
+    return config_path, py_config
 
 
-def generate_dataset_config(configs_dir, state):
+def generate_dataset_config(state):
     config_path = os.path.join(g.root_source_dir, "configs/_base_/datasets/supervisely.py")
     with open(config_path) as f:
         py_config = f.read()
@@ -51,24 +60,23 @@ def generate_dataset_config(configs_dir, state):
                        lambda m: _replace_function("validation_interval", state["valInterval"], "{} = {}", m),
                        py_config, 0, re.MULTILINE)
 
-    config_path = os.path.join(configs_dir, f"{g.project_info.name}_data.py")
+    config_path = os.path.join(configs_dir, dataset_config_name)
     with open(config_path, 'w') as f:
         f.write(py_config)
-    return config_path
+    return config_path, py_config
 
 
-def generate_schedule_config(configs_dir, state):
+def generate_schedule_config(state):
     pass
 
 
 def generate(state):
-    configs_dir = os.path.join(g.my_app.data_dir, "configs")
-    sly.fs.mkdir(configs_dir)
-    model_config_path = generate_model_config(configs_dir, state)
-    dataset_config_path = generate_dataset_config(configs_dir, state)
+    raise NotImplementedError()
+    #model_config_path, model_py_config = generate_model_config(state)
+    #dataset_config_path, model_py_config = generate_dataset_config(state)
 
 
-    res_config_path = os.path.join(g.my_app.data_dir, "train_config.py")
+    #res_config_path = os.path.join(g.my_app.data_dir, "train_config.py")
 
 # def generate_config(save_path):
 #     pass
