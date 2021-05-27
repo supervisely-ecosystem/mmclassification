@@ -93,6 +93,8 @@ def main():
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
+#@TODO: sly-editor - change style for read/write modes
+#@TODO: sly-editor UMAR добавить реактивность изменения опций???
 #@TODO: release new version of SDK before release app
 #@TODO: add variable - how often model should be saved
 # #@TODO: if OOM error, make a special message for that

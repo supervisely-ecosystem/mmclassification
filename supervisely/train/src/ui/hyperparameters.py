@@ -40,6 +40,27 @@ def init(data, state):
     #state["activeTabName"] = "General"
 
 
+    data["configsPyViewOptionsRead"] = {
+        "mode": 'ace/mode/python',
+        "showGutter": False,
+        "readOnly": True,
+        "maxLines": 100,
+        "highlightActiveLine": False
+    }
+
+    data["configsPyViewOptionsWrite"] = {
+        "mode": 'ace/mode/python',
+        "showGutter": True,
+        "readOnly": False,
+        "maxLines": 100,
+        "highlightActiveLine": True
+    }
+
+    state["pyConfigsViewOptions"] = data["configsPyViewOptionsRead"]
+
+    state["advancedPy"] = False
+
+
 @g.my_app.callback("preview_configs")
 @sly.timeit
 def preview_configs(api: sly.Api, task_id, context, state, app_logger):

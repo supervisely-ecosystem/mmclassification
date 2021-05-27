@@ -107,8 +107,29 @@
                description="Experienced MMClassification users can edit python configs. In this case app will
                not validate them (do it at your own risk - training can crash if configs are incorrect)">
         <sly-icon slot="icon" :options="{ color: '#fba607', bgColor: '#ffe9da', rounded: false }">
-            <i class="zmdi zmdi-help"></i>
+            <i class="zmdi zmdi-lamp"></i>
         </sly-icon>
+        <div>{{state.pyConfigsViewOptions}}</div>
+        <div class="fflex">
+            <el-switch
+                    class="mr10"
+                    v-model="state.advancedPy"
+                    on-color="#13ce66"
+                    off-color="#B8B8B8"
+                    @input="x => {
+                                state.advancedPy = x;
+                                if (x === true) {
+                                    state.pyConfigsViewOptions = data.configsPyViewOptionsRead;
+                                }
+                                else {
+                                    state.pyConfigsViewOptions = data.configsPyViewOptionsWrite;
+                                }
+                                command('preview_configs');
+                            }"
+            >
+            </el-switch>
+            <div>Yes, i'm pro in MMClassification and want to edit generated python configs manually</div>
+        </div>
     </sly-field>
 
     <sly-field title="Model config (model_config.py)" v-if="data.modelPyConfig.length > 0">
@@ -117,7 +138,7 @@
         </div>
         <sly-copy-to-clipboard :data="data.modelPyConfig">
             <sly-editor v-model="data.modelPyConfig"
-                        :options="data.pyViewOptions">
+                        :options="state.pyConfigsViewOptions">
             </sly-editor>
         </sly-copy-to-clipboard>
     </sly-field>
@@ -127,7 +148,7 @@
         </div>
         <sly-copy-to-clipboard :data="data.datasetPyConfig">
             <sly-editor v-model="data.datasetPyConfig"
-                        :options="data.pyViewOptions">
+                        :options="state.pyConfigsViewOptions">
             </sly-editor>
         </sly-copy-to-clipboard>
     </sly-field>
@@ -137,7 +158,7 @@
         </div>
         <sly-copy-to-clipboard :data="data.schedulePyConfig">
             <sly-editor v-model="data.schedulePyConfig"
-                        :options="data.pyViewOptions">
+                        :options="state.pyConfigsViewOptions">
             </sly-editor>
         </sly-copy-to-clipboard>
     </sly-field>
@@ -146,9 +167,7 @@
             <i class="zmdi zmdi-language-python mr5"></i>runtime_config.py
         </div>
         <sly-copy-to-clipboard :data="data.runtimePyConfig">
-            <sly-editor v-model="data.runtimePyConfig"
-                        :options="data.pyViewOptions">
-            </sly-editor>
+            <sly-editor v-model="data.runtimePyConfig" :options="state.pyConfigsViewOptions"></sly-editor>
         </sly-copy-to-clipboard>
     </sly-field>
     <sly-field title="Train config (train_config.py)" v-if="data.mainPyConfig.length > 0">
@@ -157,7 +176,7 @@
         </div>
         <sly-copy-to-clipboard :data="data.mainPyConfig">
             <sly-editor v-model="data.mainPyConfig"
-                        :options="data.pyViewOptions">
+                        :options="state.pyConfigsViewOptions">
             </sly-editor>
         </sly-copy-to-clipboard>
     </sly-field>
