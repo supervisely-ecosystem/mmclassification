@@ -122,6 +122,7 @@ def main():
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
+# #@TODO: if OOM error, make a special message for that
 # @TODO: check if it is used correctly: validation_interval vs (and) logging frequence
 #@TODO: custom weights - load-from option
 #@TODO: integrate: checkpoint_config = dict(by_epoch=False, interval=16000)
