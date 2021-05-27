@@ -1,5 +1,5 @@
 -r requirements/optional.txt
 -r requirements/runtime.txt
 #-r requirements/tests.txt
-supervisely==6.1.79
+supervisely==6.1.80
 mmcv==1.3.1

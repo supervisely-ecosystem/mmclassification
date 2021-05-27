@@ -55,35 +55,6 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         #     '../_base_/schedules/imagenet_bs256.py', '../_base_/default_runtime.py'
         # ]
 
-
-        # settings:
-        #--device=cuda
-        # --gpus # number of jpus (count automatically)
-        # --gpus-ids
-
-        # --gpu-ids
-
-        # models:
-        # cfg.model.head.num_classes
-
-        # datasets:
-        # samples_per_gpu=32,
-        # workers_per_gpu=2,
-        # evaluation = dict(interval=1, metric='accuracy')
-        # target_size = 256
-
-        # schedules:
-        # optimizer = dict(type='SGD', lr=0.1, momentum=0.9, weight_decay=0.0001)
-        # optimizer_config = dict(grad_clip=None)
-        # lr_config = dict(policy='step', step=[30, 60, 90])
-        # lr_config = dict(policy='CosineAnnealing', min_lr=0)
-        # lr_config = dict(policy='step', gamma=0.98, step=1)
-        # runner = dict(type='EpochBasedRunner', max_epochs=100)
-
-        # runtime:
-        # hooks = logging hook
-        # log interval=100,
-        # checkpoint_config = dict(interval=1)
         mm_train()
 
         #
@@ -122,14 +93,14 @@ def main():
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
-#@TODO: remove supervisely_schedule.py
+#@TODO: release new version of SDK before release app
+#@TODO: add variable - how often model should be saved
 # #@TODO: if OOM error, make a special message for that
 # @TODO: check if it is used correctly: validation_interval vs (and) logging frequence
 #@TODO: custom weights - load-from option
 #@TODO: integrate: checkpoint_config = dict(by_epoch=False, interval=16000)
 
 #@TODO: * in model name - что это?
-#@TODO: add predicted tags (gt_labels.json) to model file
 #@TODO: separate - update content and options in comparegallery
 #@TODO: disable preview button if custom pipeline is not defined
 #@TODO: preview augentations

@@ -85,7 +85,7 @@
 
 <sly-card class="mt15"
           title="8. Preview entire training configuration"
-          subtitle="Training settings in MMClassification is a set of python configs. These configs will be saved to
+          subtitle="Training settings in MMClassification are the set of python configs. These configs will be saved to
               Team Files along with other training artifacts. Learn more in app readme.">
     <div slot="header">
         <el-button type="primary" class="regular"
@@ -95,42 +95,68 @@
         </el-button>
     </div>
     <div v-if="data.modelPyConfig.length === 0">
-        <i class="zmdi zmdi-help" style="color: orange"></i> Press Preview button to generate and visualize training configuration (python scripts)
+        <i class="zmdi zmdi-help" style="color: orange"></i> Press Preview button to generate and visualize training
+        configuration (python scripts)
     </div>
     <div v-show="state.selectedTags.length === 0" class="mt10" style="color: red">
         0 training tags are selected at step #2
     </div>
-    <sly-field title="Model config" v-if="data.modelPyConfig.length > 0">
+
+    <sly-field v-if="data.modelPyConfig.length > 0"
+               title="Advanced usage (not recommended for most of the users)"
+               description="Experienced MMClassification users can edit python configs. In this case app will
+               not validate them (do it at your own risk - training can crash if configs are incorrect)">
+        <sly-icon slot="icon" :options="{ color: '#fba607', bgColor: '#ffe9da', rounded: false }">
+            <i class="zmdi zmdi-help"></i>
+        </sly-icon>
+    </sly-field>
+
+    <sly-field title="Model config (model_config.py)" v-if="data.modelPyConfig.length > 0">
+        <div slot="title" style="color: #fd4685; font-weight: bold;">
+            <i class="zmdi zmdi-language-python mr5"></i>model_config.py
+        </div>
         <sly-copy-to-clipboard :data="data.modelPyConfig">
             <sly-editor v-model="data.modelPyConfig"
                         :options="data.pyViewOptions">
             </sly-editor>
         </sly-copy-to-clipboard>
     </sly-field>
-    <sly-field title="Dataset config" v-if="data.datasetPyConfig.length > 0">
+    <sly-field title="Dataset config (dataset_config.py)" v-if="data.datasetPyConfig.length > 0">
+        <div slot="title" style="color: #fd4685; font-weight: bold;">
+            <i class="zmdi zmdi-language-python mr5"></i>dataset_config.py
+        </div>
         <sly-copy-to-clipboard :data="data.datasetPyConfig">
             <sly-editor v-model="data.datasetPyConfig"
                         :options="data.pyViewOptions">
             </sly-editor>
         </sly-copy-to-clipboard>
     </sly-field>
-    <sly-field title="Optimizer and schedule config" v-if="data.schedulePyConfig.length > 0">
+    <sly-field title="Optimizer and schedule config (schedule_config.py)" v-if="data.schedulePyConfig.length > 0">
+        <div slot="title" style="color: #fd4685; font-weight: bold;">
+            <i class="zmdi zmdi-language-python mr5"></i>schedule_config.py
+        </div>
         <sly-copy-to-clipboard :data="data.schedulePyConfig">
             <sly-editor v-model="data.schedulePyConfig"
                         :options="data.pyViewOptions">
             </sly-editor>
         </sly-copy-to-clipboard>
     </sly-field>
-    <sly-field title="Runtime config" v-if="data.runtimePyConfig.length > 0">
+    <sly-field title="Runtime config (runtime_config.py)" v-if="data.runtimePyConfig.length > 0">
+        <div slot="title" style="color: #fd4685; font-weight: bold;">
+            <i class="zmdi zmdi-language-python mr5"></i>runtime_config.py
+        </div>
         <sly-copy-to-clipboard :data="data.runtimePyConfig">
             <sly-editor v-model="data.runtimePyConfig"
                         :options="data.pyViewOptions">
             </sly-editor>
         </sly-copy-to-clipboard>
     </sly-field>
-    <sly-field title="Train config" v-if="data.trainPyConfig.length > 0">
-        <sly-copy-to-clipboard :data="data.trainPyConfig">
-            <sly-editor v-model="data.trainPyConfig"
+    <sly-field title="Train config (train_config.py)" v-if="data.mainPyConfig.length > 0">
+        <div slot="title" style="color: #fd4685; font-weight: bold;">
+            <i class="zmdi zmdi-language-python mr5"></i>train_config.py
+        </div>
+        <sly-copy-to-clipboard :data="data.mainPyConfig">
+            <sly-editor v-model="data.mainPyConfig"
                         :options="data.pyViewOptions">
             </sly-editor>
         </sly-copy-to-clipboard>

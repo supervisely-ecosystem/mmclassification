@@ -9,7 +9,14 @@ model_config_name = "model_config.py"
 dataset_config_name = "dataset_config.py"
 schedule_config_name = "schedule_config.py"
 runtime_config_name = "runtime_config.py"
-train_config_name = "train_config.py"
+main_config_name = "train_config.py"
+main_config_template = f"""
+_base_ = [
+    './{model_config_name}', './{dataset_config_name}',
+    './{schedule_config_name}', './{runtime_config_name}'
+]
+"""
+
 configs_dir = os.path.join(g.my_app.data_dir, "configs")
 sly.fs.mkdir(configs_dir)
 sly.fs.clean_dir(configs_dir)  # for debug
@@ -105,6 +112,17 @@ def generate_schedule_config(state):
     return config_path, py_config
 
 
+def generate_runtime_config(state):
+    return "", ""
+
+
+def generate_main_config(state):
+    config_path = os.path.join(configs_dir, main_config_name)
+    with open(config_path, 'w') as f:
+        f.write(main_config_template)
+    return config_path, str(main_config_template)
+
+
 def generate(state):
     raise NotImplementedError()
     #model_config_path, model_py_config = generate_model_config(state)
@@ -112,13 +130,3 @@ def generate(state):
 
 
     #res_config_path = os.path.join(g.my_app.data_dir, "train_config.py")
-
-# def generate_config(save_path):
-#     pass
-#
-# def generate(model_config_path, save_path):
-#     import importlib
-#     spec = importlib.util.spec_from_file_location("model_config", model_config_path)
-#     foo = importlib.util.module_from_spec(spec)
-#     spec.loader.exec_module(foo)
-#     print(foo._base_)
