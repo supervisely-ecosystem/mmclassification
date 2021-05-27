@@ -63,21 +63,22 @@
         <el-switch v-model="state.nesterov" on-color="#13ce66" off-color="#B8B8B8"></el-switch>
     </sly-field>
 
-    <sly-field title="Clips gradient norm">
-        <el-switch v-model="state.gradClip" on-color="#13ce66" off-color="#B8B8B8"></el-switch>
+    <sly-field title="Clip gradient norm">
+        <el-switch v-model="state.gradClipEnabled" on-color="#13ce66" off-color="#B8B8B8"></el-switch>
         <div class="fflex">
             <div class="mr5">max_norm =</div>
-            <el-input-number :disabled="!state.gradClip"
+            <el-input-number :disabled="!state.gradClipEnabled"
                              v-model="state.maxNorm" :min="0" :step="0.1" :debounce="1000">
             </el-input-number>
         </div>
     </sly-field>
 
-    <sly-field title="Learning Policy">
-        <el-select v-model="state.policy">
-            <el-option key="step" label="step" value="step"></el-option>
-            <el-option key="Adam" label="Adam" value="Adam"></el-option>
-            <el-option key="AdamW" label="AdamW" value="AdamW"></el-option>
-        </el-select>
+    <sly-field title="Learning Policy" description="configure learning rate schedule in python (for advanced users)">
+        <el-switch v-model="state.lrPolycyEnabled" on-color="#13ce66" off-color="#B8B8B8"></el-switch>
+        <sly-copy-to-clipboard v-if="state.lrPolycyEnabled" :data="state.lrPolicyPyConfig">
+            <sly-editor v-model="state.lrPolicyPyConfig"
+                        :options="{'mode': 'ace/mode/python', 'readOnly': false, 'maxLines': 100}">
+            </sly-editor>
+        </sly-copy-to-clipboard>
     </sly-field>
 </sly-card>

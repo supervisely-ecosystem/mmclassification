@@ -124,6 +124,7 @@ def main():
 
 # @TODO: check if it is used correctly: validation_interval vs (and) logging frequence
 #@TODO: custom weights - load-from option
+#@TODO: integrate: checkpoint_config = dict(by_epoch=False, interval=16000)
 
 #@TODO: * in model name - что это?
 #@TODO: add predicted tags (gt_labels.json) to model file

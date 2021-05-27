@@ -1,5 +1,9 @@
+import os
+import sly_globals as g
+
+
 def init(state):
-    state["epochs"] =  10
+    state["epochs"] = 10
     state["gpusIds"] = '0'
 
     state["imgSize"] = 256
@@ -13,15 +17,16 @@ def init(state):
     state["momentum"] = 0.9
     state["weightDecay"] = 0.0001
     state["nesterov"] = False
-    state["gradClip"] = False
+    state["gradClipEnabled"] = False
     state["maxNorm"] = 1
 
-    state["activeTabName"] = "General"
-    # state["hyp"] = {
-    #     "scratch": g.scratch_str,
-    #     "finetune": g.finetune_str,
-    # }
-    # state["hypRadio"] = "scratch"
-    state["optimizer"] = "SGD"
+    state["lrPolicyEnabled"] = False
+
+    file_path = os.path.join(g.root_source_dir, "configs/_base_/schedules/supervisely_lr_policy.py")
+    with open(file_path) as f:
+        state["lrPolicyPyConfig"] = f.read()
+
     state["metricsPeriod"] = 1
     state["valInterval"] = 1
+
+    #state["activeTabName"] = "General"
