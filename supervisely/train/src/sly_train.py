@@ -93,14 +93,19 @@ def main():
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
+# add save best option
+# evaluation = dict(interval=validation_interval, metric='accuracy')
+#@TODO: add variable - how often model should be saved
+#@TODO: integrate: checkpoint_config = dict(by_epoch=False, interval=16000)
+#https://mmcv.readthedocs.io/en/latest/_modules/mmcv/runner/hooks/checkpoint.html
+# log training metrics frequency???
+
 #@TODO: sly-editor - change style for read/write modes
 #@TODO: sly-editor UMAR добавить реактивность изменения опций???
 #@TODO: release new version of SDK before release app
-#@TODO: add variable - how often model should be saved
 # #@TODO: if OOM error, make a special message for that
-# @TODO: check if it is used correctly: validation_interval vs (and) logging frequence
 #@TODO: custom weights - load-from option
-#@TODO: integrate: checkpoint_config = dict(by_epoch=False, interval=16000)
+
 
 #@TODO: * in model name - что это?
 #@TODO: separate - update content and options in comparegallery

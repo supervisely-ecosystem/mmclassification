@@ -10,7 +10,12 @@ def init(data, state):
     state["batchSizePerGPU"] = 32
     state["workersPerGPU"] = 2  # 0 - for debug @TODO: for debug
     state["valInterval"] = 1
-    state["metricsPeriod"] = 1
+    #state["metricsPeriod"] = 1
+    state["checkpointInterval"] = 1
+    state["maxKeepCkptsEnabled"] = False
+    state["maxKeepCkpts"] = -1
+    state["saveLast"] = True
+    state["saveBest"] = True
 
     state["optimizer"] = "SGD"
     state["lr"] = 0.001

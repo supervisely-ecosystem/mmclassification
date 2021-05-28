@@ -28,14 +28,41 @@
             <span class="ml5">epochs</span>
         </div>
     </sly-field>
-    <sly-field title="Logging frequency"
-               description="How often metrics should be logged, increase if training data is small">
+    <sly-field title="Save checkpoints periodically"
+               description="value '-1' means 'never'">
         <div class="fflex">
-            <span class="mr5">Log metrics every </span>
-            <el-input-number v-model="state.metricsPeriod" :min="1" :max="state.epochs"></el-input-number>
+            <span class="mr5">Save checkpoint every </span>
+            <el-input-number v-model="state.checkpointInterval" :min="-1" :max="state.epochs"></el-input-number>
             <span class="ml5">epochs</span>
         </div>
     </sly-field>
+
+    <sly-field title="Checkpoints save count"
+               description="The maximum checkpoints to keep. In some cases we want only the latest few checkpoints and would
+                            like to delete old ones to save the disk space. If option is disabled then it means unlimited.">
+        <div><el-switch v-model="state.maxKeepCkptsEnabled" on-color="#13ce66" off-color="#B8B8B8"></el-switch></div>
+        <el-input-number class="mt5"v-model="state.maxKeepCkpts" :disabled="!state.maxKeepCkptsEnabled" :min="1"></el-input-number>
+    </sly-field>
+
+    <sly-field title="Save last checkpoint"
+               description="Whether to force the last checkpoint to be saved regardless of interval">
+        <el-switch v-model="state.saveLast" on-color="#13ce66" off-color="#B8B8B8"></el-switch>
+    </sly-field>
+
+    <sly-field title="Save best checkpoint"
+               description="Best checkpoint will be marked with prefix 'best_'">
+        <el-switch v-model="state.saveBest" on-color="#13ce66" off-color="#B8B8B8"></el-switch>
+    </sly-field>
+
+
+    <!--    <sly-field title="Logging frequency"-->
+    <!--               description="How often metrics should be logged, increase if training data is small">-->
+    <!--        <div class="fflex">-->
+    <!--            <span class="mr5">Log metrics every </span>-->
+    <!--            <el-input-number v-model="state.metricsPeriod" :min="1" :max="state.epochs"></el-input-number>-->
+    <!--            <span class="ml5">epochs</span>-->
+    <!--        </div>-->
+    <!--    </sly-field>-->
     <sly-field title="Optimizer"
                description="Choose optimizer and its settings">
         <div>
