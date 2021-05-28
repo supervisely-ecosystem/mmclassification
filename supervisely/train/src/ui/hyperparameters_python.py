@@ -4,11 +4,11 @@ import sly_globals as g
 
 
 def init(data, state):
-    data["modelPyConfig"] = ""
-    data["datasetPyConfig"] = ""
-    data["schedulePyConfig"] = ""
-    data["runtimePyConfig"] = ""
-    data["mainPyConfig"] = ""
+    state["modelPyConfig"] = ""
+    state["datasetPyConfig"] = ""
+    state["schedulePyConfig"] = ""
+    state["runtimePyConfig"] = ""
+    state["mainPyConfig"] = ""
 
     data["configsPyViewOptionsRead"] = {
         "mode": 'ace/mode/python',
@@ -27,7 +27,6 @@ def init(data, state):
     }
 
     state["pyConfigsViewOptions"] = data["configsPyViewOptionsRead"]
-
     state["advancedPy"] = False
 
 

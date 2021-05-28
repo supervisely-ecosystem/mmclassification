@@ -145,10 +145,4 @@ def generate_main_config(state):
     return config_path, str(main_config_template)
 
 
-def generate(state):
-    raise NotImplementedError()
-    #model_config_path, model_py_config = generate_model_config(state)
-    #dataset_config_path, model_py_config = generate_dataset_config(state)
-
-
-    #res_config_path = os.path.join(g.my_app.data_dir, "train_config.py")
+def save_from_state(state):

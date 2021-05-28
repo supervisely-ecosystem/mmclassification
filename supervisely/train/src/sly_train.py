@@ -48,7 +48,7 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         #
         # init sys.argv for main training script
 
-        train_config.generate(state)
+        train_config.save_from_state(state)
 
         init_script_arguments(state, project_dir)
         from tools.train import main as mm_train #@TODO: move to imports section on top

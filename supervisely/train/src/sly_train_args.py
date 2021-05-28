@@ -2,10 +2,12 @@ import os
 import sys
 import supervisely_lib as sly
 import sly_globals as g
+import train_config
 
 
 def init_script_arguments(state, project_dir):
-    sys.argv.append(os.path.join(g.root_source_dir, "configs/resnet/resnet18_b16x8_cifar10.py"))
+    sys.argv.append(train_config)
+    #sys.argv.append(os.path.join(g.root_source_dir, "configs/resnet/resnet18_b16x8_cifar10.py"))
     sys.argv.extend(["--work-dir", "/data"])
 
 

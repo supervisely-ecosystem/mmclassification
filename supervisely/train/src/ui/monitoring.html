@@ -6,7 +6,7 @@
                @click="state.started = true; command('train')"
                :disabled="state.selectedTags.length === 0 ||
                           (state.weightsInitialization === 'custom' && state.weightsPath === '') ||
-                          data.modelPyConfig.length === 0 ||
+                          state.modelPyConfig.length === 0 ||
                           state.started === true"
     >
         Start training
@@ -17,7 +17,7 @@
     <div class="mt5" v-show="state.weightsInitialization === 'custom' && state.weightsPath === ''" style="color: red">
         Please define path to ustom model weights at step #6
     </div>
-    <div class="mt5" v-show="data.modelPyConfig.length === 0" style="color: red">
+    <div class="mt5" v-show="state.modelPyConfig.length === 0" style="color: red">
         Please generate previews for training configuration at step #8
     </div>
 
