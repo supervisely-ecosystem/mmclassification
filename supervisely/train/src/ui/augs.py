@@ -75,7 +75,7 @@ def init(data, state):
         "highlightActiveLine": False
     }
 
-    state["customAugsPath"] = "/mmclass-heavy-no-fliplr.json"  # @TODO: for debug
+    state["customAugsPath"] = ""  # "/mmclass-heavy-no-fliplr.json"  # @TODO: for debug
     data["customAugsPy"] = None
 
     global gallery

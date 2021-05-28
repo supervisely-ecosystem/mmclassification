@@ -60,12 +60,18 @@
               subtitle="Press preview button to apply augmentations to random image">
         <div slot="header">
             <el-button type="primary" class="regular"
-                       @click="command('preview_augs')">
+                       @click="command('preview_augs')"
+                       :disabled="state.augsType === 'custom' && state.customAugsPath.length === 0"
+            >
                 Preview
             </el-button>
         </div>
         <div v-if="!data.gallery">
-            <i class="zmdi zmdi-help" style="color: orange"></i> Press preview button to aply augmentations to random image
+            <i class="zmdi zmdi-help" style="color: orange"></i> Press preview button to apply augmentations to random
+            image
+        </div>
+        <div v-show="state.augsType === 'custom' && state.customAugsPath.length === 0" class="mt10" style="color: red">
+            Please select training tags at step #2
         </div>
         <sly-grid-gallery
                 v-if="data.gallery"
