@@ -18,6 +18,13 @@ _base_ = [
 """
 
 configs_dir = os.path.join(g.artifacts_dir, "configs")
+model_config_path = os.path.join(configs_dir, model_config_name)
+dataset_config_path = os.path.join(configs_dir, dataset_config_name)
+schedule_config_path = os.path.join(configs_dir, schedule_config_name)
+runtime_config_path = os.path.join(configs_dir, runtime_config_name)
+main_config_path = os.path.join(configs_dir, main_config_name)
+
+
 sly.fs.mkdir(configs_dir)
 sly.fs.clean_dir(configs_dir)  # for debug
 
@@ -31,8 +38,8 @@ def _replace_function(var_name, var_value, template, match):
 def generate_model_config(state):
     model_name = state["selectedModel"]
     model_info = architectures.get_model_info_by_name(model_name)
-    model_config_path = os.path.join(g.root_source_dir, model_info["modelConfig"])
-    with open(model_config_path) as f:
+    lib_model_config_path = os.path.join(g.root_source_dir, model_info["modelConfig"])
+    with open(lib_model_config_path) as f:
         py_config = f.read()
 
     num_tags = len(state["selectedTags"])
@@ -40,10 +47,9 @@ def generate_model_config(state):
                        lambda m: _replace_function("num_classes", num_tags, "{}={},", m),
                        py_config, 0, re.MULTILINE)
 
-    config_path = os.path.join(configs_dir, model_config_name)
-    with open(config_path, 'w') as f:
+    with open(model_config_path, 'w') as f:
         f.write(py_config)
-    return config_path, py_config
+    return model_config_path, py_config
 
 
 def generate_dataset_config(state):
@@ -73,10 +79,9 @@ def generate_dataset_config(state):
                        lambda m: _replace_function("save_best", save_best, "{} = {}\n", m),
                        py_config, 0, re.MULTILINE)
 
-    config_path = os.path.join(configs_dir, dataset_config_name)
-    with open(config_path, 'w') as f:
+    with open(dataset_config_path, 'w') as f:
         f.write(py_config)
-    return config_path, py_config
+    return dataset_config_path, py_config
 
 
 def generate_schedule_config(state):
@@ -128,10 +133,9 @@ def generate_schedule_config(state):
     if len(add_ckpt_to_config) > 0:
         py_config += checkpoint + os.linesep
 
-    config_path = os.path.join(configs_dir, schedule_config_name)
-    with open(config_path, 'w') as f:
+    with open(schedule_config_path, 'w') as f:
         f.write(py_config)
-    return config_path, py_config
+    return schedule_config_path, py_config
 
 
 def generate_runtime_config(state):
@@ -139,10 +143,14 @@ def generate_runtime_config(state):
 
 
 def generate_main_config(state):
-    config_path = os.path.join(configs_dir, main_config_name)
-    with open(config_path, 'w') as f:
+    with open(main_config_path, 'w') as f:
         f.write(main_config_template)
-    return config_path, str(main_config_template)
+    return main_config_path, str(main_config_template)
 
 
 def save_from_state(state):
+    state["modelPyConfig"] = ""
+    state["datasetPyConfig"] = ""
+    state["schedulePyConfig"] = ""
+    state["runtimePyConfig"] = ""
+    state["mainPyConfig"] = ""

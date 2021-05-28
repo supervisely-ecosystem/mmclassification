@@ -41,10 +41,10 @@ def preview_configs(api: sly.Api, task_id, context, state, app_logger):
     main_config_path, main_py_config = train_config.generate_main_config(state)
 
     fields = [
-        {"field": "data.modelPyConfig", "payload": model_py_config},
-        {"field": "data.datasetPyConfig", "payload": dataset_py_config},
-        {"field": "data.schedulePyConfig", "payload": schedule_py_config},
-        {"field": "data.runtimePyConfig", "payload": runtime_py_config},
-        {"field": "data.mainPyConfig", "payload": main_py_config},
+        {"field": "state.modelPyConfig", "payload": model_py_config},
+        {"field": "state.datasetPyConfig", "payload": dataset_py_config},
+        {"field": "state.schedulePyConfig", "payload": schedule_py_config},
+        {"field": "state.runtimePyConfig", "payload": runtime_py_config},
+        {"field": "state.mainPyConfig", "payload": main_py_config},
     ]
     api.task.set_fields(task_id, fields)
