@@ -96,7 +96,7 @@ def main():
 # implement save_best renaming
 # log training metrics frequency???
 
-#@TODO: runtime load_from
+#@TODO: runtime load_from / or args --resume-from
 #@TODO: release new version of SDK before release app
 # #@TODO: if OOM error, make a special message for that
 #@TODO: custom weights - load-from option
