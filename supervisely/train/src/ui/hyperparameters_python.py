@@ -33,6 +33,7 @@ def init(data, state):
 
 @g.my_app.callback("preview_configs")
 @sly.timeit
+@g.my_app.ignore_errors_and_show_dialog_window()
 def preview_configs(api: sly.Api, task_id, context, state, app_logger):
     model_config_path, model_py_config = train_config.generate_model_config(state)
     dataset_config_path, dataset_py_config = train_config.generate_dataset_config(state)
