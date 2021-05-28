@@ -10,7 +10,7 @@ def init(data, state):
     state["batchSizePerGPU"] = 32
     state["workersPerGPU"] = 2  # 0 - for debug @TODO: for debug
     state["valInterval"] = 1
-    #state["metricsPeriod"] = 1
+    state["metricsPeriod"] = 10
     state["checkpointInterval"] = 1
     state["maxKeepCkptsEnabled"] = True
     state["maxKeepCkpts"] = 5
@@ -30,7 +30,4 @@ def init(data, state):
     file_path = os.path.join(g.root_source_dir, "configs/_base_/schedules/supervisely_lr_policy.py")
     with open(file_path) as f:
         state["lrPolicyPyConfig"] = f.read()
-
-    state["metricsPeriod"] = 1
-    state["valInterval"] = 1
 

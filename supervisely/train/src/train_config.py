@@ -112,6 +112,21 @@ def generate_schedule_config(state):
 
     runner = f"runner = dict(type='EpochBasedRunner', max_epochs={state['epochs']})"
 
+    py_config = optimizer + os.linesep + \
+                grad_clip + os.linesep + \
+                ls_updater + os.linesep + \
+                runner + os.linesep
+
+    with open(schedule_config_path, 'w') as f:
+        f.write(py_config)
+    return schedule_config_path, py_config
+
+
+def generate_runtime_config(state):
+    config_path = os.path.join(g.root_source_dir, "configs/_base_/default_runtime.py")
+    with open(config_path) as f:
+        py_config = f.read()
+
     # https://mmcv.readthedocs.io/en/latest/_modules/mmcv/runner/hooks/checkpoint.html
     add_ckpt_to_config = []
     def _get_ckpt_arg(arg_name, state_flag, state_field, suffix=","):
@@ -125,21 +140,20 @@ def generate_schedule_config(state):
         max_keep_ckpts=_get_ckpt_arg("max_keep_ckpts", "maxKeepCkptsEnabled", "maxKeepCkpts"),
         save_last=_get_ckpt_arg("save_last", "saveLast", "saveLast", suffix=""),
     )
+    py_config = re.sub(r"(checkpoint_config = dict\(interval=1\))",
+                       lambda m: checkpoint,
+                       py_config, 0, re.MULTILINE)
 
-    py_config = optimizer + os.linesep + \
-                grad_clip + os.linesep + \
-                ls_updater + os.linesep + \
-                runner + os.linesep
-    if len(add_ckpt_to_config) > 0:
-        py_config += checkpoint + os.linesep
+    # logger hook
+    # https://mmcv.readthedocs.io/en/latest/_modules/mmcv/runner/hooks/logger/text.html
+    py_config = re.sub(r"log_interval\s*=\s*(\d+)",
+                       lambda m: _replace_function("log_interval", state["metricsPeriod"], "{} = {}", m),
+                       py_config, 0, re.MULTILINE)
 
-    with open(schedule_config_path, 'w') as f:
+    with open(runtime_config_path, 'w') as f:
         f.write(py_config)
-    return schedule_config_path, py_config
 
-
-def generate_runtime_config(state):
-    return "", ""
+    return runtime_config_path, py_config
 
 
 def generate_main_config(state):
