@@ -49,6 +49,7 @@ def train(api: sly.Api, task_id, context, state, app_logger):
             else:
                 raise e
 
+
         verify_train_val_sets(train_set, val_set)
         save_set_to_json(os.path.join(project_dir, "train_set.json"), train_set)
         save_set_to_json(os.path.join(project_dir, "val_set.json"), val_set)
