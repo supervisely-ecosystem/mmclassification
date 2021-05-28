@@ -38,6 +38,7 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         # split to train / validation sets (paths to images and annotations)
         train_set, val_set = get_train_val_sets(project_dir, state)
 
+        get_progress_cb("Validate and clean data", 1)(1)
         train_set, val_set = input_project.clean_bad_images(project_dir, train_set, val_set)
         verify_train_val_sets(train_set, val_set)
         save_set_to_json(os.path.join(project_dir, "train_set.json"), train_set)
@@ -92,6 +93,8 @@ def main():
 
 
 # implement save_best renaming
+#@TODO: save_set_to_json - save in imagenet format, rename clean_bad_images - add filed - tag index and save to json for our custom dataset
+#@TODO: save session link in artifacts dir
 #@TODO: state["workersPerGPU"] = 0# 2  # 0 - for debug @TODO: for debug
 #@TODO: validate project size after project cleaning
 #@TODO: if several training tags are assigned to an image

@@ -1,4 +1,4 @@
-import numpy as np
+import os
 import supervisely_lib as sly
 import sly_globals as g
 
@@ -12,7 +12,7 @@ def init(data):
 
 def clean_bad_images(project_dir, train_set, val_set):
     project = sly.Project(project_dir, sly.OpenMode.READ)
-    train_tags = sly.json.load_json_file(project_dir, "gt_labels.json")
+    train_tags = sly.json.load_json_file(os.path.join(project_dir, "gt_labels.json"))
 
     to_remove = {}
     for dataset in project.datasets:
