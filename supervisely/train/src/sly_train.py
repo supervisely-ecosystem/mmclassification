@@ -40,6 +40,7 @@ def train(api: sly.Api, task_id, context, state, app_logger):
 
         # split to train / validation sets (paths to images and annotations)
         train_set, val_set = get_train_val_sets(project_dir, state)
+
         train_set, val_set = clean_bad_images_from_project(project_dir, train_set, val_set)
         verify_train_val_sets(train_set, val_set)
         save_set_to_json(os.path.join(project_dir, "train_set.json"), train_set)
