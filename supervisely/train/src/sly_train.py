@@ -1,9 +1,13 @@
 import os
+
+import input_project
 import supervisely_lib as sly
 
 import sly_globals as g
 import ui as ui
 import architectures
+
+from input_project import clean_bad_images_from_project
 from sly_train_progress import get_progress_cb
 from sly_train_args import init_script_arguments
 from splits import get_train_val_sets, verify_train_val_sets, save_set_to_json
@@ -34,29 +38,34 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         gt_labels = {tag_name: idx for idx, tag_name in enumerate(tag_names)}
         sly.json.dump_json_file(gt_labels, os.path.join(project_dir, "gt_labels.json"))
 
+        clean_bad_images_from_project(project_dir)
+
         # split to train / validation sets (paths to images and annotations)
-        train_set, val_set = get_train_val_sets(project_dir, state)
+        try:
+            train_set, val_set = get_train_val_sets(project_dir, state)
+        except  ValueError as e:
+            if "total_count != train_count + val_count" in repr(e):
+                pass
+            else:
+                raise e
+
         verify_train_val_sets(train_set, val_set)
         save_set_to_json(os.path.join(project_dir, "train_set.json"), train_set)
         save_set_to_json(os.path.join(project_dir, "val_set.json"), val_set)
         sly.logger.info(f"Train set: {len(train_set)} images")
         sly.logger.info(f"Val set: {len(val_set)} images")
 
+        input_project.validate_target_tags()
+
         # # convert Supervisely project to YOLOv5 format
         # progress_cb = get_progress_cb("Convert Supervisely to YOLOv5 format", len(train_set) + len(val_set))
         # yolov5_format.transform(project_dir, train_data_dir, train_set, val_set, progress_cb)
-        #
         # init sys.argv for main training script
 
         train_config.save_from_state(state)
 
-        init_script_arguments(state, project_dir)
+        init_script_arguments(state)
         from tools.train import main as mm_train #@TODO: move to imports section on top
-        # _base_ = [
-        #     '../_base_/models/resnet18.py', '../_base_/datasets/imagenet_bs32.py',
-        #     '../_base_/schedules/imagenet_bs256.py', '../_base_/default_runtime.py'
-        # ]
-
         mm_train()
 
         #
@@ -93,13 +102,17 @@ def main():
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
-# implement save_best renaming
 
+# implement save_best renaming
+#@TODO: if several training tags are assigned to an image
+#@TODO: add ON/OFF for custom augmentations
+#@TODO: custom augs - reimplement prepare data in BaseDataset
+#@TODO: SuperviselyLoggerHook in default_runtime
+#@TODO: move mm_train import on top
 #@TODO: runtime load_from / or args --resume-from
 #@TODO: release new version of SDK before release app
-# #@TODO: if OOM error, make a special message for that
+#@TODO: if OOM error, make a special message for that
 #@TODO: custom weights - load-from option
-
 #@TODO: random weights initialization?
 #@TODO: --resume-from - continue training
 #@TODO: readme - add py-configs to training artifacts

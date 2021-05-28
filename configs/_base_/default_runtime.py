@@ -7,7 +7,7 @@ log_config = dict(
     interval=log_interval,
     hooks=[
         dict(type='TextLoggerHook'),
-        dict(type='SuperviselyLoggerHook')
+        #dict(type='SuperviselyLoggerHook')
     ])
 # yapf:enable
 

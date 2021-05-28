@@ -1,9 +1,15 @@
 <sly-card class="mt15"
           title="7. Traning hyperparameters"
           subtitle="Task progress, detailed logs, metrics charts, and other visualizations">
-    <sly-field title="GPU device id(s)"
+    <sly-field title="GPU device id"
                description="Cuda device(s), i.e. 0 or 0,1,2,3">
-        <el-input v-model="state.gpusIds" style="width:250px;"></el-input>
+        <el-input v-model="state.gpusId" style="width:250px;"></el-input>
+        <el-select v-model="state.gpusId" >
+            <el-option key="0" label="0" value="0"></el-option>
+            <el-option key="1" label="1" value="1"></el-option>
+            <el-option key="2" label="2" value="2"></el-option>
+            <el-option key="3" label="3" value="3"></el-option>
+        </el-select>
     </sly-field>
     <sly-field title="Number of epochs">
         <el-input-number v-model="state.epochs" :min="1" :max="10000"></el-input-number>

@@ -8,4 +8,4 @@ def init_script_arguments(state):
     #sys.argv.append(os.path.join(g.root_source_dir, "configs/resnet/resnet18_b16x8_cifar10.py"))
     sys.argv.extend(["--work-dir", g.artifacts_dir])
     sys.argv.extend(["--device", "cuda"])
-    sys.argv.extend(["--gpu-ids", state["gpusIds"]])
+    sys.argv.extend(["--gpu-ids", state["gpusId"]])
