@@ -28,13 +28,11 @@
             <span class="ml5">epochs</span>
         </div>
     </sly-field>
-    <sly-field title="Save checkpoints periodically"
-               description="value '-1' means 'never'">
-        <div><el-switch v-model="state.checkpointIntervalEnabled" on-color="#13ce66" off-color="#B8B8B8"></el-switch></div>
-        <div class="fflex mt5">
-            <span class="mr5">Save checkpoint every </span>
-            <el-input-number :disabled="!state.checkpointIntervalEnabled"
-                             v-model="state.checkpointInterval"
+    <sly-field title="Checkpoints interval"
+               description="Save checkpoints periodically">
+        <div class="fflex">
+            <span class="mr5">Save checkpoint every</span>
+            <el-input-number v-model="state.checkpointInterval"
                              :min="1" :max="state.epochs">
             </el-input-number>
             <span class="ml5">epochs</span>
@@ -59,10 +57,10 @@
         <el-switch v-model="state.saveLast" on-color="#13ce66" off-color="#B8B8B8"></el-switch>
     </sly-field>
 
-    <sly-field title="Save best checkpoint"
-               description="Best checkpoint will be marked with prefix 'best_'">
-        <el-switch v-model="state.saveBest" on-color="#13ce66" off-color="#B8B8B8"></el-switch>
-    </sly-field>
+<!--    <sly-field title="Save best checkpoint"-->
+<!--               description="Best checkpoint will be marked with prefix 'best_'">-->
+<!--        <el-switch v-model="state.saveBest" on-color="#13ce66" off-color="#B8B8B8"></el-switch>-->
+<!--    </sly-field>-->
 
 
     <!--    <sly-field title="Logging frequency"-->

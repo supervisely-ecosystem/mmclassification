@@ -11,7 +11,6 @@ def init(data, state):
     state["workersPerGPU"] = 2  # 0 - for debug @TODO: for debug
     state["valInterval"] = 1
     #state["metricsPeriod"] = 1
-    state["checkpointIntervalEnabled"] = True
     state["checkpointInterval"] = 1
     state["maxKeepCkptsEnabled"] = False
     state["maxKeepCkpts"] = 3

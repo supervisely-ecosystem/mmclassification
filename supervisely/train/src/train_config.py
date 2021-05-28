@@ -101,14 +101,16 @@ def generate_schedule_config(state):
 
     runner = f"runner = dict(type='EpochBasedRunner', max_epochs={state['epochs']})"
 
+    # https://mmcv.readthedocs.io/en/latest/_modules/mmcv/runner/hooks/checkpoint.html
     add_ckpt_to_config = []
     def _get_ckpt_arg(arg_name, state_flag, state_field):
-        if state[state_flag] is True:
+        flag = True if state_flag is None else state[state_flag]
+        if flag is True:
             add_ckpt_to_config.append(True)
             return f" {arg_name}={state[state_field]},"
         return ""
     checkpoint = "checkpoint_config = dict({interval}{max_keep_ckpts}{save_last})".format(
-        interval=_get_ckpt_arg("interval", "checkpointIntervalEnabled", "checkpointInterval"),
+        interval=_get_ckpt_arg("interval", None, "checkpointInterval"),
         max_keep_ckpts=_get_ckpt_arg("max_keep_ckpts", "maxKeepCkptsEnabled", "maxKeepCkpts"),
         save_last=_get_ckpt_arg("save_last", "saveLast", "saveLast"),
     )

@@ -12,6 +12,7 @@ import train_config
 
 @g.my_app.callback("train")
 @sly.timeit
+@g.my_app.ignore_errors_and_show_dialog_window()
 def train(api: sly.Api, task_id, context, state, app_logger):
     try:
         architectures.prepare_weights(state)
@@ -48,7 +49,6 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         train_config.generate(state)
 
         init_script_arguments(state, project_dir)
-        #Config._validate_py_syntax(filename)
         from tools.train import main as mm_train #@TODO: move to imports section on top
         # _base_ = [
         #     '../_base_/models/resnet18.py', '../_base_/datasets/imagenet_bs32.py',
@@ -93,13 +93,9 @@ def main():
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
-# handle errors from generate_schedule_config
-# add save best option
-# evaluation = dict(interval=validation_interval, metric='accuracy')
-#@TODO: add variable - how often model should be saved
-#@TODO: integrate: checkpoint_config = dict(by_epoch=False, interval=16000)
-#https://mmcv.readthedocs.io/en/latest/_modules/mmcv/runner/hooks/checkpoint.html
+# add save best ckpt option
 # log training metrics frequency???
+
 
 #@TODO: sly-editor - change style for read/write modes
 #@TODO: sly-editor UMAR добавить реактивность изменения опций???
