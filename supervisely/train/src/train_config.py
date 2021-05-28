@@ -17,7 +17,7 @@ _base_ = [
 ]
 """
 
-configs_dir = os.path.join(g.my_app.data_dir, "configs")
+configs_dir = os.path.join(g.artifacts_dir, "configs")
 sly.fs.mkdir(configs_dir)
 sly.fs.clean_dir(configs_dir)  # for debug
 
