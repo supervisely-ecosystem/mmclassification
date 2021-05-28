@@ -67,6 +67,7 @@ def generate_dataset_config(state):
                        lambda m: _replace_function("validation_interval", state["valInterval"], "{} = {}", m),
                        py_config, 0, re.MULTILINE)
 
+    #https://mmcv.readthedocs.io/en/latest/_modules/mmcv/runner/hooks/evaluation.html#EvalHook
     save_best = None if state["saveBest"] is False else "'auto'"
     py_config = re.sub(r"save_best\s*=\s*([a-zA-Z]+)\s",
                        lambda m: _replace_function("save_best", save_best, "{} = {}\n", m),

@@ -12,8 +12,8 @@ def init(data, state):
     state["valInterval"] = 1
     #state["metricsPeriod"] = 1
     state["checkpointInterval"] = 1
-    state["maxKeepCkptsEnabled"] = False
-    state["maxKeepCkpts"] = 3
+    state["maxKeepCkptsEnabled"] = True
+    state["maxKeepCkpts"] = 5
     state["saveLast"] = True
     state["saveBest"] = True
 
