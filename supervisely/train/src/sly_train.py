@@ -92,6 +92,7 @@ def main():
 
 
 # implement save_best renaming
+#@TODO: state["workersPerGPU"] = 0# 2  # 0 - for debug @TODO: for debug
 #@TODO: validate project size after project cleaning
 #@TODO: if several training tags are assigned to an image
 #@TODO: add ON/OFF for custom augmentations

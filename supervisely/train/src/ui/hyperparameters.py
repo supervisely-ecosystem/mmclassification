@@ -8,7 +8,7 @@ def init(data, state):
 
     state["imgSize"] = 256
     state["batchSizePerGPU"] = 32
-    state["workersPerGPU"] = 2  # 0 - for debug @TODO: for debug
+    state["workersPerGPU"] = 0# 2  # 0 - for debug @TODO: for debug
     state["valInterval"] = 1
     state["metricsPeriod"] = 10
     state["checkpointInterval"] = 1
