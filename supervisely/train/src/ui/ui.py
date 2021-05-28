@@ -7,7 +7,7 @@ import augs
 import architectures as model_architectures
 import hyperparameters as hyperparameters
 import hyperparameters_python as hyperparameters_python
-# import monitoring as monitoring
+import monitoring as monitoring
 # import artifacts as artifacts
 
 
@@ -20,6 +20,5 @@ def init(data, state):
     model_architectures.init(data, state)
     hyperparameters.init(data, state)
     hyperparameters_python.init(data, state)
-
-    # monitoring.init(data, state)
+    monitoring.init(data, state)
     # artifacts.init(data)

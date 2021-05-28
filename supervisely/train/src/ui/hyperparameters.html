@@ -9,7 +9,7 @@
         <el-input-number v-model="state.epochs" :min="1" :max="10000"></el-input-number>
     </sly-field>
     <sly-field title="Input image size (in pixels)"
-               description="Image is resized to square">
+               description="Model input resolution, image is resized to square">
         <el-input-number v-model="state.imgSize" :min="64"></el-input-number>
     </sly-field>
     <sly-field title="Batch size per GPU"
