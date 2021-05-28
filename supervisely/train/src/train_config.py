@@ -10,12 +10,6 @@ dataset_config_name = "dataset_config.py"
 schedule_config_name = "schedule_config.py"
 runtime_config_name = "runtime_config.py"
 main_config_name = "train_config.py"
-main_config_template = f"""
-_base_ = [
-    './{model_config_name}', './{dataset_config_name}',
-    './{schedule_config_name}', './{runtime_config_name}'
-]
-"""
 
 configs_dir = os.path.join(g.artifacts_dir, "configs")
 model_config_path = os.path.join(configs_dir, model_config_name)
@@ -24,6 +18,12 @@ schedule_config_path = os.path.join(configs_dir, schedule_config_name)
 runtime_config_path = os.path.join(configs_dir, runtime_config_name)
 main_config_path = os.path.join(configs_dir, main_config_name)
 
+main_config_template = f"""
+_base_ = [
+    '{model_config_path}', '{dataset_config_path}',
+    '{schedule_config_path}', '{runtime_config_path}'
+]
+"""
 
 sly.fs.mkdir(configs_dir)
 sly.fs.clean_dir(configs_dir)  # for debug
@@ -163,8 +163,13 @@ def generate_main_config(state):
 
 
 def save_from_state(state):
-    state["modelPyConfig"] = ""
-    state["datasetPyConfig"] = ""
-    state["schedulePyConfig"] = ""
-    state["runtimePyConfig"] = ""
-    state["mainPyConfig"] = ""
+    with open(model_config_path, 'w') as f:
+        f.write(state["modelPyConfig"])
+    with open(dataset_config_path, 'w') as f:
+        f.write(state["datasetPyConfig"])
+    with open(schedule_config_path, 'w') as f:
+        f.write(state["schedulePyConfig"])
+    with open(runtime_config_path, 'w') as f:
+        f.write(state["runtimePyConfig"])
+    with open(main_config_path, 'w') as f:
+        f.write(state["mainPyConfig"])
