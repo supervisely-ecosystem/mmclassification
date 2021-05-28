@@ -30,9 +30,13 @@
     </sly-field>
     <sly-field title="Save checkpoints periodically"
                description="value '-1' means 'never'">
-        <div class="fflex">
+        <div><el-switch v-model="state.checkpointIntervalEnabled" on-color="#13ce66" off-color="#B8B8B8"></el-switch></div>
+        <div class="fflex mt5">
             <span class="mr5">Save checkpoint every </span>
-            <el-input-number v-model="state.checkpointInterval" :min="-1" :max="state.epochs"></el-input-number>
+            <el-input-number :disabled="!state.checkpointIntervalEnabled"
+                             v-model="state.checkpointInterval"
+                             :min="1" :max="state.epochs">
+            </el-input-number>
             <span class="ml5">epochs</span>
         </div>
     </sly-field>
@@ -40,8 +44,14 @@
     <sly-field title="Checkpoints save count"
                description="The maximum checkpoints to keep. In some cases we want only the latest few checkpoints and would
                             like to delete old ones to save the disk space. If option is disabled then it means unlimited.">
-        <div><el-switch v-model="state.maxKeepCkptsEnabled" on-color="#13ce66" off-color="#B8B8B8"></el-switch></div>
-        <el-input-number class="mt5"v-model="state.maxKeepCkpts" :disabled="!state.maxKeepCkptsEnabled" :min="1"></el-input-number>
+        <div class="mb5"><el-switch v-model="state.maxKeepCkptsEnabled" on-color="#13ce66" off-color="#B8B8B8"></el-switch></div>
+        <el-input-number v-if="state.maxKeepCkptsEnabled"
+                         v-model="state.maxKeepCkpts"
+                         :disabled="!state.maxKeepCkptsEnabled"
+                         :min="1">
+        </el-input-number>
+        <el-input v-if="!state.maxKeepCkptsEnabled" placeholder="unlimited" :disabled="true" style="width: 180px;">
+</el-input>
     </sly-field>
 
     <sly-field title="Save last checkpoint"

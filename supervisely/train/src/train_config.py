@@ -101,10 +101,24 @@ def generate_schedule_config(state):
 
     runner = f"runner = dict(type='EpochBasedRunner', max_epochs={state['epochs']})"
 
+    add_ckpt_to_config = []
+    def _get_ckpt_arg(arg_name, state_flag, state_field):
+        if state[state_flag] is True:
+            add_ckpt_to_config.append(True)
+            return f" {arg_name}={state[state_field]},"
+        return ""
+    checkpoint = "checkpoint_config = dict({interval}{max_keep_ckpts}{save_last})".format(
+        interval=_get_ckpt_arg("interval", "checkpointIntervalEnabled", "checkpointInterval"),
+        max_keep_ckpts=_get_ckpt_arg("max_keep_ckpts", "maxKeepCkptsEnabled", "maxKeepCkpts"),
+        save_last=_get_ckpt_arg("save_last", "saveLast", "saveLast"),
+    )
+
     py_config = optimizer + os.linesep + \
                 grad_clip + os.linesep + \
                 ls_updater + os.linesep + \
                 runner + os.linesep
+    if len(add_ckpt_to_config) > 0:
+        py_config += checkpoint + os.linesep
 
     config_path = os.path.join(configs_dir, schedule_config_name)
     with open(config_path, 'w') as f:
