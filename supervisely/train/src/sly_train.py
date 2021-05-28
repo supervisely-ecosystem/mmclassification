@@ -94,14 +94,12 @@ def main():
     g.my_app.run(data=data, state=state)
 
 # implement save_best renaming
-# log training metrics frequency???
 
 #@TODO: runtime load_from / or args --resume-from
 #@TODO: release new version of SDK before release app
 # #@TODO: if OOM error, make a special message for that
 #@TODO: custom weights - load-from option
 
-#@TODO: disable preview button if custom pipeline is not defined
 #@TODO: random weights initialization?
 #@TODO: --resume-from - continue training
 #@TODO: readme - add py-configs to training artifacts

@@ -61,7 +61,7 @@
         <div slot="header">
             <el-button type="primary" class="regular"
                        @click="command('preview_augs')"
-                       :disabled="state.augsType === 'custom' && state.customAugsPath.length === 0"
+                       :disabled="(state.augsType === 'custom' && state.customAugsPath.length === 0) || !data.customAugsPy"
             >
                 Preview
             </el-button>
