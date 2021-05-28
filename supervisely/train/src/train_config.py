@@ -67,6 +67,11 @@ def generate_dataset_config(state):
                        lambda m: _replace_function("validation_interval", state["valInterval"], "{} = {}", m),
                        py_config, 0, re.MULTILINE)
 
+    save_best = None if state["saveBest"] is False else "'auto'"
+    py_config = re.sub(r"save_best\s*=\s*([a-zA-Z]+)\s",
+                       lambda m: _replace_function("save_best", save_best, "{} = {}\n", m),
+                       py_config, 0, re.MULTILINE)
+
     config_path = os.path.join(configs_dir, dataset_config_name)
     with open(config_path, 'w') as f:
         f.write(py_config)

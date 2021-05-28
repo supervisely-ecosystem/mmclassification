@@ -93,24 +93,18 @@ def main():
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
-# add save best ckpt option
+# implement save_best renaming
 # log training metrics frequency???
 
 
-#@TODO: sly-editor - change style for read/write modes
-#@TODO: sly-editor UMAR добавить реактивность изменения опций???
 #@TODO: release new version of SDK before release app
 # #@TODO: if OOM error, make a special message for that
 #@TODO: custom weights - load-from option
 
-
-#@TODO: * in model name - что это?
-#@TODO: separate - update content and options in comparegallery
 #@TODO: disable preview button if custom pipeline is not defined
-#@TODO: preview augentations
 #@TODO: random weights initialization?
 #@TODO: --resume-from - continue training
 #@TODO: readme - add py-configs to training artifacts
-#@TODO: train button disable before preview configs button (or regenerate before train)
+#@TODO: train - autogenerate configs preview if needed
 if __name__ == "__main__":
     sly.main_wrapper("main", main)
