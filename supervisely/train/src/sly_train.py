@@ -93,6 +93,7 @@ def main():
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
+# handle errors from generate_schedule_config
 # add save best option
 # evaluation = dict(interval=validation_interval, metric='accuracy')
 #@TODO: add variable - how often model should be saved
