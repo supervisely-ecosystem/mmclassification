@@ -56,8 +56,6 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         sly.logger.info(f"Train set: {len(train_set)} images")
         sly.logger.info(f"Val set: {len(val_set)} images")
 
-        input_project.validate_target_tags()
-
         # # convert Supervisely project to YOLOv5 format
         # progress_cb = get_progress_cb("Convert Supervisely to YOLOv5 format", len(train_set) + len(val_set))
         # yolov5_format.transform(project_dir, train_data_dir, train_set, val_set, progress_cb)
