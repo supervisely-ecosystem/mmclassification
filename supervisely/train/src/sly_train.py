@@ -38,18 +38,9 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         gt_labels = {tag_name: idx for idx, tag_name in enumerate(tag_names)}
         sly.json.dump_json_file(gt_labels, os.path.join(project_dir, "gt_labels.json"))
 
-        clean_bad_images_from_project(project_dir)
-
         # split to train / validation sets (paths to images and annotations)
-        try:
-            train_set, val_set = get_train_val_sets(project_dir, state)
-        except  ValueError as e:
-            if "total_count != train_count + val_count" in repr(e):
-                pass
-            else:
-                raise e
-
-
+        train_set, val_set = get_train_val_sets(project_dir, state)
+        train_set, val_set = clean_bad_images_from_project(project_dir, train_set, val_set)
         verify_train_val_sets(train_set, val_set)
         save_set_to_json(os.path.join(project_dir, "train_set.json"), train_set)
         save_set_to_json(os.path.join(project_dir, "val_set.json"), val_set)
@@ -59,10 +50,10 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         # # convert Supervisely project to YOLOv5 format
         # progress_cb = get_progress_cb("Convert Supervisely to YOLOv5 format", len(train_set) + len(val_set))
         # yolov5_format.transform(project_dir, train_data_dir, train_set, val_set, progress_cb)
-        # init sys.argv for main training script
 
         train_config.save_from_state(state)
 
+        # init sys.argv for main training script
         init_script_arguments(state)
         from tools.train import main as mm_train #@TODO: move to imports section on top
         mm_train()
@@ -103,6 +94,7 @@ def main():
 
 
 # implement save_best renaming
+#@TODO: validate project size after project cleaning
 #@TODO: if several training tags are assigned to an image
 #@TODO: add ON/OFF for custom augmentations
 #@TODO: custom augs - reimplement prepare data in BaseDataset
