@@ -1,13 +1,10 @@
 import os
-
-import input_project
 import supervisely_lib as sly
 
+import input_project
 import sly_globals as g
 import ui as ui
 import architectures
-
-from input_project import clean_bad_images_from_project
 from sly_train_progress import get_progress_cb
 from sly_train_args import init_script_arguments
 from splits import get_train_val_sets, verify_train_val_sets, save_set_to_json
@@ -41,7 +38,7 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         # split to train / validation sets (paths to images and annotations)
         train_set, val_set = get_train_val_sets(project_dir, state)
 
-        train_set, val_set = clean_bad_images_from_project(project_dir, train_set, val_set)
+        train_set, val_set = input_project.clean_bad_images(project_dir, train_set, val_set)
         verify_train_val_sets(train_set, val_set)
         save_set_to_json(os.path.join(project_dir, "train_set.json"), train_set)
         save_set_to_json(os.path.join(project_dir, "val_set.json"), val_set)

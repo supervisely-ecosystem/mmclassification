@@ -10,7 +10,7 @@ def init(data):
     data["projectPreviewUrl"] = g.api.image.preview_url(g.project_info.reference_image_url, 100, 100)
 
 
-def clean_bad_images_from_project(project_dir, train_set, val_set):
+def clean_bad_images(project_dir, train_set, val_set):
     project = sly.Project(project_dir, sly.OpenMode.READ)
     train_tags = sly.json.load_json_file(project_dir, "gt_labels.json")
 
