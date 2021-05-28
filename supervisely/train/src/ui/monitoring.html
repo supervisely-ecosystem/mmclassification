@@ -12,13 +12,13 @@
         Start training
     </el-button>
     <div v-show="state.selectedTags.length === 0" class="mt10" style="color: red">
-        0 training tags are selected at step #2
+        Please select training tags at step #2
     </div>
     <div class="mt5" v-show="state.weightsInitialization === 'custom' && state.weightsPath === ''" style="color: red">
-        Path to model weights is not defined at step #6
+        Please define path to ustom model weights at step #6
     </div>
     <div class="mt5" v-show="data.modelPyConfig.length === 0" style="color: red">
-        Preview final training configs at step #8 before start training
+        Please generate previews for training configuration at step #8
     </div>
 
     <div v-if="data.progressName.length > 0" class="mt10">
