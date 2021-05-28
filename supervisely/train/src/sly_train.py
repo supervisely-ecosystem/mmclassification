@@ -6,7 +6,7 @@ import ui as ui
 import architectures
 from sly_train_progress import get_progress_cb
 from sly_train_args import init_script_arguments
-from splits import get_train_val_sets, verify_train_val_sets
+from splits import get_train_val_sets, verify_train_val_sets, save_set_to_json
 import train_config
 
 
@@ -37,6 +37,8 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         # split to train / validation sets (paths to images and annotations)
         train_set, val_set = get_train_val_sets(project_dir, state)
         verify_train_val_sets(train_set, val_set)
+        save_set_to_json(os.path.join(project_dir, "train_set.json"), train_set)
+        save_set_to_json(os.path.join(project_dir, "val_set.json"), val_set)
         sly.logger.info(f"Train set: {len(train_set)} images")
         sly.logger.info(f"Val set: {len(val_set)} images")
 
@@ -67,10 +69,8 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         # upload_artifacts(g.local_artifacts_dir, g.remote_artifacts_dir)
         # set_task_output()
     except Exception as e:
-        g.my_app.show_modal_window(f"Oops! Something went wrong, please try again or contact tech support. "
-                                   f"Find more info in the app logs. Error: {repr(e)}", level="error")
         api.app.set_field(task_id, "state.started", False)
-        raise e  #@TODO: uncomment only for debug
+        raise e  # app will handle this error and show modal window
 
     # stop application
     get_progress_cb("Finished, app is stopped automatically", 1)(1)
