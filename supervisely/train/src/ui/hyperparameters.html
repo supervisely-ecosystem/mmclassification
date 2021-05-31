@@ -67,8 +67,6 @@
                description="Best checkpoint will be marked with prefix 'best_'">
         <el-switch v-model="state.saveBest" on-color="#13ce66" off-color="#B8B8B8"></el-switch>
     </sly-field>
-
-
         <sly-field title="Logging frequency"
                    description="How often metrics should be logged, increase if training data is small">
             <div class="fflex">
@@ -77,10 +75,9 @@
                 <span class="ml5">iterations</span>
             </div>
         </sly-field>
-    <sly-field title="Optimizer"
-               description="Choose optimizer and its settings">
-        <div>
-            Learn more in official
+    <sly-field title="Optimizer">
+        <div slot="description">
+            Choose optimizer and its settings, learn more in official
             <a href="https://pytorch.org/docs/1.7.1/optim.html?module-torch.optim" target="_blank">
                 pytorch documentation
             </a>
