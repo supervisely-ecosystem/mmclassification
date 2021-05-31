@@ -118,6 +118,8 @@ def main():
 #@TODO: random weights initialization?
 #@TODO: --resume-from - continue training
 #@TODO: readme - add py-configs to training artifacts
+#@TODO: readme - tags co-occurrence-matrix
+
 # implement save_best renaming
 if __name__ == "__main__":
     sly.main_wrapper("main", main)
