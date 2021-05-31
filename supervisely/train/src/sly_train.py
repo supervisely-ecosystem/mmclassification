@@ -38,8 +38,11 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         # split to train / validation sets (paths to images and annotations)
         train_set, val_set = get_train_val_sets(project_dir, state)
 
-        get_progress_cb("Validate and clean data", 1)(1)
-        train_set, val_set = input_project.clean_bad_images(project_dir, train_set, val_set)
+        progress = get_progress_cb(
+            "Validating and cleaning training data (remove images without training tags)",
+            len(train_set) + len(val_set)
+        )
+        num_images_not_tags, num_images_multiple_tags, train_set, val_set = input_project.clean_bad_images(project_dir, train_set, val_set, progress)
         verify_train_val_sets(train_set, val_set)
         save_set_to_json(os.path.join(project_dir, "train_set.json"), train_set)
         save_set_to_json(os.path.join(project_dir, "val_set.json"), val_set)
@@ -91,8 +94,13 @@ def main():
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
+#@TODO: training data stats info
+#- total number of images
+#- every tag - train/val images
+#- number of images without training tag (will be skipped)
+#- number of images with several training tags (confusion, will be skipped)
+#- click to visualize images for legend
 
-# implement save_best renaming
 #@TODO: add need_gpu in config
 #@TODO: save_set_to_json - save in imagenet format, rename clean_bad_images - add filed - tag index and save to json for our custom dataset
 #@TODO: save session link in artifacts dir
@@ -110,5 +118,6 @@ def main():
 #@TODO: random weights initialization?
 #@TODO: --resume-from - continue training
 #@TODO: readme - add py-configs to training artifacts
+# implement save_best renaming
 if __name__ == "__main__":
     sly.main_wrapper("main", main)
