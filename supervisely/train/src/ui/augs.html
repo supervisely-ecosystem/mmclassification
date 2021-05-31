@@ -61,7 +61,8 @@
         <div slot="header">
             <el-button type="primary" class="regular"
                        @click="command('preview_augs')"
-                       :disabled="(state.augsType === 'custom' && state.customAugsPath.length === 0) || !data.customAugsPy"
+                       :disabled="(state.augsType === 'custom' && state.customAugsPath.length === 0) ||
+                                  (state.augsType === 'custom' && !data.customAugsPy)"
             >
                 Preview
             </el-button>
@@ -71,7 +72,13 @@
             image
         </div>
         <div v-show="state.augsType === 'custom' && state.customAugsPath.length === 0" class="mt10" style="color: red">
+            Please define the path in Team Files to augs config
+        </div>
+        <div v-show="state.selectedTags.length === 0" class="mt10" style="color: red">
             Please select training tags at step #2
+        </div>
+        <div v-show="state.augsType === 'custom' && !data.customAugsPy" class="mt10" style="color: red">
+            Please press 'Load' button to preview custom augs configuration
         </div>
         <sly-grid-gallery
                 v-if="data.gallery"
