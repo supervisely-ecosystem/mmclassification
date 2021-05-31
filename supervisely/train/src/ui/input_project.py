@@ -1,4 +1,5 @@
 import os
+from collections import defaultdict
 import supervisely_lib as sly
 import sly_globals as g
 
@@ -10,9 +11,36 @@ def init(data):
     data["projectPreviewUrl"] = g.api.image.preview_url(g.project_info.reference_image_url, 100, 100)
 
 
-def clean_bad_images_and_calc_stats(project_dir, train_set, val_set, progress_cb):
+def clean_sets_and_calc_stats(project_dir, train_set, val_set, progress_cb):
     project = sly.Project(project_dir, sly.OpenMode.READ)
     train_tags = sly.json.load_json_file(os.path.join(project_dir, "gt_labels.json"))
+
+    def _clean_and_calc(split, stats):
+        res_split = []
+        for item in split:
+            ann = sly.Annotation.load_json_file(item.ann_path, project.meta)
+
+            name = None
+            num_train_tags_on_image = 0
+            for tag in ann.img_tags:
+                tag: sly.Tag
+                if tag.name in train_tags:
+                    name = tag.name
+                    num_train_tags_on_image += 1
+
+            if num_training_tags_on_image == 0:
+                stats["no tags"] += 1
+            elif num_training_tags_on_image > 1:
+                stats["collision"] += 1
+            else:
+                if name is None:
+                    raise RuntimeError("Tag name is None")
+                stats[name] += 1
+
+
+    stats = defaultdict(int)
+
+
 
     num_images_not_tags = 0
     num_images_multiple_tags = 0
