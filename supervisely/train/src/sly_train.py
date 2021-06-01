@@ -122,6 +122,7 @@ def main():
 #Oops! Something went wrong, please try again or contact tech support. Find more info in the app logs. Error: AttributeError("'dict' object has no attribute 'optimizer'")
 # уменьшить скругления + сделать кликабельность по названию?
 
+
 # implement save_best renaming
 if __name__ == "__main__":
     sly.main_wrapper("main", main)

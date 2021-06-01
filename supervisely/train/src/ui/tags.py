@@ -9,8 +9,8 @@ tag2images = defaultdict(list)
 #all_images = []
 tag2urls = defaultdict(list)
 
-_preview_height = 150
-_max_examples_count = 9
+_preview_height = 120
+_max_examples_count = 10
 
 image_slider_options = {
     "selectable": False,
@@ -51,24 +51,20 @@ def cache_images_examples(data):
             tag2urls = s["tag2urls"]
             tag2images = s["tag2images"]
     else:
-        id_to_tagmeta = g.project_meta.tag_metas.get_id_mapping()
-        progress = sly.Progress("Caching image examples for tags", g.api.project.get_images_count(g.project_id))
-        for dataset in g.api.dataset.get_list(g.project_id):
-            ds_images = g.api.image.get_list(dataset.id)
-            for img_info in ds_images:
-                tags = sly.TagCollection.from_api_response(img_info.tags, g.project_meta.tag_metas, id_to_tagmeta)
-                for tag in tags:
-                    img_info_dict = img_info._asdict()
-                    tag2images[tag.name].append(img_info_dict)
-
-                    if len(tag2urls[tag.name]) >= _max_examples_count:
-                        continue
-                    #all_images.append(img_info)
-                    tag2urls[tag.name].append({
-                        "moreExamples": [img_info.full_storage_url],
-                        "preview": g.api.image.preview_url(img_info.full_storage_url, height=_preview_height)
+        temp_tag2images = g.api.project.download_images_tags(g.project_id)
+        for tag_name, images_infos in temp_tag2images.items():
+            infos_dict = []
+            urls_examples = []
+            for info in images_infos:
+                infos_dict.append(info._asdict())
+                if len(urls_examples) < _max_examples_count:
+                    urls_examples.append({
+                        "moreExamples": [info.full_storage_url],
+                        "preview": g.api.image.preview_url(info.full_storage_url, height=_preview_height)
                     })
-                progress.iter_done_report()
+
+            tag2images[tag_name] = infos_dict
+            tag2urls[tag_name] = urls_examples
 
         with shelve.open(cache_base_filename) as s:
             s["tag2urls"] = tag2urls

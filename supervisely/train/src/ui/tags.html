@@ -4,6 +4,13 @@
               subtitle="Select image tags, that should be used for training. Training supports only tags of type NONE (without values)
                         and tags that have at least one image example, other tags are not shown in table.
                         train / val tags are also skipped and will be used later">
+
+
+        <sly-field title="Tags balance"
+                   description="Whether to force the last checkpoint to be saved regardless of interval">
+        </sly-field>
+
+
         <el-table
                 class="ultra-table"
                 :data="data.tags"
