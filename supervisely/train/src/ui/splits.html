@@ -1,6 +1,7 @@
 <sly-card class="mt15"
           title="3. Train / Validation splits"
-          subtitle="Define how to split your data to train/val subsets">
+          subtitle="Define how to split your data to train/val subsets. Number of images in splits is approximate.
+                    Preview final data statistics in next sections">
     <el-tabs type="border-card" class="el-tabs-cards" v-model="state.splitMethod">
         <el-tab-pane name="random">
             <el-radio slot="label" v-model="state.splitMethod" label="random">

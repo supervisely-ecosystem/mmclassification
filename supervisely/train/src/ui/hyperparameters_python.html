@@ -3,13 +3,12 @@
           subtitle="Training settings in MMClassification are the set of python configs. App generates these configs
                     automatically. Generated configs will be saved to Team Files along with other training artifacts.
                     Learn more in app readme.">
-    <div slot="header">
-        <el-button type="primary" class="regular"
-                   @click="command('preview_configs')"
-                   :disabled="state.selectedTags.length === 0 || state.started === true">
-            Preview
-        </el-button>
-    </div>
+    <el-button slot="header"
+               type="primary" class="regular"
+               @click="command('preview_configs')"
+               :disabled="state.selectedTags.length === 0 || state.started === true">
+        Preview
+    </el-button>
     <div v-if="state.modelPyConfig.length === 0">
         <i class="zmdi zmdi-help" style="color: orange"></i> Press Preview button to generate and visualize training
         configuration (python scripts)

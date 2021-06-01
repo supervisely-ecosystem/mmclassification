@@ -121,7 +121,7 @@ def main():
 #@TODO: readme - tags co-occurrence-matrix
 #Oops! Something went wrong, please try again or contact tech support. Find more info in the app logs. Error: AttributeError("'dict' object has no attribute 'optimizer'")
 # уменьшить скругления + сделать кликабельность по названию?
-
+#@TODO: add to readme - unpack KV tag
 
 # implement save_best renaming
 if __name__ == "__main__":
