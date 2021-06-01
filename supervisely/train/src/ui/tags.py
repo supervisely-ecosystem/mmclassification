@@ -5,7 +5,6 @@ import supervisely_lib as sly
 import random
 
 import sly_globals as g
-import input_project
 
 
 tag2images = defaultdict(list)
@@ -117,10 +116,3 @@ def get_random_image():
     info = ImageInfo(**image_info_dict)
     return info
 
-
-@g.my_app.callback("preview_tags")
-@sly.timeit
-@g.my_app.ignore_errors_and_show_dialog_window()
-def preview_tags_and_stats(api: sly.Api, task_id, context, state, app_logger):
-    input_project.download()
-    pass

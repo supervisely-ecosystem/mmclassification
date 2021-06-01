@@ -4,12 +4,23 @@ import supervisely_lib as sly
 import sly_globals as g
 from sly_train_progress import get_progress_cb
 
+images_infos = None # dataset_name -> image_name -> image_info
+
 
 def init(data):
     data["projectId"] = g.project_info.id
     data["projectName"] = g.project_info.name
     data["projectImagesCount"] = g.project_info.items_count
     data["projectPreviewUrl"] = g.api.image.preview_url(g.project_info.reference_image_url, 100, 100)
+
+
+def cache_images_infos():
+    global images_infos
+    images_infos = {}
+    for dataset_info in g.api.dataset.get_list(g.project_id):
+        images_infos[dataset_info.name] = {}
+        for image_info in g.api.image.get_list(dataset_info.id):
+
 
 
 def download():
@@ -20,7 +31,8 @@ def download():
         sly.fs.mkdir(g.project_dir, remove_content_if_exists=False)  # clean content for debug, has no effect in prod
         # download and preprocess Sypervisely project (using cache)
         download_progress = get_progress_cb("Download data (using cache)", g.project_info.items_count * 2)
-        sly.download_project(g.api, g.project_id, g.project_dir, cache=g.my_app.cache, progress_cb=download_progress)
+        sly.download_project(g.api, g.project_id, g.project_dir,
+                             cache=g.my_app.cache, progress_cb=download_progress, only_image_tags=True)
 
 # def clean_sets_and_calc_stats(project_dir, train_set, val_set, progress_cb):
 #     project = sly.Project(project_dir, sly.OpenMode.READ)

@@ -23,9 +23,6 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         gt_labels = {tag_name: idx for idx, tag_name in enumerate(tag_names)}
         sly.json.dump_json_file(gt_labels, os.path.join(project_dir, "gt_labels.json"))
 
-        # split to train / validation sets (paths to images and annotations)
-        train_set, val_set = get_train_val_sets(project_dir, state)
-
         progress = get_progress_cb(
             "Validating and cleaning training data (remove images without training tags)",
             len(train_set) + len(val_set)
@@ -110,6 +107,7 @@ def main():
 #Oops! Something went wrong, please try again or contact tech support. Find more info in the app logs. Error: AttributeError("'dict' object has no attribute 'optimizer'")
 # уменьшить скругления + сделать кликабельность по названию?
 #@TODO: add to readme - unpack KV tag
+#@TODO: min version instance
 
 # implement save_best renaming
 if __name__ == "__main__":

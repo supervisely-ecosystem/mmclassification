@@ -9,7 +9,7 @@
                         'train' and 'val' are not shown">
         <div slot="header">
             <el-button type="primary" class="regular"
-                       @click="command('preview_tags')">
+                       @click="command('generate_splits')">
                 Generate train / val splits
             </el-button>
         </div>
@@ -32,7 +32,6 @@
                 </template>
             </sly-class-balance>
         </div>
-
         <div v-if="!data.tagsBalance">
             <i class="zmdi zmdi-help" style="color: orange"></i> Press button to list tags and their train/val
             statistics

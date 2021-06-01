@@ -1,4 +1,6 @@
 import supervisely_lib as sly
+import sly_globals as g
+import input_project
 
 
 def init(project_info, project_meta: sly.ProjectMeta, data, state):
@@ -77,3 +79,16 @@ def save_set_to_json(path, items):
             "ann_path": item.ann_path
         })
     sly.json.dump_json_file(res, path)
+
+
+@g.my_app.callback("generate_splits")
+@sly.timeit
+@g.my_app.ignore_errors_and_show_dialog_window()
+def generate_splits(api: sly.Api, task_id, context, state, app_logger):
+    input_project.download()
+
+    # split to train / validation sets (paths to images and annotations)
+    train_set, val_set = get_train_val_sets(g.project_dir, state)
+
+
+    pass
