@@ -2,16 +2,17 @@
           title="9. Training progress"
           subtitle="Task progress, detailed logs, metrics charts, and other visualizations">
 
-    <el-button slot="header"
-               type="primary" class="regular"
-               @click="state.started = true; command('train')"
-               :disabled="state.selectedTags.length === 0 ||
-                          (state.weightsInitialization === 'custom' && state.weightsPath === '') ||
-                          state.modelPyConfig.length === 0 ||
-                          state.started === true"
-    >
-        Start training
-    </el-button>
+    <div slot="header">
+        <el-button type="primary" class="regular"
+                   @click="state.started = true; command('train')"
+                   :disabled="state.selectedTags.length === 0 ||
+                              (state.weightsInitialization === 'custom' && state.weightsPath === '') ||
+                              state.modelPyConfig.length === 0 ||
+                              state.started === true"
+        >
+            Start training
+        </el-button>
+    </div>
     <div v-show="state.selectedTags.length === 0" class="mt10" style="color: red">
         Please select training tags at step #2
     </div>
