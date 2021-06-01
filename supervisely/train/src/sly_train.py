@@ -18,18 +18,6 @@ def train(api: sly.Api, task_id, context, state, app_logger):
     try:
         architectures.prepare_weights(state)
 
-        # prepare directory for original Supervisely project
-        project_dir = os.path.join(g.my_app.data_dir, "sly_project")
-
-        # if-else only to speedup debug, has no effect in prod
-        if sly.fs.dir_exists(project_dir):
-            pass
-        else:
-            sly.fs.mkdir(project_dir, remove_content_if_exists=False)  # clean content for debug, has no effect in prod
-            # download and preprocess Sypervisely project (using cache)
-            download_progress = get_progress_cb("Download data (using cache)", g.project_info.items_count * 2)
-            sly.download_project(api, g.project_id, project_dir, cache=g.my_app.cache, progress_cb=download_progress)
-
         # save selectedTags -> ground-truth labels
         tag_names = state["selectedTags"]
         gt_labels = {tag_name: idx for idx, tag_name in enumerate(tag_names)}

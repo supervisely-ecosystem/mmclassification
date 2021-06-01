@@ -2,8 +2,11 @@ import os
 from collections import defaultdict, namedtuple
 import shelve
 import supervisely_lib as sly
-import sly_globals as g
 import random
+
+import sly_globals as g
+import input_project
+
 
 tag2images = defaultdict(list)
 #all_images = []
@@ -27,34 +30,34 @@ cache_path = cache_base_filename + ".db"
 
 
 def init(data, state):
-    cache_images_examples(data)
+    # cache_images_examples(data)
+    #
+    # max_count = -1
+    # tags_balance_rows = []
+    # # tags with 0 images will be ignored automatically
+    # for tag_name, images_infos in tag2images.items():
+    #     if tag_name.lower() in _ignore_tags:
+    #         continue
+    #     tag_meta = g.project_meta.get_tag_meta(tag_name)
+    #     tag_meta: sly.TagMeta
+    #     if tag_meta.value_type not in _allowed_tag_types:
+    #         continue
+    #     tags_balance_rows.append({
+    #         "name": tag_name,
+    #         "total": len(images_infos),
+    #         "segments": {
+    #             "count": len(images_infos)
+    #         }
+    #     })
+    #     max_count = max(max_count, len(images_infos))
+    #
+    # tags_balance = {
+    #     "maxValue": max_count,
+    #     "segments": [{"name": "Images count", "key": "count", "color": "#1892f8"}],
+    #     "rows": tags_balance_rows
+    # }
 
-    max_count = -1
-    tags_balance_rows = []
-    # tags with 0 images will be ignored automatically
-    for tag_name, images_infos in tag2images.items():
-        if tag_name.lower() in _ignore_tags:
-            continue
-        tag_meta = g.project_meta.get_tag_meta(tag_name)
-        tag_meta: sly.TagMeta
-        if tag_meta.value_type not in _allowed_tag_types:
-            continue
-        tags_balance_rows.append({
-            "name": tag_name,
-            "total": len(images_infos),
-            "segments": {
-                "count": len(images_infos)
-            }
-        })
-        max_count = max(max_count, len(images_infos))
-
-    tags_balance = {
-        "maxValue": max_count,
-        "segments": [{"name": "Images count", "key": "count", "color": "#1892f8"}],
-        "rows": tags_balance_rows
-    }
-
-    data["tagsBalance"] = tags_balance
+    data["tagsBalance"] = None # tags_balance
     state["selectedTags"] = []
 
     # stats = g.api.project.get_stats(g.project_id)
@@ -113,3 +116,11 @@ def get_random_image():
     ImageInfo = namedtuple('ImageInfo', image_info_dict)
     info = ImageInfo(**image_info_dict)
     return info
+
+
+@g.my_app.callback("preview_tags")
+@sly.timeit
+@g.my_app.ignore_errors_and_show_dialog_window()
+def preview_tags_and_stats(api: sly.Api, task_id, context, state, app_logger):
+    input_project.download()
+    pass
