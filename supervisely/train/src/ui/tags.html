@@ -10,7 +10,7 @@
         <div slot="header">
             <el-button type="primary" class="regular"
                        @click="command('preview_tags')">
-                Preview tags and stats
+                Generate train / val splits
             </el-button>
         </div>
 
@@ -34,7 +34,7 @@
         </div>
 
         <div v-if="!data.tagsBalance">
-            <i class="zmdi zmdi-help" style="color: orange"></i> Press preview button to list tags and their train/val
+            <i class="zmdi zmdi-help" style="color: orange"></i> Press button to list tags and their train/val
             statistics
         </div>
 
