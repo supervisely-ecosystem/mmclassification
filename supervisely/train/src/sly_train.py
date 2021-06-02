@@ -84,6 +84,7 @@ def main():
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
+#@TODO: show gallery
 #@TODO: warn - there are images without tags ...
 #@TODO: small demo data - generate synth
 #@TODO: сделать табличку tags, that will be skipped + колонка reason
