@@ -34,8 +34,8 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         )
         num_images_not_tags, num_images_multiple_tags, train_set, val_set = input_project.clean_bad_images(project_dir, train_set, val_set, progress)
         verify_train_val_sets(train_set, val_set)
-        save_set_to_json(os.path.join(g.project_dir, "train_set.json"), train_set)
-        save_set_to_json(os.path.join(g.project_dir, "val_set.json"), val_set)
+        #save_set_to_json(os.path.join(g.project_dir, "train_set.json"), train_set)
+        #save_set_to_json(os.path.join(g.project_dir, "val_set.json"), val_set)
         sly.logger.info(f"Train set: {len(train_set)} images")
         sly.logger.info(f"Val set: {len(val_set)} images")
 
