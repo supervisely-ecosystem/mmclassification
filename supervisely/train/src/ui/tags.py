@@ -76,6 +76,7 @@ def init(data, state):
     # data["tags"] = tags_json
     # cache_images_examples(data)
     data["imageSliderOptions"] = image_slider_options
+    data["done3"] = False
     init_progress(progress_index, data)
 
 
@@ -122,9 +123,6 @@ def init(data, state):
 
 def init_cache(split_items, split_name, progress_cb):
     global tag2images, tag2urls
-    tag2images = defaultdict(lambda: defaultdict(list))
-    tag2urls = defaultdict(list)
-
     for item in split_items:
         name = item.name
         dataset_name = item.dataset_name
@@ -148,13 +146,18 @@ def init_cache(split_items, split_name, progress_cb):
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def show_tags(api: sly.Api, task_id, context, state, app_logger):
+    global tag2images, tag2urls
+    tag2images = defaultdict(lambda: defaultdict(list))
+    tag2urls = defaultdict(list)
+
     progress = get_progress_cb(progress_index, "Calculating stats", g.project_info.items_count)
     init_cache(splits.train_set, "train", progress)
     init_cache(splits.val_set, "val", progress)
 
     segments = [
         {"name": "train", "key": "train", "color": "#13ce66"},
-        {"name": "val", "key": "val", "color": "#20a0ff"},
+        {"name": "val", "key": "val", "color": "#ffa500"},
+        # 20a0ff
     ]
 
     max_count = -1
@@ -177,6 +180,7 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
             }
         })
         max_count = max(max_count, total)
+    reset_progress(progress_index)
 
     tags_balance = {
         "maxValue": max_count,
@@ -184,8 +188,11 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
         "rows": tags_balance_rows
     }
 
+    subsample_urls = {tag_name: urls[:_max_examples_count] for tag_name, urls in tag2urls.items()}
+
     fields = [
         {"field": f"data.tagsBalance", "payload": tags_balance},
-        {"field": f"data.tag2urls", "payload": tag2urls},
+        {"field": f"data.tag2urls", "payload": subsample_urls},
+        {"field": f"data.done3", "payload": True},
     ]
     g.api.app.set_fields(g.task_id, fields)
