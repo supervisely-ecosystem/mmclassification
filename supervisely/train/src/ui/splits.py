@@ -85,10 +85,9 @@ def save_set_to_json(path, items):
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def generate_splits(api: sly.Api, task_id, context, state, app_logger):
-    input_project.download()
 
-    # split to train / validation sets (paths to images and annotations)
-    train_set, val_set = get_train_val_sets(g.project_dir, state)
+
+
 
 
     pass

@@ -2,8 +2,9 @@ import os
 from collections import defaultdict
 import supervisely_lib as sly
 import sly_globals as g
-from sly_train_progress import get_progress_cb
+from sly_train_progress import get_progress_cb, reset_progress, init_progress
 
+progress_index = 1
 images_infos = None # dataset_name -> image_name -> image_info
 
 
@@ -12,6 +13,8 @@ def init(data):
     data["projectName"] = g.project_info.name
     data["projectImagesCount"] = g.project_info.items_count
     data["projectPreviewUrl"] = g.api.image.preview_url(g.project_info.reference_image_url, 100, 100)
+    init_progress(progress_index, data)
+    data["done1"] = False
 
 
 def cache_images_infos():
@@ -20,19 +23,24 @@ def cache_images_infos():
     for dataset_info in g.api.dataset.get_list(g.project_id):
         images_infos[dataset_info.name] = {}
         for image_info in g.api.image.get_list(dataset_info.id):
+            pass
 
 
+@g.my_app.callback("download_project")
+@sly.timeit
+@g.my_app.ignore_errors_and_show_dialog_window()
+def download(api: sly.Api, task_id, context, state, app_logger):
+    sly.fs.mkdir(g.project_dir)
+    sly.fs.remove_dir(g.project_dir)  # for debug
 
-def download():
-    # if-else only to speedup debug, has no effect in prod
     if sly.fs.dir_exists(g.project_dir):
         pass
     else:
-        sly.fs.mkdir(g.project_dir, remove_content_if_exists=False)  # clean content for debug, has no effect in prod
-        # download and preprocess Sypervisely project (using cache)
-        download_progress = get_progress_cb("Download data (using cache)", g.project_info.items_count * 2)
+        sly.fs.mkdir(g.project_dir)
+        download_progress = get_progress_cb(progress_index, "Download data (using cache)", g.project_info.items_count * 2)
         sly.download_project(g.api, g.project_id, g.project_dir,
                              cache=g.my_app.cache, progress_cb=download_progress, only_image_tags=True)
+        reset_progress(progress_index)
 
 # def clean_sets_and_calc_stats(project_dir, train_set, val_set, progress_cb):
 #     project = sly.Project(project_dir, sly.OpenMode.READ)

@@ -1,8 +1,15 @@
-<sly-card title="1. Input Project" subtitle="This project will be used for training">
+<sly-card title="Step 1. Input Project" subtitle="This project will be used for training">
+    <div slot="header">
+        <el-button type="primary" class="regular" @click="command('download_project')">Download</el-button>
+    </div>
     <sly-field title="" description="Project">
         <a slot="title" target="_blank"
            :href="`/projects/${data.projectId}/datasets`">{{data.projectName}} ({{data.projectImagesCount}}
             images)</a>
         <sly-icon slot="icon" :options="{ imageUrl: `${data.projectPreviewUrl}` }"/>
     </sly-field>
+    <div v-if="data.progress1" class="mt10">
+        <div style="color: #20a0ff">{{data.progress1}}: {{data.progressCurrent1}} / {{data.progressTotal1}}</div>
+        <el-progress :percentage="data.progressPercent1"></el-progress>
+    </div>
 </sly-card>

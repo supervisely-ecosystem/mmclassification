@@ -18,10 +18,15 @@ def train(api: sly.Api, task_id, context, state, app_logger):
     try:
         architectures.prepare_weights(state)
 
+        input_project.download()
+
+        # split to train / validation sets (paths to images and annotations)
+        train_set, val_set = get_train_val_sets(g.project_dir, state)
+
         # save selectedTags -> ground-truth labels
         tag_names = state["selectedTags"]
         gt_labels = {tag_name: idx for idx, tag_name in enumerate(tag_names)}
-        sly.json.dump_json_file(gt_labels, os.path.join(project_dir, "gt_labels.json"))
+        sly.json.dump_json_file(gt_labels, os.path.join(g.project_dir, "gt_labels.json"))
 
         progress = get_progress_cb(
             "Validating and cleaning training data (remove images without training tags)",
@@ -29,8 +34,8 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         )
         num_images_not_tags, num_images_multiple_tags, train_set, val_set = input_project.clean_bad_images(project_dir, train_set, val_set, progress)
         verify_train_val_sets(train_set, val_set)
-        save_set_to_json(os.path.join(project_dir, "train_set.json"), train_set)
-        save_set_to_json(os.path.join(project_dir, "val_set.json"), val_set)
+        save_set_to_json(os.path.join(g.project_dir, "train_set.json"), train_set)
+        save_set_to_json(os.path.join(g.project_dir, "val_set.json"), val_set)
         sly.logger.info(f"Train set: {len(train_set)} images")
         sly.logger.info(f"Val set: {len(val_set)} images")
 
@@ -79,6 +84,7 @@ def main():
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
+#@TODO: сделать табличку tags, that will be skipped + колонка reason
 #@TODO: training data stats info
 #- total number of images
 #- every tag - train/val images
@@ -86,6 +92,7 @@ def main():
 #- number of images with several training tags (confusion, will be skipped)
 #- click to visualize images for legend
 
+#@TODO: train_val_splits - api
 #@TODO: add need_gpu in config
 #@TODO: save_set_to_json - save in imagenet format, rename clean_bad_images - add filed - tag index and save to json for our custom dataset
 #@TODO: save session link in artifacts dir
