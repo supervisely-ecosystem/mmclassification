@@ -2,6 +2,15 @@
           title="3. Train / Validation splits"
           subtitle="Define how to split your data to train/val subsets. Number of images in splits is approximate.
                     Preview final data statistics in next sections">
+    <div slot="header">
+        <el-button
+                type="primary"
+                class="regular"
+                @click="command('create_splits')">
+            Create
+        </el-button>
+    </div>
+
     <el-tabs type="border-card" class="el-tabs-cards" v-model="state.splitMethod">
         <el-tab-pane name="random">
             <el-radio slot="label" v-model="state.splitMethod" label="random">
