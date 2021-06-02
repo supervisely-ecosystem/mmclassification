@@ -9,7 +9,8 @@
                         'train' and 'val' are not shown">
         <div slot="header">
             <el-button type="primary" class="regular"
-                       @click="command('show_tags')">
+                       :loading="state.tagsInProgress"
+                       @click="state.tagsInProgress = true; command('show_tags')">
                 Show tags and stats
             </el-button>
         </div>

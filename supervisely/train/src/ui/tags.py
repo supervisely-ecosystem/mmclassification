@@ -60,7 +60,7 @@ def init(data, state):
 
     data["tagsBalance"] = None  # tags_balance
     state["selectedTags"] = []
-
+    state["tagsInProgress"] = False
     # stats = g.api.project.get_stats(g.project_id)
     # images_with_tag = {}
     # for item in stats["imageTags"]["items"]:
@@ -170,29 +170,43 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
         tag_meta: sly.TagMeta
         if tag_meta.value_type not in _allowed_tag_types:
             continue
-        total = len(segment_infos["train"]) + len(segment_infos["val"])
+
+        train_count = len(segment_infos["train"])
+        val_count = len(segment_infos["val"])
+
+        #@TODO: for debug
+        # train_count = random.randint(0, train_count)
+        # val_count = random.randint(0, val_count)
+
+        total = train_count + val_count
         tags_balance_rows.append({
             "name": tag_name,
             "total": total,
             "segments": {
-                "train": len(segment_infos["train"]),
-                "val": len(segment_infos["val"]),
+                "train": train_count,
+                "val": val_count,
             }
         })
         max_count = max(max_count, total)
     reset_progress(progress_index)
 
+    rows_sorted = sorted(tags_balance_rows, key=lambda k: k["total"], reverse=True)
     tags_balance = {
         "maxValue": max_count,
         "segments": segments,
-        "rows": tags_balance_rows
+        "rows": rows_sorted
     }
 
     subsample_urls = {tag_name: urls[:_max_examples_count] for tag_name, urls in tag2urls.items()}
 
     fields = [
-        {"field": f"data.tagsBalance", "payload": tags_balance},
-        {"field": f"data.tag2urls", "payload": subsample_urls},
-        {"field": f"data.done3", "payload": True},
+        {"field": "data.done3", "payload": True},
+        {"field": "state.tagsInProgress", "payload": False},
+    ]
+    g.api.app.set_fields(g.task_id, fields)
+
+    fields = [
+        {"field": "data.tagsBalance", "payload": tags_balance},
+        {"field": "data.tag2urls", "payload": subsample_urls},
     ]
     g.api.app.set_fields(g.task_id, fields)
