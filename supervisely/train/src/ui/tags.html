@@ -25,7 +25,10 @@
                 </sly-icon>
             </sly-field>
 
-            <sly-class-balance class="mt15" v-model="state.selectedTags" :content="data.tagsBalance">
+            <sly-class-balance class="mt15"
+                               v-model="state.selectedTags"
+                               :content="data.tagsBalance"
+                               :options="data.tagsBalanceOptions">
                 <template v-slot:collapse-row="{ row }">
                     <!--                v-if="data.tag2urls.hasOwnProperty(row.name)"-->
                     <sly-image-slider :data="data.tag2urls[row.name]"

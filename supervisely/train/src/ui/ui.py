@@ -13,6 +13,7 @@ import monitoring as monitoring
 
 @sly.timeit
 def init(data, state):
+    state["activeStep"] = 2
     input_project.init(data)
     tags.init(data, state)
     train_val_split.init(g.project_info, g.project_meta, data, state)

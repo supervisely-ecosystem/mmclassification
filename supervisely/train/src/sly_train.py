@@ -80,6 +80,7 @@ def main():
     data = {}
     state = {}
     data["taskId"] = g.task_id
+
     ui.init(data, state)  # init data for UI widgets
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
