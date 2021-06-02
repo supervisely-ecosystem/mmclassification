@@ -1,7 +1,7 @@
 import os
 import supervisely_lib as sly
 import sly_globals as g
-from tags import get_random_image
+#from tags import get_random_image
 from supervisely_lib.app.widgets import CompareGallery
 
 

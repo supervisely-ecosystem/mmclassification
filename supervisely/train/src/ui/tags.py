@@ -76,43 +76,49 @@ def init(data, state):
     data["imageSliderOptions"] = image_slider_options
 
 
-def cache_images_examples(data):
-    global tag2urls, tag2images
+# def cache_images_examples(data):
+#     global tag2urls, tag2images
+#
+#     if sly.fs.file_exists(cache_path):
+#         sly.logger.info("Cache exists, read tags and images info from cache")
+#         with shelve.open(cache_base_filename, flag='r') as s:
+#             tag2urls = s["tag2urls"]
+#             tag2images = s["tag2images"]
+#     else:
+#         temp_tag2images = g.api.project.download_images_tags(g.project_id)
+#         for tag_name, images_infos in temp_tag2images.items():
+#             #infos_dict = []
+#             urls_examples = []
+#             for info in images_infos:
+#                 #infos_dict.append(info._asdict())
+#                 if len(urls_examples) < _max_examples_count:
+#                     urls_examples.append({
+#                         "moreExamples": [info.full_storage_url],
+#                         "preview": g.api.image.preview_url(info.full_storage_url, height=_preview_height)
+#                     })
+#
+#             tag2images[tag_name] = images_infos  # infos_dict
+#             tag2urls[tag_name] = urls_examples
+#
+#         with shelve.open(cache_base_filename) as s:
+#             s["tag2urls"] = tag2urls
+#             s["tag2images"] = tag2images
+#         sly.logger.info(f"Cache for project id={g.project_id} has been successfully created")
+#
+#     data["tag2urls"] = tag2urls
+#     #data["tag2images"] = tag2images
 
-    if sly.fs.file_exists(cache_path):
-        sly.logger.info("Cache exists, read tags and images info from cache")
-        with shelve.open(cache_base_filename, flag='r') as s:
-            tag2urls = s["tag2urls"]
-            tag2images = s["tag2images"]
-    else:
-        temp_tag2images = g.api.project.download_images_tags(g.project_id)
-        for tag_name, images_infos in temp_tag2images.items():
-            #infos_dict = []
-            urls_examples = []
-            for info in images_infos:
-                #infos_dict.append(info._asdict())
-                if len(urls_examples) < _max_examples_count:
-                    urls_examples.append({
-                        "moreExamples": [info.full_storage_url],
-                        "preview": g.api.image.preview_url(info.full_storage_url, height=_preview_height)
-                    })
 
-            tag2images[tag_name] = images_infos  # infos_dict
-            tag2urls[tag_name] = urls_examples
-
-        with shelve.open(cache_base_filename) as s:
-            s["tag2urls"] = tag2urls
-            s["tag2images"] = tag2images
-        sly.logger.info(f"Cache for project id={g.project_id} has been successfully created")
-
-    data["tag2urls"] = tag2urls
-    #data["tag2images"] = tag2images
+# def get_random_image():
+#     rand_key = random.choice(list(tag2images.keys()))
+#     image_info_dict = random.choice(tag2images[rand_key])
+#     ImageInfo = namedtuple('ImageInfo', image_info_dict)
+#     info = ImageInfo(**image_info_dict)
+#     return info
 
 
-def get_random_image():
-    rand_key = random.choice(list(tag2images.keys()))
-    image_info_dict = random.choice(tag2images[rand_key])
-    ImageInfo = namedtuple('ImageInfo', image_info_dict)
-    info = ImageInfo(**image_info_dict)
-    return info
-
+@g.my_app.callback("show_tags")
+@sly.timeit
+@g.my_app.ignore_errors_and_show_dialog_window()
+def show_tags(api: sly.Api, task_id, context, state, app_logger):
+    pass
