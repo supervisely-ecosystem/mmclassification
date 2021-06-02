@@ -8,7 +8,8 @@
                 class="regular"
                 :loading="state.splitInProgress"
                 @click="command('create_splits')">
-            Create
+            <span v-if="!data.done2">Create</span>
+            <span v-if="data.done2">Recreate</span>
         </el-button>
     </div>
 
@@ -129,7 +130,7 @@
         </el-tab-pane>
     </el-tabs>
 
-    <div v-if="data.done2" class="mt15">
+    <div v-if="data.done2 && !state.splitInProgress" class="mt15">
         <div>
             <i class="zmdi zmdi-check-circle mr5" style="color: #13ce66"></i>
             <span style="color: #5a6772;">

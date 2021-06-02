@@ -84,6 +84,7 @@ def main():
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
+#@TODO: splits - remove further steps if splits regenerated
 #@TODO: сделать табличку tags, that will be skipped + колонка reason
 #@TODO: training data stats info
 #- total number of images
@@ -92,7 +93,6 @@ def main():
 #- number of images with several training tags (confusion, will be skipped)
 #- click to visualize images for legend
 
-#@TODO: train_val_splits - api
 #@TODO: add need_gpu in config
 #@TODO: save_set_to_json - save in imagenet format, rename clean_bad_images - add filed - tag index and save to json for our custom dataset
 #@TODO: save session link in artifacts dir
