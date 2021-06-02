@@ -1,11 +1,14 @@
 import os
-from collections import defaultdict
+from collections import namedtuple
+import shelve
 import supervisely_lib as sly
 import sly_globals as g
 from sly_train_progress import get_progress_cb, reset_progress, init_progress
 
 progress_index = 1
-images_infos = None # dataset_name -> image_name -> image_info
+_images_infos = None # dataset_name -> image_name -> image_info
+_cache_base_filename = os.path.join(g.my_app.data_dir, "images_info")
+_cache_path = _cache_base_filename + ".db"
 
 
 def init(data):
@@ -17,21 +20,13 @@ def init(data):
     data["done1"] = False
 
 
-def cache_images_infos():
-    global images_infos
-    images_infos = {}
-    for dataset_info in g.api.dataset.get_list(g.project_id):
-        images_infos[dataset_info.name] = {}
-        for image_info in g.api.image.get_list(dataset_info.id):
-            pass
-
-
 @g.my_app.callback("download_project")
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def download(api: sly.Api, task_id, context, state, app_logger):
     #sly.fs.mkdir(g.project_dir) # for debug
     #sly.fs.remove_dir(g.project_dir)  # for debug
+    #sly.fs.silent_remove(_cache_path)
 
     if sly.fs.dir_exists(g.project_dir):
         pass
@@ -41,7 +36,41 @@ def download(api: sly.Api, task_id, context, state, app_logger):
         sly.download_project(g.api, g.project_id, g.project_dir,
                              cache=g.my_app.cache, progress_cb=download_progress, only_image_tags=True)
         reset_progress(progress_index)
+
+    cache_images_infos()
     api.task.set_field(task_id, "data.done1", True)
+
+
+def cache_images_infos():
+    global _images_infos
+
+    if sly.fs.file_exists(_cache_path):
+        sly.logger.info("Cache exists, read images info from cache")
+        with shelve.open(_cache_base_filename, flag='r') as s:
+            _images_infos = s["images_infos"]
+    else:
+        progress = get_progress_cb(progress_index, "Cache project info", g.project_info.items_count)
+        _images_infos = {}
+        for dataset_info in g.api.dataset.get_list(g.project_id):
+            name_to_info = {}
+            for info in g.api.image.get_list(dataset_info.id):
+                name_to_info[info.name] = info._asdict()
+                progress(1)
+            _images_infos[dataset_info.name] = name_to_info
+        reset_progress(progress_index)
+
+        with shelve.open(_cache_base_filename) as s:
+            s["images_infos"] = _images_infos
+        sly.logger.info(f"images infos for project id={g.project_id} has been successfully cached")
+
+
+def get_image_info_from_cache(dataset_name, item_name):
+    image_info_dict = _images_infos[dataset_name][item_name]
+    ImageInfo = namedtuple('ImageInfo', image_info_dict)
+    info = ImageInfo(**image_info_dict)
+    return info
+
+
 
 # def clean_sets_and_calc_stats(project_dir, train_set, val_set, progress_cb):
 #     project = sly.Project(project_dir, sly.OpenMode.READ)
