@@ -32,9 +32,13 @@
                 </template>
             </sly-class-balance>
         </div>
-        <div v-if="!data.tagsBalance">
+        <div v-if="!data.tagsBalance && !data.progress3">
             <i class="zmdi zmdi-help" style="color: orange"></i> Press button to list tags and their train/val
             statistics
+        </div>
+        <div v-if="data.progress3" class="mt10">
+            <div style="color: #20a0ff">{{data.progress3}}: {{data.progressCurrent3}} / {{data.progressTotal3}}</div>
+            <el-progress :percentage="data.progressPercent3"></el-progress>
         </div>
 
         <!--        <sly-field title="Tags balance"-->

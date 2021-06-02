@@ -7,11 +7,13 @@ import supervisely_lib as sly
 import random
 import splits
 import sly_globals as g
+from sly_train_progress import get_progress_cb, reset_progress, init_progress
 
 tag2images = None
 tag2urls = None
 images_without_tags = []
 
+progress_index = 3
 _preview_height = 120
 _max_examples_count = 10
 
@@ -74,6 +76,7 @@ def init(data, state):
     # data["tags"] = tags_json
     # cache_images_examples(data)
     data["imageSliderOptions"] = image_slider_options
+    init_progress(progress_index, data)
 
 
 # def cache_images_examples(data):
@@ -117,7 +120,7 @@ def init(data, state):
 #     return info
 
 
-def init_cache(split_items, split_name):
+def init_cache(split_items, split_name, progress_cb):
     global tag2images, tag2urls
     tag2images = defaultdict(lambda: defaultdict(list))
     tag2urls = defaultdict(list)
@@ -138,14 +141,16 @@ def init_cache(split_items, split_name):
                     "moreExamples": [img_info.full_storage_url],
                     "preview": g.api.image.preview_url(img_info.full_storage_url, height=_preview_height)
                 })
+        progress_cb(1)
 
 
 @g.my_app.callback("show_tags")
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def show_tags(api: sly.Api, task_id, context, state, app_logger):
-    init_cache(splits.train_set, "train")
-    init_cache(splits.val_set, "val")
+    progress = get_progress_cb(progress_index, "Calculating stats", g.project_info.items_count)
+    init_cache(splits.train_set, "train", progress)
+    init_cache(splits.val_set, "val", progress)
 
     segments = [
         {"name": "train", "key": "train", "color": "#13ce66"},
