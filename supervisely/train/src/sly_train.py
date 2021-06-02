@@ -85,9 +85,8 @@ def main():
     g.my_app.run(data=data, state=state)
 
 #@TODO: warn - there are images without tags ...
-#@TODO: splits - remove further steps if splits regenerated
+#@TODO: small demo data - generate synth
 #@TODO: сделать табличку tags, that will be skipped + колонка reason
-#@TODO: training data stats info
 #- total number of images
 #- every tag - train/val images
 #- number of images without training tag (will be skipped)
