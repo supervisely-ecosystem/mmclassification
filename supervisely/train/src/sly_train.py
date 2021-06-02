@@ -7,7 +7,7 @@ import ui as ui
 import architectures
 from sly_train_progress import get_progress_cb
 from sly_train_args import init_script_arguments
-from splits import get_train_val_sets, verify_train_val_sets, save_set_to_json
+from splits import get_train_val_sets, verify_train_val_sets#, save_set_to_json
 import train_config
 
 

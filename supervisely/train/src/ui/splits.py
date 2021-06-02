@@ -43,6 +43,10 @@ def init(project_info, project_meta: sly.ProjectMeta, data, state):
     state["trainDatasets"] = []
     state["valDatasets"] = []
     state["untaggedImages"] = "train"
+    state["splitInProgress"] = False
+    data["trainImagesCount"] = None
+    data["valImagesCount"] = None
+    data["done2"] = False
 
 
 def get_train_val_sets(project_dir, state):
@@ -88,16 +92,29 @@ def verify_train_val_sets(train_set, val_set):
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def create_splits(api: sly.Api, task_id, context, state, app_logger):
+    step_done = False
     global train_set, val_set
     try:
+        api.task.set_field(task_id, "state.splitInProgress", True)
         train_set, val_set = get_train_val_sets(g.project_dir, state)
         sly.logger.info(f"Train set: {len(train_set)} images")
         sly.logger.info(f"Val set: {len(val_set)} images")
         verify_train_val_sets(train_set, val_set)
+        step_done = True
     except Exception as e:
         train_set = None
         val_set = None
+        step_done = False
         raise e
+    finally:
+        api.task.set_field(task_id, "state.splitInProgress", False)
+        fields = [
+            {"field": "state.splitInProgress", "payload": False},
+            {"field": f"data.done2", "payload": step_done},
+            {"field": f"data.trainImagesCount", "payload": None if train_set is None else len(train_set)},
+            {"field": f"data.valImagesCount", "payload": None if val_set is None else len(val_set)},
+        ]
+        g.api.app.set_fields(g.task_id, fields)
 
     #save_set_to_json(os.path.join(g.project_dir, "train_set.json"), train_set)
     #save_set_to_json(os.path.join(g.project_dir, "val_set.json"), val_set)
