@@ -7,12 +7,12 @@ from supervisely_lib.app.widgets import CompareGallery
 
 _templates = [
     {
-        "config": "supervisely/train/augs/mmclass-light.json",
-        "name": "Light (color + rotate)",
+        "config": "supervisely/train/augs/mmclass-lite.json",
+        "name": "Lite (color + rotate)",
     },
     {
-        "config": "supervisely/train/augs/mmclass-light-with-fliplr.json",
-        "name": "Light + fliplr",
+        "config": "supervisely/train/augs/mmclass-lite-with-fliplr.json",
+        "name": "Lite + fliplr",
     },
     {
         "config": "supervisely/train/augs/mmclass-heavy-no-fliplr.json",

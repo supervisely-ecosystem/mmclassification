@@ -1,82 +1,42 @@
-<div>
-    <!--    :title="`2. Target tags (total ${data.tags.length}, selected ${state.selectedTags.length})`"-->
-    <!--    subtitle="Select image tags, that should be used for training. Training supports only tags of type NONE (without values)-->
-    <!--                        and tags that have at least one image example, other tags are not shown in table.-->
-    <!--                        train / val tags are also skipped and will be used later"-->
-    <sly-card class="mt15"
-              title="Step 3. Select target tags for training"
-              subtitle="Training supports only tags of type NONE (without values). Tags assigned to 0 images and tags with name
-                        'train' and 'val' are not shown">
-        <div slot="header">
-            <el-button type="primary" class="regular"
-                       :loading="state.tagsInProgress"
-                       @click="state.tagsInProgress = true; command('show_tags')">
-                Show tags and stats
-            </el-button>
-        </div>
+<sly-card class="mt15"
+          title="Step 3. Select target tags for training"
+          subtitle="Training supports only tags of type NONE (without values). Tags assigned to 0 images and tags with name
+                    'train' and 'val' are not shown and will be skipped automatically">
+    <div slot="header">
+        <el-button type="primary" class="regular"
+                   :loading="state.tagsInProgress"
+                   @click="state.tagsInProgress = true; command('show_tags')">
+            Show tags and stats
+        </el-button>
+    </div>
 
-        <div v-if="data.tagsBalance">
-            <sly-field title="Notice: How to train classifier on key-value tags"
-                       description="There is the app 'Unpack key-value tags' in Ecosystem. Use it to transform type of the
-                   tags before using this app"
-            >
-                <sly-icon slot="icon" :options="{ color: '#fba607', bgColor: '#ffe9da', rounded: false }">
-                    <i class="zmdi zmdi-help"></i>
-                </sly-icon>
-            </sly-field>
+    <div v-if="data.tagsBalance">
+        <sly-field title="Notice: How to train classifier on key-value tags"
+                   description="There is the app 'Unpack key-value tags' in Ecosystem. Use it to transform type of the
+               tags before using this app"
+        >
+            <sly-icon slot="icon" :options="{ color: '#fba607', bgColor: '#ffe9da', rounded: false }">
+                <i class="zmdi zmdi-help"></i>
+            </sly-icon>
+        </sly-field>
 
-            <sly-class-balance class="mt15"
-                               v-model="state.selectedTags"
-                               :content="data.tagsBalance"
-                               :options="data.tagsBalanceOptions">
-                <template v-slot:collapse-row="{ row }">
-                    <!--                v-if="data.tag2urls.hasOwnProperty(row.name)"-->
-                    <sly-image-slider :data="data.tag2urls[row.name]"
-                                      :options="data.imageSliderOptions"></sly-image-slider>
-                </template>
-            </sly-class-balance>
-        </div>
-        <div v-if="!data.tagsBalance && !data.progress3 && !data.done3">
-            <i class="zmdi zmdi-help" style="color: orange"></i> Press button to list tags and their train/val
-            statistics
-        </div>
-        <div v-if="data.progress3" class="mt10">
-            <div style="color: #20a0ff">{{data.progress3}}: {{data.progressCurrent3}} / {{data.progressTotal3}}</div>
-            <el-progress :percentage="data.progressPercent3"></el-progress>
-        </div>
-
-        <!--        <sly-field title="Tags balance"-->
-        <!--                   description="Whether to force the last checkpoint to be saved regardless of interval">-->
-        <!--        </sly-field>-->
-
-
-        <!--        <el-table-->
-        <!--                class="ultra-table"-->
-        <!--                :data="data.tags"-->
-        <!--                style="width: 100%"-->
-        <!--                max-height="570"-->
-        <!--                @selection-change="-->
-        <!--                (val) => {-->
-        <!--                    state.selectedTags = val.map(x => x.name);-->
-        <!--                }-->
-        <!--                "-->
-        <!--        >-->
-        <!--            <el-table-column type="selection" width="55"></el-table-column>-->
-        <!--            <el-table-column label="Name" prop="name" sortable>-->
-        <!--                <template scope="scope">-->
-        <!--                    <div>-->
-        <!--                        <i class="zmdi zmdi-label mr5" :style="{color: scope.row.color}"></i>-->
-        <!--                        {{ scope.row.name }}-->
-        <!--                    </div>-->
-        <!--                    <sly-image-slider-->
-        <!--                            v-if="data.tag2urls.hasOwnProperty(scope.row.name)"-->
-        <!--                            :data="data.tag2urls[scope.row.name]"-->
-        <!--                            :options="data.imageSliderOptions">-->
-        <!--                    </sly-image-slider>-->
-        <!--                </template>-->
-        <!--            </el-table-column>-->
-        <!--            &lt;!&ndash;            <el-table-column prop="valueType" label="type" sortable width="180"></el-table-column>&ndash;&gt;-->
-        <!--            <el-table-column prop="imagesCount" label="Images count" sortable width="150"></el-table-column>-->
-        <!--        </el-table>-->
-    </sly-card>
-</div>
+        <sly-class-balance class="mt15"
+                           v-model="state.selectedTags"
+                           :content="data.tagsBalance"
+                           :options="data.tagsBalanceOptions">
+            <template v-slot:collapse-row="{ row }">
+                <!--                v-if="data.tag2urls.hasOwnProperty(row.name)"-->
+                <sly-image-slider :data="data.tag2urls[row.name]"
+                                  :options="data.imageSliderOptions"></sly-image-slider>
+            </template>
+        </sly-class-balance>
+    </div>
+    <div v-if="!data.tagsBalance && !data.progress3 && !data.done3">
+        <i class="zmdi zmdi-help" style="color: orange"></i> Press button to list tags and their train/val
+        statistics
+    </div>
+    <div v-if="data.progress3" class="mt10">
+        <div style="color: #20a0ff">{{data.progress3}}: {{data.progressCurrent3}} / {{data.progressTotal3}}</div>
+        <el-progress :percentage="data.progressPercent3"></el-progress>
+    </div>
+</sly-card>
