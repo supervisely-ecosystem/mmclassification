@@ -1,15 +1,16 @@
 import os
 from collections import defaultdict, namedtuple
 import shelve
+
+import input_project
 import supervisely_lib as sly
 import random
-
+import splits
 import sly_globals as g
 
-
-tag2images = defaultdict(list)
-#all_images = []
-tag2urls = defaultdict(list)
+tag2images = None
+tag2urls = None
+images_without_tags = []
 
 _preview_height = 120
 _max_examples_count = 10
@@ -17,13 +18,12 @@ _max_examples_count = 10
 _ignore_tags = ["train", "val"]
 _allowed_tag_types = [sly.TagValueType.NONE]
 
-
 image_slider_options = {
     "selectable": False,
     "height": f"{_preview_height}px"
 }
 
-#speedup during debug (has no effects in production)
+# speedup during debug (has no effects in production)
 cache_base_filename = os.path.join(g.my_app.data_dir, f"{g.project_id}")
 cache_path = cache_base_filename + ".db"
 
@@ -56,7 +56,7 @@ def init(data, state):
     #     "rows": tags_balance_rows
     # }
 
-    data["tagsBalance"] = None # tags_balance
+    data["tagsBalance"] = None  # tags_balance
     state["selectedTags"] = []
 
     # stats = g.api.project.get_stats(g.project_id)
@@ -117,8 +117,70 @@ def init(data, state):
 #     return info
 
 
+def init_cache(split_items, split_name):
+    global tag2images, tag2urls
+    tag2images = defaultdict(lambda: defaultdict(list))
+    tag2urls = defaultdict(list)
+
+    for item in split_items:
+        name = item.name
+        dataset_name = item.dataset_name
+        ann_path = item.ann_path
+        img_info = input_project.get_image_info_from_cache(dataset_name, name)
+
+        ann = sly.Annotation.load_json_file(ann_path, g.project_meta)
+        if len(ann.img_tags) == 0:
+            images_without_tags.append(img_info)
+        else:
+            for tag in ann.img_tags:
+                tag2images[tag.name][split_name].append(img_info)
+                tag2urls[tag.name].append({
+                    "moreExamples": [img_info.full_storage_url],
+                    "preview": g.api.image.preview_url(img_info.full_storage_url, height=_preview_height)
+                })
+
+
 @g.my_app.callback("show_tags")
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def show_tags(api: sly.Api, task_id, context, state, app_logger):
-    pass
+    init_cache(splits.train_set, "train")
+    init_cache(splits.val_set, "val")
+
+    segments = [
+        {"name": "train", "key": "train", "color": "#13ce66"},
+        {"name": "val", "key": "val", "color": "#20a0ff"},
+    ]
+
+    max_count = -1
+    tags_balance_rows = []
+    # tags with 0 images will be ignored automatically
+    for tag_name, segment_infos in tag2images.items():
+        if tag_name.lower() in _ignore_tags:
+            continue
+        tag_meta = g.project_meta.get_tag_meta(tag_name)
+        tag_meta: sly.TagMeta
+        if tag_meta.value_type not in _allowed_tag_types:
+            continue
+        total = len(segment_infos["train"]) + len(segment_infos["val"])
+        tags_balance_rows.append({
+            "name": tag_name,
+            "total": total,
+            "segments": {
+                "train": len(segment_infos["train"]),
+                "val": len(segment_infos["val"]),
+            }
+        })
+        max_count = max(max_count, total)
+
+    tags_balance = {
+        "maxValue": max_count,
+        "segments": segments,
+        "rows": tags_balance_rows
+    }
+
+    fields = [
+        {"field": f"data.tagsBalance", "payload": tags_balance},
+        {"field": f"data.tag2urls", "payload": tag2urls},
+    ]
+    g.api.app.set_fields(g.task_id, fields)

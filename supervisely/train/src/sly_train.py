@@ -84,6 +84,8 @@ def main():
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
+#@TODO: warn - there are images without tags ...
+
 #@TODO: splits - remove further steps if splits regenerated
 #@TODO: сделать табличку tags, that will be skipped + колонка reason
 #@TODO: training data stats info
