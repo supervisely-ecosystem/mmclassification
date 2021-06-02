@@ -30,17 +30,18 @@ def cache_images_infos():
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def download(api: sly.Api, task_id, context, state, app_logger):
-    sly.fs.mkdir(g.project_dir)
-    sly.fs.remove_dir(g.project_dir)  # for debug
+    #sly.fs.mkdir(g.project_dir) # for debug
+    #sly.fs.remove_dir(g.project_dir)  # for debug
 
     if sly.fs.dir_exists(g.project_dir):
         pass
     else:
         sly.fs.mkdir(g.project_dir)
-        download_progress = get_progress_cb(progress_index, "Download data (using cache)", g.project_info.items_count * 2)
+        download_progress = get_progress_cb(progress_index, "Download project", g.project_info.items_count * 2)
         sly.download_project(g.api, g.project_id, g.project_dir,
                              cache=g.my_app.cache, progress_cb=download_progress, only_image_tags=True)
         reset_progress(progress_index)
+    api.task.set_field(task_id, "data.done1", True)
 
 # def clean_sets_and_calc_stats(project_dir, train_set, val_set, progress_cb):
 #     project = sly.Project(project_dir, sly.OpenMode.READ)
