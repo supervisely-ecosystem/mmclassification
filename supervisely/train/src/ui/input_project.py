@@ -11,13 +11,14 @@ _cache_base_filename = os.path.join(g.my_app.data_dir, "images_info")
 _cache_path = _cache_base_filename + ".db"
 
 
-def init(data):
+def init(data, state):
     data["projectId"] = g.project_info.id
     data["projectName"] = g.project_info.name
     data["projectImagesCount"] = g.project_info.items_count
     data["projectPreviewUrl"] = g.api.image.preview_url(g.project_info.reference_image_url, 100, 100)
     init_progress(progress_index, data)
     data["done1"] = False
+    state["collapsed1"] = False
 
 
 @g.my_app.callback("download_project")
@@ -40,7 +41,14 @@ def download(api: sly.Api, task_id, context, state, app_logger):
         reset_progress(progress_index)
 
     cache_images_infos()
-    api.task.set_field(task_id, "data.done1", True)
+
+    fields = [
+        {"field": "data.done1", "payload": True},
+        {"field": "state.collapsed2", "payload": False},
+        {"field": "state.disabled2", "payload": False},
+        {"field": "state.activeStep", "payload": 2},
+    ]
+    g.api.app.set_fields(g.task_id, fields)
 
 
 def cache_images_infos():

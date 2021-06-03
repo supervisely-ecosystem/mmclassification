@@ -47,6 +47,8 @@ def init(project_info, project_meta: sly.ProjectMeta, data, state):
     data["trainImagesCount"] = None
     data["valImagesCount"] = None
     data["done2"] = False
+    state["collapsed2"] = True
+    state["disabled2"] = True
 
 
 def get_train_val_sets(project_dir, state):
@@ -60,7 +62,8 @@ def get_train_val_sets(project_dir, state):
         train_tag_name = state["trainTagName"]
         val_tag_name = state["valTagName"]
         add_untagged_to = state["untaggedImages"]
-        train_set, val_set = sly.Project.get_train_val_splits_by_tag(project_dir, train_tag_name, val_tag_name, add_untagged_to)
+        train_set, val_set = sly.Project.get_train_val_splits_by_tag(project_dir, train_tag_name, val_tag_name,
+                                                                     add_untagged_to)
         return train_set, val_set
     elif split_method == "datasets":
         train_datasets = state["trainDatasets"]
@@ -114,7 +117,13 @@ def create_splits(api: sly.Api, task_id, context, state, app_logger):
             {"field": f"data.trainImagesCount", "payload": None if train_set is None else len(train_set)},
             {"field": f"data.valImagesCount", "payload": None if val_set is None else len(val_set)},
         ]
+        if step_done is True:
+            fields.extend([
+                {"field": "state.collapsed3", "payload": False},
+                {"field": "state.disabled3", "payload": False},
+                {"field": "state.activeStep", "payload": 3},
+            ])
         g.api.app.set_fields(g.task_id, fields)
 
-    #save_set_to_json(os.path.join(g.project_dir, "train_set.json"), train_set)
-    #save_set_to_json(os.path.join(g.project_dir, "val_set.json"), val_set)
+    # save_set_to_json(os.path.join(g.project_dir, "train_set.json"), train_set)
+    # save_set_to_json(os.path.join(g.project_dir, "val_set.json"), val_set)

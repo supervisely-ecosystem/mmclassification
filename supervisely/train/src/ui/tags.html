@@ -1,6 +1,9 @@
 <sly-card title="Training tags"
           subtitle="Training supports only tags of type NONE (without values). Tags assigned to 0 images and tags with name
-                    'train' and 'val' are not shown and will be skipped automatically">
+                    'train' and 'val' are not shown and will be skipped automatically"
+          :options="{collapsable: true}"
+          :collapsed.sync="state.collapsed3"
+          :disabled="{disabled: state.disabled3, message: 'Generate train/val splits before preview training tags'}">
 <!--    <div slot="header">-->
 <!--    </div>-->
     <el-button type="primary" class="regular"

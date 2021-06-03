@@ -45,6 +45,8 @@ def init(data, state):
     data["imageSliderOptions"] = image_slider_options
     data["done3"] = False
     data["skippedTags"] = []
+    state["collapsed3"] = True
+    state["disabled3"] = True
     init_progress(progress_index, data)
 
 
