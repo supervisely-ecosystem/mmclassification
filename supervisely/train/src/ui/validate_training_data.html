@@ -1,13 +1,11 @@
-<sly-card class="mt15"
-          title="Step 4. Training data overview and validation"
-          subtitle="Final data will be validated and key moments will be described in overview report">
-    <div slot="header">
-        <el-button type="primary" class="regular"
-                   :loading="state.validateInProgress"
-                   @click="state.validateInProgress = true; command('validate_data')">
-            Validate
-        </el-button>
-    </div>
+<sly-card title="Data validation"
+          subtitle="Show data overview and automatically highlight possible issues in training data">
+<!--    :loading="state.validateInProgress"-->
+<!--    @click="state.validateInProgress = true; command('validate_data')"-->
+    <el-button type="primary" class="regular"
+               @click="command('validate_data')">
+        Validate
+    </el-button>
 
     <div>
         <div>

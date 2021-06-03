@@ -12,6 +12,7 @@ from sly_train_progress import get_progress_cb, reset_progress, init_progress
 tag2images = None
 tag2urls = None
 images_without_tags = []
+disabled_tags = []
 
 progress_index = 3
 _preview_height = 120
@@ -56,7 +57,7 @@ def init(data, state):
 
 
 def init_cache(split_items, split_name, progress_cb):
-    global tag2images, tag2urls
+    global tag2images, tag2urls, images_without_tags
     for item in split_items:
         name = item.name
         dataset_name = item.dataset_name
@@ -80,7 +81,8 @@ def init_cache(split_items, split_name, progress_cb):
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def show_tags(api: sly.Api, task_id, context, state, app_logger):
-    global tag2images, tag2urls
+    global tag2images, tag2urls, disabled_tags
+
     tag2images = defaultdict(lambda: defaultdict(list))
     tag2urls = defaultdict(list)
 
@@ -129,8 +131,11 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
         val_count = len(segment_infos["val"])
 
         # @TODO: for debug
-        train_count = random.randint(0, train_count)
-        val_count = random.randint(0, val_count)
+        # @TODO: for debug
+        # @TODO: for debug
+        if tag_name != "my-tag-123":
+            train_count = random.randint(0, train_count)
+            val_count = random.randint(0, val_count)
 
         disabled = False
         if train_count == 0:
