@@ -11,15 +11,6 @@
     </div>
 
     <div v-if="data.tagsBalance">
-        <sly-field title="Notice: How to train classifier on key-value tags"
-                   description="There is the app 'Unpack key-value tags' in Ecosystem. Use it to transform type of the
-               tags before using this app"
-        >
-            <sly-icon slot="icon" :options="{ color: '#fba607', bgColor: '#ffe9da', rounded: false }">
-                <i class="zmdi zmdi-help"></i>
-            </sly-icon>
-        </sly-field>
-
         <sly-class-balance class="mt15"
                            v-model="state.selectedTags"
                            :content="data.tagsBalance"
@@ -38,5 +29,24 @@
     <div v-if="data.progress3" class="mt10">
         <div style="color: #20a0ff">{{data.progress3}}: {{data.progressCurrent3}} / {{data.progressTotal3}}</div>
         <el-progress :percentage="data.progressPercent3"></el-progress>
+    </div>
+    <div v-if="data.skippedTags.length > 0">
+        <hr style="border: 0; border-top: 1px solid rgba(0,0,0,.12); margin-bottom: 15px;"/>
+        <sly-field title="These tags can not be used for training"
+                   description="Learn more in app readme"
+        >
+            <div class="mt5" v-for="(item, index) in data.skippedTags">
+                <i class="zmdi zmdi-label mr5" :style="{color:item.color}"></i> {{item.name}} -
+                <span style="color: #5a6772;">{{item.reason}}</span>
+            </div>
+        </sly-field>
+        <sly-field title="Notice: How to train classifier on key-value tags"
+                   description="There is the app 'Unpack key-value tags' in Ecosystem. Use it to transform type of the
+               tags before using this app"
+        >
+            <sly-icon slot="icon" :options="{ color: '#fba607', bgColor: '#ffe9da', rounded: false }">
+                <i class="zmdi zmdi-help"></i>
+            </sly-icon>
+        </sly-field>
     </div>
 </sly-card>

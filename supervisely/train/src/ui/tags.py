@@ -43,6 +43,7 @@ def init(data, state):
     }
     data["imageSliderOptions"] = image_slider_options
     data["done3"] = False
+    data["skippedTags"] = []
     init_progress(progress_index, data)
 
 
@@ -92,16 +93,37 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
         {"name": "val", "key": "val", "color": "#ffa500"},
     ]
 
+    disabled_tags = []
+    _working_tags = set(tag2images.keys())
+    for tag_meta in g.project_meta.tag_metas:
+        if tag_meta.name not in _working_tags:
+            # tags with 0 images will be ignored automatically
+            disabled_tags.append({
+                "name": tag_meta.name,
+                "color": sly.color.rgb2hex(tag_meta.color),
+                "reason": "0 images with this tag"
+            })
+
     max_count = -1
     tags_balance_rows = []
-    # tags with 0 images will be ignored automatically
     for tag_name, segment_infos in tag2images.items():
-        if tag_name.lower() in _ignore_tags:
-            continue
         tag_meta = g.project_meta.get_tag_meta(tag_name)
         tag_meta: sly.TagMeta
-        if tag_meta.value_type not in _allowed_tag_types:
+
+        if tag_name.lower() in _ignore_tags:
+            disabled_tags.append({
+                "name": tag_name,
+                "color": sly.color.rgb2hex(tag_meta.color),
+                "reason": "name is reserved"
+            })
             continue
+
+        if tag_meta.value_type not in _allowed_tag_types:
+            disabled_tags.append({
+                "name": tag_name,
+                "color": sly.color.rgb2hex(tag_meta.color),
+                "reason": "unsupported type, app supports only tags of type None (without value)"
+            })
 
         train_count = len(segment_infos["train"])
         val_count = len(segment_infos["val"])
@@ -110,10 +132,20 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
         train_count = random.randint(0, train_count)
         val_count = random.randint(0, val_count)
 
+        disabled = False
+        if train_count == 0:
+            disabled = True
+            disabled_tags.append({
+                "name": tag_name,
+                "color": sly.color.rgb2hex(tag_meta.color),
+                "reason": "0 examples in train set, regenerate train/val splits"
+            })
+
         total = train_count + val_count
         tags_balance_rows.append({
             "name": tag_name,
             "total": total,
+            "disabled": disabled,
             "segments": {
                 "train": train_count,
                 "val": val_count,
@@ -134,6 +166,7 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
     fields = [
         {"field": "data.done3", "payload": True},
         {"field": "state.tagsInProgress", "payload": False},
+        {"field": "data.skippedTags", "payload": disabled_tags}
     ]
     g.api.app.set_fields(g.task_id, fields)
 
