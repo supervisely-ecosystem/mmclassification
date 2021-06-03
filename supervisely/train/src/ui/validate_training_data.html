@@ -1,5 +1,8 @@
 <sly-card title="Data validation"
-          subtitle="Show data overview and automatically highlight possible issues in training data">
+          subtitle="Show data overview and automatically highlight possible issues in training data"
+          :options="{collapsable: true}"
+          :collapsed.sync="state.collapsed4"
+          :disabled="{disabled: state.disabled4, message: 'Select training tags at step2 before validate final training data'}">
 <!--    :loading="state.validateInProgress"-->
 <!--    @click="state.validateInProgress = true; command('validate_data')"-->
     <el-button type="primary" class="regular"
