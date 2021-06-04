@@ -125,7 +125,7 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
             disabled_tags.append({
                 "name": tag_name,
                 "color": sly.color.rgb2hex(tag_meta.color),
-                "reason": "unsupported type, app supports only tags of type None (without value)"
+                "reason": "unsupported type, app supports only tags of type None (without value). Use app 'Unpack key-value tags' from Ecosystem to transform key-value tags to None tags"
             })
             continue
 
