@@ -4,7 +4,7 @@ import sly_globals as g
 import splits
 import tags
 
-
+report = []
 final_tags = []
 final_tags2images = defaultdict(lambda: defaultdict(list))
 
@@ -12,18 +12,18 @@ final_tags2images = defaultdict(lambda: defaultdict(list))
 def init(data, state):
     state["collapsed4"] = True
     state["disabled4"] = True
+    data["validationReport"] = None
 
 
 @g.my_app.callback("validate_data")
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def validate_data(api: sly.Api, task_id, context, state, app_logger):
-    report = []
-
     report.append({
         "type": "info",
         "title": "Total tags in project",
         "count": len(g.project_meta.tag_metas),
+        "description": None
     })
 
     report.append({
@@ -37,7 +37,8 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
     report.append({
         "title": "Selected tags for training",
         "count": len(selected_tags),
-        "type": "pass",  # or info?
+        "type": "info",
+        "description": None
     })
 
     report.append({
@@ -60,7 +61,7 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
     report.append({
         "title": "Images with training tags",
         "count": num_images_before_validation,
-        "type": "error" if len(num_images_before_validation) == 0 else "pass",
+        "type": "error" if num_images_before_validation == 0 else "pass",
         "description": "Images that have one of the selected tags assigned (before validation)"
     })
 
@@ -146,54 +147,9 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         else:
             final_tags.append(tag_name)
 
-
-    #
-    #     {
-    #         "type": "info",
-    #         "name": "total images",
-    #         "count": 8886263,
-    #     },
-    #     {
-    #         "type": "info",
-    #         "count": 245,
-    #         "name": "total tags",
-    #     },
-    #     {
-    #         "type": "accept",
-    #         "count": 245,
-    #         "name": "training tags",
-    #         "description": "number of selected tags for training"
-    #     },
-    #     {
-    #         "type": "warning",
-    #         "count": 0,
-    #         "name": "unavailable tags",
-    #         "description": "tags that can not be used in training",
-    #     },
-    #     {
-    #         "type": "warning",
-    #         "count": 0,
-    #         "name": "unavailable tags",
-    #         "description": "tags that can not be used in training",
-    #     }
-    # ]
-
-
-    total_images = g.project_info.items_count
-
-    final_train_set_size = len(splits.train_set)
-    final_val_set_size = len(splits.val_set)
-    train_val_intersection = 0
-    images_not_in_train_val_splits = 0
-
-    tags_in_project = len(g.project_meta.tag_metas)
-    training_tags = len(state["selectedTags"])
-
-    tags_without_training_samples = 0
-    tags_without_validation_samples = 0
-
-    images_without_target_tags = 0
-    images_with_collisions = 0
-
+    fields = [
+        {"field": "data.validationReport", "payload": report},
+    ]
+    g.api.app.set_fields(g.task_id, fields)
 
 
