@@ -10,9 +10,12 @@ final_tags2images = defaultdict(lambda: defaultdict(list))
 
 
 def init(data, state):
+    data["done4"] = False
     state["collapsed4"] = True
     state["disabled4"] = True
     data["validationReport"] = None
+    data["cntErrors"] = 0
+    data["cntWarnings"] = 0
 
 
 @g.my_app.callback("validate_data")
@@ -139,12 +142,33 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
                        f"have 0 examples in train set and will be skipped automatically"
     })
 
+    cnt_errors = 0
+    cnt_warnings = 0
+    for item in report:
+        if item["type"] == "error":
+            cnt_errors += 1
+        if item["type"] == "warning":
+            cnt_warnings += 1
+
+    complete_color = "#13ce66"
+    complete_message = "Validation has been successfully completed"
+    if cnt_errors > 0:
+        complete_color = "red"
+        complete_message = "Validation has been failed, can not automatically resolve errors"
+    elif cnt_warnings > 0:
+        complete_color = "orange"
+        complete_message = "Validation has been successfully completed, all warnings will be resolved automatically"
+
     fields = [
-        {"field": "data.validationReport", "payload": report},
-        {"field": "state.collapsed5", "payload": False},
-        {"field": "state.disabled5", "payload": False},
-        {"field": "state.activeStep", "payload": 5},
+        {"field": "data.report", "payload": report},
+        {"field": "data.done4", "payload": True},
+        {"field": "data.cntErrors", "payload": cnt_errors},
+        {"field": "data.cntWarnings", "payload": cnt_warnings},
     ]
+    if cnt_errors == 0:
+        fields.extend([
+            {"field": "state.collapsed5", "payload": False},
+            {"field": "state.disabled5", "payload": False},
+            {"field": "state.activeStep", "payload": 5},
+        ])
     g.api.app.set_fields(g.task_id, fields)
-
-

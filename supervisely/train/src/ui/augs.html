@@ -3,7 +3,7 @@
               subtitle="Choose one of the prepared templates or provide custom pipeline"
               :options="{collapsable: true}"
               :collapsed.sync="state.collapsed5"
-              :disabled="{disabled: state.disabled5, message: 'Validate data at step 4 before configure augmentation'}">
+              :disabled="{disabled: state.disabled5, message: 'Validate data at step 4 before configure augmentations'}">
         <el-tabs type="border-card" class="el-tabs-cards" v-model="state.augsType">
             <el-tab-pane name="template">
                 <el-radio slot="label" v-model="state.augsType" label="template">
@@ -26,6 +26,18 @@
                                     :options="data.pyViewOptions">
                         </sly-editor>
                     </sly-copy-to-clipboard>
+                </sly-field>
+                <sly-field title="Preview augmentation pipeline on random image">
+                    <sly-grid-gallery
+                            v-if="data.gallery && state.augsType == 'template'"
+                            :content="data.gallery.content"
+                            :options="data.gallery.options">
+                        <template v-slot:card-footer="{ annotation }">
+                            <div class="mt5" style="text-align: center">
+                                <el-tag type="primary">{{annotation.title}}</el-tag>
+                            </div>
+                        </template>
+                    </sly-grid-gallery>
                 </sly-field>
             </el-tab-pane>
             <el-tab-pane name="custom">
@@ -57,40 +69,40 @@
         </el-tabs>
     </sly-card>
 
-<!--    <sly-card class="mt15"-->
-<!--              title="5. Preview augmentations on random image"-->
-<!--              subtitle="Press preview button to apply augmentations to random image">-->
-<!--        <div slot="header">-->
-<!--            <el-button type="primary" class="regular"-->
-<!--                       @click="command('preview_augs')"-->
-<!--                       :disabled="(state.augsType === 'custom' && state.customAugsPath.length === 0) ||-->
-<!--                                  (state.augsType === 'custom' && !data.customAugsPy)"-->
-<!--            >-->
-<!--                Preview-->
-<!--            </el-button>-->
-<!--        </div>-->
-<!--        <div v-if="!data.gallery">-->
-<!--            <i class="zmdi zmdi-help" style="color: orange"></i> Press preview button to apply augmentations to random-->
-<!--            image-->
-<!--        </div>-->
-<!--        <div v-show="state.augsType === 'custom' && state.customAugsPath.length === 0" class="mt10" style="color: red">-->
-<!--            Please define the path in Team Files to augs config-->
-<!--        </div>-->
-<!--        <div v-show="state.selectedTags.length === 0" class="mt10" style="color: red">-->
-<!--            Please select training tags at step #2-->
-<!--        </div>-->
-<!--        <div v-show="state.augsType === 'custom' && !data.customAugsPy" class="mt10" style="color: red">-->
-<!--            Please press 'Load' button to preview custom augs configuration-->
-<!--        </div>-->
-<!--        <sly-grid-gallery-->
-<!--                v-if="data.gallery"-->
-<!--                :content="data.gallery.content"-->
-<!--                :options="data.gallery.options">-->
-<!--            <template v-slot:card-footer="{ annotation }">-->
-<!--                <div class="mt5" style="text-align: center">-->
-<!--                    <el-tag type="primary">{{annotation.title}}</el-tag>-->
-<!--                </div>-->
-<!--            </template>-->
-<!--        </sly-grid-gallery>-->
-<!--    </sly-card>-->
+    <!--    <sly-card class="mt15"-->
+    <!--              title="5. Preview augmentations on random image"-->
+    <!--              subtitle="Press preview button to apply augmentations to random image">-->
+    <!--        <div slot="header">-->
+    <!--            <el-button type="primary" class="regular"-->
+    <!--                       @click="command('preview_augs')"-->
+    <!--                       :disabled="(state.augsType === 'custom' && state.customAugsPath.length === 0) ||-->
+    <!--                                  (state.augsType === 'custom' && !data.customAugsPy)"-->
+    <!--            >-->
+    <!--                Preview-->
+    <!--            </el-button>-->
+    <!--        </div>-->
+    <!--        <div v-if="!data.gallery">-->
+    <!--            <i class="zmdi zmdi-help" style="color: orange"></i> Press preview button to apply augmentations to random-->
+    <!--            image-->
+    <!--        </div>-->
+    <!--        <div v-show="state.augsType === 'custom' && state.customAugsPath.length === 0" class="mt10" style="color: red">-->
+    <!--            Please define the path in Team Files to augs config-->
+    <!--        </div>-->
+    <!--        <div v-show="state.selectedTags.length === 0" class="mt10" style="color: red">-->
+    <!--            Please select training tags at step #2-->
+    <!--        </div>-->
+    <!--        <div v-show="state.augsType === 'custom' && !data.customAugsPy" class="mt10" style="color: red">-->
+    <!--            Please press 'Load' button to preview custom augs configuration-->
+    <!--        </div>-->
+    <!--        <sly-grid-gallery-->
+    <!--                v-if="data.gallery"-->
+    <!--                :content="data.gallery.content"-->
+    <!--                :options="data.gallery.options">-->
+    <!--            <template v-slot:card-footer="{ annotation }">-->
+    <!--                <div class="mt5" style="text-align: center">-->
+    <!--                    <el-tag type="primary">{{annotation.title}}</el-tag>-->
+    <!--                </div>-->
+    <!--            </template>-->
+    <!--        </sly-grid-gallery>-->
+    <!--    </sly-card>-->
 </div>
