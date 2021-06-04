@@ -25,8 +25,8 @@ def _update_progress_ui(index, api: sly.Api, task_id, progress: sly.Progress, st
         progress.report_progress()
 
 
-def get_progress_cb(index, message, total, is_size=False):
-    progress = sly.Progress(message, total, is_size=is_size)
+def get_progress_cb(index, message, total, is_size=False, min_report_percent=5):
+    progress = sly.Progress(message, total, is_size=is_size, min_report_percent=min_report_percent)
     progress_cb = partial(update_progress, index=index, api=globals.api, task_id=globals.task_id, progress=progress)
     progress_cb(0)
     return progress_cb
