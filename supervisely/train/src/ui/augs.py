@@ -3,7 +3,7 @@ import supervisely_lib as sly
 import sly_globals as g
 #from tags import get_random_image
 from supervisely_lib.app.widgets import CompareGallery
-
+import validate_training_data as td
 
 _templates = [
     {
@@ -106,7 +106,7 @@ def load_existing_pipeline(api: sly.Api, task_id, context, state, app_logger):
 @g.my_app.ignore_errors_and_show_dialog_window()
 def preview_augs(api: sly.Api, task_id, context, state, app_logger):
     global gallery
-    image_info = get_random_image()
+    image_info = td.get_random_image()
     if state["augsType"] == "template":
         augs_ppl = get_template_by_name(state["augsTemplateName"])
     else:

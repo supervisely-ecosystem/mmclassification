@@ -1,8 +1,9 @@
 from collections import defaultdict
 import supervisely_lib as sly
 import sly_globals as g
-import splits
+import random
 import tags
+
 
 report = []
 final_tags = []
@@ -172,3 +173,11 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
             {"field": "state.activeStep", "payload": 5},
         ])
     g.api.app.set_fields(g.task_id, fields)
+
+
+def get_random_image():
+    rand_key = random.choice(list(final_tags2images.keys()))
+    info = random.choice(final_tags2images[rand_key]['train'])
+    #ImageInfo = namedtuple('ImageInfo', image_info_dict)
+    #info = ImageInfo(**image_info_dict)
+    return info
