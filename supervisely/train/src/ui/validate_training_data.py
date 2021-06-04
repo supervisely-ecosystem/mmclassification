@@ -131,8 +131,10 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         "title": "Final training tags",
         "count": len(final_tags),
         "type": type,
-        "description": "If this number differs from the number of selected tags then it means that after data validation and "
-                       "cleaning some of the selected tags have 0 examples in train set and will be skipped automatically"
+        "description": f"If this number differs from the number of selected tags then it means that after data "
+                       f"validation and cleaning some of the selected tags "
+                       f"{list(set(selected_tags) - set(final_tags))} "
+                       f"have 0 examples in train set and will be skipped automatically"
     })
 
     fields = [
