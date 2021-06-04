@@ -47,9 +47,8 @@
         </el-button>
         <div v-if="data.tagsBalance">
             <el-button type="primary" class="regular"
-                       :loading="state.tagsInProgress"
-                       @click="state.tagsInProgress = true; command('show_tags')"
-                       :disabled="state.selectedTags.length < 2">
+                       @click="command('use_tags')"
+                       :disabled="state.selectedTags.length < 2 || data.done3">
                 Use {{state.selectedTags.length}} selected tags
             </el-button>
             <!--            style="color: #5a6772"-->

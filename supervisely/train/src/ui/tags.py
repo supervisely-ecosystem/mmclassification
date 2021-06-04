@@ -26,9 +26,7 @@ image_slider_options = {
     "height": f"{_preview_height}px"
 }
 
-# speedup during debug (has no effects in production)
-# cache_base_filename = os.path.join(g.my_app.data_dir, f"{g.project_id}")
-# cache_path = cache_base_filename + ".db"
+training_tags = None
 
 
 def init(data, state):
@@ -129,6 +127,7 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
                 "color": sly.color.rgb2hex(tag_meta.color),
                 "reason": "unsupported type, app supports only tags of type None (without value)"
             })
+            continue
 
         train_count = len(segment_infos["train"])
         val_count = len(segment_infos["val"])
@@ -136,9 +135,9 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
         # @TODO: for debug
         # @TODO: for debug
         # @TODO: for debug
-        if tag_name != "my-tag-123":
-            train_count = random.randint(0, train_count)
-            val_count = random.randint(0, val_count)
+        # if tag_name != "my-tag-123":
+        #     train_count = random.randint(0, train_count)
+        #     val_count = random.randint(0, val_count)
 
         disabled = False
         if train_count == 0:
@@ -161,7 +160,6 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
         })
         max_count = max(max_count, total)
 
-
     rows_sorted = sorted(tags_balance_rows, key=lambda k: k["total"], reverse=True)
     tags_balance = {
         "maxValue": max_count,
@@ -173,7 +171,6 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
 
     reset_progress(progress_index)
     fields = [
-        {"field": "data.done3", "payload": True},
         {"field": "state.tagsInProgress", "payload": False},
         {"field": "data.skippedTags", "payload": disabled_tags}
     ]
@@ -182,5 +179,21 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
     fields = [
         {"field": "data.tagsBalance", "payload": tags_balance},
         {"field": "data.tag2urls", "payload": subsample_urls},
+    ]
+    g.api.app.set_fields(g.task_id, fields)
+
+
+@g.my_app.callback("use_tags")
+@sly.timeit
+@g.my_app.ignore_errors_and_show_dialog_window()
+def use_tags(api: sly.Api, task_id, context, state, app_logger):
+    global training_tags
+    training_tags = state["selectedTags"]
+
+    fields = [
+        {"field": "data.done3", "payload": True},
+        {"field": "state.collapsed4", "payload": False},
+        {"field": "state.disabled4", "payload": False},
+        {"field": "state.activeStep", "payload": 4},
     ]
     g.api.app.set_fields(g.task_id, fields)

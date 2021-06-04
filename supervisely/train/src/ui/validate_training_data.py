@@ -10,7 +10,8 @@ final_tags2images = defaultdict(lambda: defaultdict(list))
 
 
 def init(data, state):
-    pass
+    state["collapsed4"] = True
+    state["disabled4"] = True
 
 
 @g.my_app.callback("validate_data")
