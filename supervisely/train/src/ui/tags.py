@@ -97,6 +97,7 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
         {"name": "val", "key": "val", "color": "#ffa500"},
     ]
 
+    #@TODO: validate tags - info
     disabled_tags = []
     _working_tags = set(tag2images.keys())
     for tag_meta in g.project_meta.tag_metas:
@@ -159,7 +160,7 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
             }
         })
         max_count = max(max_count, total)
-    reset_progress(progress_index)
+
 
     rows_sorted = sorted(tags_balance_rows, key=lambda k: k["total"], reverse=True)
     tags_balance = {
@@ -170,6 +171,7 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
 
     subsample_urls = {tag_name: urls[:_max_examples_count] for tag_name, urls in tag2urls.items()}
 
+    reset_progress(progress_index)
     fields = [
         {"field": "data.done3", "payload": True},
         {"field": "state.tagsInProgress", "payload": False},

@@ -22,10 +22,24 @@
         <sly-field title="These tags can not be used for training"
                    description="Learn more in app readme"
         >
-            <div class="mt5" v-for="(item, index) in data.skippedTags">
-                <i class="zmdi zmdi-label mr5" :style="{color:item.color}"></i> {{item.name}} -
-                <span style="color: #5a6772;">{{item.reason}}</span>
-            </div>
+<!--            <div class="mt5" v-for="(item, index) in data.skippedTags">-->
+<!--                <i class="zmdi zmdi-label mr5" :style="{color:item.color}"></i> {{item.name}} - -->
+<!--                <span style="color: #5a6772;">{{item.reason}}</span>-->
+<!--            </div>-->
+            <table class="beautiful-table al">
+                <thead>
+                    <tr>
+                        <th>Tag name</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in data.skippedTags">
+                        <td><i class="zmdi zmdi-label mr5" :style="{color:item.color}"></i>{{item.name}}</td>
+                        <td>{{item.reason}}</td>
+                    </tr>
+                </tbody>
+            </table>
         </sly-field>
     </div>
     <div class="mt10">
@@ -42,7 +56,7 @@
                        :disabled="state.selectedTags.length < 2">
                 Use {{state.selectedTags.length}} selected tags
             </el-button>
-<!--            style="color: #5a6772"-->
+            <!--            style="color: #5a6772"-->
             <div v-if="state.selectedTags.length < 2" class="mt5">
                 <i class="zmdi zmdi-help" style="color: orange"></i> Please select at least two tags for training
             </div>
