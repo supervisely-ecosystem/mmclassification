@@ -172,13 +172,9 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
     reset_progress(progress_index)
     fields = [
         {"field": "state.tagsInProgress", "payload": False},
-        {"field": "data.skippedTags", "payload": disabled_tags}
-    ]
-    g.api.app.set_fields(g.task_id, fields)
-
-    fields = [
         {"field": "data.tagsBalance", "payload": tags_balance},
         {"field": "data.tag2urls", "payload": subsample_urls},
+        {"field": "data.skippedTags", "payload": disabled_tags}
     ]
     g.api.app.set_fields(g.task_id, fields)
 
