@@ -81,7 +81,6 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
     })
 
     # remove collision images from sets
-    global final_tags2images, final_tags
     final_images_count = 0
     final_train_size = 0
     final_val_size = 0
@@ -118,8 +117,6 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
                        "cleaning some of the selected tags have 0 examples in train set"
     })
 
-
-
     report.append({
         "title": "images with training tags",
         "count": len(tags.images_without_tags),
@@ -128,7 +125,6 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
     })
 
     # remove collision images from sets
-    global final_tags2images, final_tags
     final_images_count = 0
     final_train_size = 0
     final_val_size = 0
