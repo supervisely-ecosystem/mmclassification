@@ -81,6 +81,8 @@ def init(data, state):
     global gallery
     gallery = CompareGallery(g.task_id, g.api, "data.gallery", g.project_meta)
     data["gallery"] = gallery.to_json()
+    state["collapsed5"] = True
+    state["disabled5"] = True
 
 
 @g.my_app.callback("load_existing_pipeline")

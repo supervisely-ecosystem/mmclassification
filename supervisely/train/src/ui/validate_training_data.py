@@ -141,6 +141,9 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
 
     fields = [
         {"field": "data.validationReport", "payload": report},
+        {"field": "state.collapsed5", "payload": False},
+        {"field": "state.disabled5", "payload": False},
+        {"field": "state.activeStep", "payload": 5},
     ]
     g.api.app.set_fields(g.task_id, fields)
 
