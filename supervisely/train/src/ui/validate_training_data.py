@@ -19,40 +19,53 @@ def init(data, state):
 @g.my_app.ignore_errors_and_show_dialog_window()
 def validate_data(api: sly.Api, task_id, context, state, app_logger):
     report = []
+
     report.append({
-        "title": "total images in project",
-        "count": g.project_info.items_count,
         "type": "info",
-    })
-    report.append({
-        "title": "total tags in project",
+        "title": "Total tags in project",
         "count": len(g.project_meta.tag_metas),
-        "type": "info",
-    })
-
-    training_tags = state["selectedTags"]
-    report.append({
-        "title": "training tags",
-        "count": len(training_tags),
-        "type": "info",
     })
 
     report.append({
-        "title": "tags unavailable for training",
+        "title": "Tags unavailable for training",
         "count": len(tags.disabled_tags),
         "type": "warning",
-        "description": "see previous step for more info"
+        "description": "See previous step for more info"
+    })
+
+    selected_tags = tags.selected_tags  # state["selectedTags"]
+    report.append({
+        "title": "Selected tags for training",
+        "count": len(selected_tags),
+        "type": "pass",  # or info?
     })
 
     report.append({
-        "title": "images without tags",
+        "type": "info",
+        "title": "Total images in project",
+        "count": g.project_info.items_count,
+    })
+
+    report.append({
+        "title": "Images without tags",
         "count": len(tags.images_without_tags),
-        "type": "warning",
-        "description": "such images does not have any tags, these images will ignored and not be used for training"
+        "type": "warning" if len(tags.images_without_tags) > 0 else "pass",
+        "description": "Such images don't have any tags so they will ignored and will not be used for training. "
+    })
+
+    num_images_before_validation = 0
+    for tag_name in selected_tags:
+        for split, infos in tags.tag2images[tag_name].items():
+            num_images_before_validation += len(infos)
+    report.append({
+        "title": "Images with training tags",
+        "count": num_images_before_validation,
+        "type": "error" if len(num_images_before_validation) == 0 else "pass",
+        "description": "Images that have one of the selected tags assigned (before validation)"
     })
 
     collisions = defaultdict(int)
-    for tag_name in training_tags:
+    for tag_name in selected_tags:
         for split, infos in tags.tag2images[tag_name].items():
             for info in infos:
                 collisions[info.id] += 1
@@ -61,10 +74,57 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         if counter > 1:
             num_collision_images += 1
     report.append({
-        "title": "images with collisions",
-        "count": len(num_collision_images),
-        "type": "warning",
-        "description": "images have more that one training tags assigned, such images will be ignored and removed from train/val sets"
+        "title": "Images with tags collisions",
+        "count": num_collision_images,
+        "type": "warning" if num_collision_images > 0 else "pass",
+        "description": "images with more than one training tags assigned, they will be removed from train/val sets"
+    })
+
+    # remove collision images from sets
+    global final_tags2images, final_tags
+    final_images_count = 0
+    final_train_size = 0
+    final_val_size = 0
+    for tag_name in selected_tags:
+        for split, infos in tags.tag2images[tag_name].items():
+            for info in infos:
+                if collisions[info.id] == 0:
+                    final_tags2images[tag_name][split].append(info)
+                    final_images_count += 1
+                    if split == "train":
+                        final_train_size += 1
+                    else:
+                        final_val_size += 1
+        if tag_name in final_tags2images and len(final_tags2images[tag_name]["train"]) > 0:
+            final_tags.append(tag_name)
+
+    report.append({
+        "title": "Train set size",
+        "count": final_train_size,
+        "type": "error" if final_train_size == 0 else "pass",
+        "description": "Size of training set after removing images with collisions"
+    })
+    report.append({
+        "title": "Val set size",
+        "count": final_val_size,
+        "type": "error" if final_val_size == 0 else "pass",
+        "description": "Size of validation set after removing images with collisions"
+    })
+    report.append({
+        "title": "Final training tags",
+        "count": len(final_tags),
+        "type": "error" if len(final_tags) < 2 else "pass",
+        "description": "If this number differs from the number of selected tags then it means that after data validation and "
+                       "cleaning some of the selected tags have 0 examples in train set"
+    })
+
+
+
+    report.append({
+        "title": "images with training tags",
+        "count": len(tags.images_without_tags),
+        "type": "pass",
+        "description": "one of the selected training tags is assigned to these images"
     })
 
     # remove collision images from sets

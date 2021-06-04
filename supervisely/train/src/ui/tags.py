@@ -26,7 +26,7 @@ image_slider_options = {
     "height": f"{_preview_height}px"
 }
 
-training_tags = None
+selected_tags = None
 
 
 def init(data, state):
@@ -187,8 +187,8 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def use_tags(api: sly.Api, task_id, context, state, app_logger):
-    global training_tags
-    training_tags = state["selectedTags"]
+    global selected_tags
+    selected_tags = state["selectedTags"]
 
     fields = [
         {"field": "data.done3", "payload": True},
