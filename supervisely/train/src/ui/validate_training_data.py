@@ -132,7 +132,7 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
     final_images_count = 0
     final_train_size = 0
     final_val_size = 0
-    for tag_name in training_tags:
+    for tag_name in selected_tags:
         for split, infos in tags.tag2images[tag_name].items():
             for info in infos:
                 if collisions[info.id] :
@@ -144,7 +144,7 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
                         final_val_size += 1
 
     ignore_tags_after_validation = []
-    for tag_name in training_tags:
+    for tag_name in selected_tags:
         if len(final_tags2images[tag_name]["train"]) == 0:
             ignore_tags_after_validation.append(tag_name)
         else:
