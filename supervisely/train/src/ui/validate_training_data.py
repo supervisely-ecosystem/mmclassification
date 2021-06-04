@@ -89,65 +89,51 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
     final_val_size = 0
     for tag_name in selected_tags:
         for split, infos in tags.tag2images[tag_name].items():
+            _final_infos = []
             for info in infos:
-                if collisions[info.id] == 0:
-                    final_tags2images[tag_name][split].append(info)
+                if collisions[info.id] == 1:
+                    _final_infos.append(info)
                     final_images_count += 1
                     if split == "train":
                         final_train_size += 1
                     else:
                         final_val_size += 1
+            if len(_final_infos) > 0:
+                final_tags2images[tag_name][split].extend(_final_infos)
         if tag_name in final_tags2images and len(final_tags2images[tag_name]["train"]) > 0:
             final_tags.append(tag_name)
 
     report.append({
+        "title": "Final images count",
+        "count": final_images_count,
+        "type": "error" if final_images_count == 0 else "pass",
+        "description": "Number of images (train + val) after collisions removal"
+    })
+    report.append({
         "title": "Train set size",
         "count": final_train_size,
         "type": "error" if final_train_size == 0 else "pass",
-        "description": "Size of training set after removing images with collisions"
+        "description": "Size of training set after collisions removal"
     })
     report.append({
         "title": "Val set size",
         "count": final_val_size,
         "type": "error" if final_val_size == 0 else "pass",
-        "description": "Size of validation set after removing images with collisions"
+        "description": "Size of validation set after collisions removal"
     })
+
+    type = "pass"
+    if len(final_tags) < 2:
+        type = "error"
+    elif len(final_tags) != len(selected_tags):
+        type = "warning"
     report.append({
         "title": "Final training tags",
         "count": len(final_tags),
-        "type": "error" if len(final_tags) < 2 else "pass",
+        "type": type,
         "description": "If this number differs from the number of selected tags then it means that after data validation and "
-                       "cleaning some of the selected tags have 0 examples in train set"
+                       "cleaning some of the selected tags have 0 examples in train set and will be skipped automatically"
     })
-
-    report.append({
-        "title": "images with training tags",
-        "count": len(tags.images_without_tags),
-        "type": "pass",
-        "description": "One of the selected training tags is assigned to these images"
-    })
-
-    # remove collision images from sets
-    final_images_count = 0
-    final_train_size = 0
-    final_val_size = 0
-    for tag_name in selected_tags:
-        for split, infos in tags.tag2images[tag_name].items():
-            for info in infos:
-                if collisions[info.id] :
-                    final_tags2images[tag_name][split].append(info)
-                    final_images_count += 1
-                    if split == "train":
-                        final_train_size += 1
-                    else:
-                        final_val_size += 1
-
-    ignore_tags_after_validation = []
-    for tag_name in selected_tags:
-        if len(final_tags2images[tag_name]["train"]) == 0:
-            ignore_tags_after_validation.append(tag_name)
-        else:
-            final_tags.append(tag_name)
 
     fields = [
         {"field": "data.validationReport", "payload": report},
