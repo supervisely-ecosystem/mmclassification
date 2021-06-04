@@ -20,6 +20,8 @@ def init(data, state):
 @g.my_app.ignore_errors_and_show_dialog_window()
 def validate_data(api: sly.Api, task_id, context, state, app_logger):
     report.clear()
+    final_tags.clear()
+    final_tags2images.clear()
 
     report.append({
         "type": "info",
