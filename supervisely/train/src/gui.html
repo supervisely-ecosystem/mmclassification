@@ -59,7 +59,17 @@
         </sly-stepper-item>
     </sly-stepper>
 
-
+    <el-dialog
+            title="Restart from this step"
+            :visible.sync="state.restartDialog"
+            size="tiny">
+        <span>This step and all next steps will be reseted</span>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="state.restartDialog = false">Cancel</el-button>
+            <el-button type="primary" class="regular"
+                       @click="state.restartDialog = false; command('restart')">Confirm</el-button>
+        </span>
+    </el-dialog>
 
 
     {% include 'supervisely/train/src/ui/hyperparameters.html' %}

@@ -5,6 +5,15 @@
           :options="{collapsable: true}"
           :collapsed.sync="state.collapsed3"
           :disabled="{disabled: state.disabled3, message: 'Generate train/val splits at step 2 before preview training tags'}">
+
+    <div slot="header">
+        <el-button :plain="true" type="danger" class="regular"
+                   @click="state.restartDialog = true;"
+                   v-if="data.done3">
+            <i class="zmdi zmdi-time-restore-setting mr5"></i> Restart
+        </el-button>
+    </div>
+
     <sly-class-balance class="mt15"
                        v-if="data.tagsBalance"
                        v-model="state.selectedTags"
@@ -23,16 +32,16 @@
         >
             <table class="beautiful-table al">
                 <thead>
-                    <tr>
-                        <th style="min-width: 180px;">Tag name</th>
-                        <th>Reason</th>
-                    </tr>
+                <tr>
+                    <th style="min-width: 180px;">Tag name</th>
+                    <th>Reason</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="item in data.skippedTags">
-                        <td><i class="zmdi zmdi-label mr5" :style="{color:item.color}"></i>{{item.name}}</td>
-                        <td>{{item.reason}}</td>
-                    </tr>
+                <tr v-for="item in data.skippedTags">
+                    <td><i class="zmdi zmdi-label mr5" :style="{color:item.color}"></i>{{item.name}}</td>
+                    <td>{{item.reason}}</td>
+                </tr>
                 </tbody>
             </table>
         </sly-field>
@@ -51,12 +60,7 @@
                        v-if="!data.done3">
                 Use {{state.selectedTags.length}} selected tags
             </el-button>
-            <el-button type="primary" class="regular"
-                       @click="command('restart')"
-                       v-if="data.done3">
-                Restart
-            </el-button>
-
+            <!--            type="primary"-->
             <!--            style="color: #5a6772"-->
             <div v-if="state.selectedTags.length < 2" class="mt5">
                 <i class="zmdi zmdi-help" style="color: orange"></i> Please select at least two tags for training

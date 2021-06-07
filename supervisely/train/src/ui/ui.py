@@ -15,6 +15,7 @@ import monitoring as monitoring
 @sly.timeit
 def init(data, state):
     state["activeStep"] = 1
+    state["restartDialog"] = False
     input_project.init(data, state)
     tags.init(data, state)
     train_val_split.init(g.project_info, g.project_meta, data, state)
@@ -27,7 +28,7 @@ def init(data, state):
     # artifacts.init(data)
 
 
-@g.my_app.callback("validate_data")
+@g.my_app.callback("restart")
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def restart(api: sly.Api, task_id, context, state, app_logger):
