@@ -25,3 +25,10 @@ def init(data, state):
     hyperparameters_python.init(data, state)
     monitoring.init(data, state)
     # artifacts.init(data)
+
+
+@g.my_app.callback("validate_data")
+@sly.timeit
+@g.my_app.ignore_errors_and_show_dialog_window()
+def restart(api: sly.Api, task_id, context, state, app_logger):
+    pass

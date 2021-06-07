@@ -47,9 +47,16 @@
         <div v-if="data.tagsBalance">
             <el-button type="primary" class="regular"
                        @click="command('use_tags')"
-                       :disabled="state.selectedTags.length < 2 || data.done3">
+                       :disabled="state.selectedTags.length < 2"
+                       v-if="!data.done3">
                 Use {{state.selectedTags.length}} selected tags
             </el-button>
+            <el-button type="primary" class="regular"
+                       @click="command('restart')"
+                       v-if="data.done3">
+                Restart
+            </el-button>
+
             <!--            style="color: #5a6772"-->
             <div v-if="state.selectedTags.length < 2" class="mt5">
                 <i class="zmdi zmdi-help" style="color: orange"></i> Please select at least two tags for training
