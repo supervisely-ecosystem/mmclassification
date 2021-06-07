@@ -4,9 +4,11 @@
           :options="{collapsable: true}"
           :collapsed.sync="state.collapsed2"
           :disabled="{disabled: state.disabled2, message: 'Download data at step 1 before create train/val splits'}">
+
+<!--    v-model="state.splitMethod"-->
     <el-tabs type="border-card" class="el-tabs-cards" v-model="state.splitMethod">
-        <el-tab-pane name="random">
-            <el-radio slot="label" v-model="state.splitMethod" label="random">
+        <el-tab-pane name="random" :disabled="data.done2">
+            <el-radio slot="label" v-model="state.splitMethod" label="random" :disabled="data.done2">
                 Random
                 <div>Shuffle data and split with defined probability</div>
             </el-radio>
@@ -28,10 +30,9 @@
                         <div v-if="scope.row.name !== 'train'">
                             <span style="margin-left: 10px">{{state.randomSplit.percent[scope.row.name]}}%</span>
                         </div>
-
                         <el-slider v-if="scope.row.name === 'train'"
                                    v-model="state.randomSplit.percent.train"
-                                   :disabled="state.randomSplit.sliderDisabled"
+                                   :disabled="state.randomSplit.sliderDisabled || data.done2"
                                    show-input :min="1" :max="99"
                                    style="flex:1; max-width: 99%; margin-left: 15px;"
                                    @input="
@@ -47,7 +48,7 @@
             </el-table>
         </el-tab-pane>
         <el-tab-pane name="tags" :disabled="data.done2">
-            <el-radio slot="label" v-model="state.splitMethod" label="tags">
+            <el-radio slot="label" v-model="state.splitMethod" label="tags" :disabled="data.done2">
                 Based on image tags
                 <div>Images should have assigned train or val tag</div>
             </el-radio>
@@ -68,6 +69,7 @@
             </sly-field>
             <sly-field title="Train tag" description="all images with this tag are considered as training set">
                 <sly-select-tag
+                        :disabled="data.done2"
                         :project-id="data.projectId"
                         :tags.sync="state.trainTagName"
                         :options="{'showLabel': false}">
@@ -76,6 +78,7 @@
             <sly-field title="Validation tag"
                        description="all images with this tag are considered as validation set">
                 <sly-select-tag
+                        :disabled="data.done2"
                         :project-id="data.projectId"
                         :tags.sync="state.valTagName"
                         :options="{'showLabel': false}">
@@ -83,7 +86,7 @@
             </sly-field>
             <sly-field title="Images without selected tags"
                        description="Choose what to do with untagged images">
-                <el-select v-model="state.untaggedImages" placeholder="Select" style="width: 280px;">
+                <el-select v-model="state.untaggedImages" :disabled="data.done2" placeholder="Select" style="width: 280px;">
                     <el-option key="ignore" label="ignore untagged images" value="ignore"></el-option>
                     <el-option key="train" label="add untagged images to train set" value="train"></el-option>
                     <el-option key="val" label="add untagged images to val set" value="val"></el-option>
@@ -91,7 +94,7 @@
             </sly-field>
         </el-tab-pane>
         <el-tab-pane name="datasets" :disabled="data.done2">
-            <el-radio slot="label" v-model="state.splitMethod" label="datasets">
+            <el-radio slot="label" v-model="state.splitMethod" label="datasets" :disabled="data.done2">
                 Based on datasets
                 <div>Select one or several datasets for every split</div>
             </el-radio>
@@ -105,6 +108,7 @@
             <sly-field title="Train dataset(s)"
                        description="all images in selected dataset(s) are considered as training set">
                 <sly-select-dataset
+                        :disabled="data.done2"
                         :project-id="data.projectId"
                         :datasets.sync="state.trainDatasets"
                         :options="{'multiple': true, 'showLabel': false}">
@@ -113,6 +117,7 @@
             <sly-field title="Validation dataset(s)"
                        description="all images in selected dataset(s) are considered as validation set">
                 <sly-select-dataset
+                        :disabled="data.done2"
                         :project-id="data.projectId"
                         :datasets.sync="state.valDatasets"
                         :options="{'multiple': true, 'showLabel': false}">
