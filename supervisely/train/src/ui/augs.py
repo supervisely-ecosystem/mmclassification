@@ -123,4 +123,4 @@ def preview_augs(api: sly.Api, task_id, context, state, app_logger):
         api.file.remove(g.team_id, remote_preview_path)
     file_info = api.file.upload(g.team_id, local_image_path, remote_preview_path)
     gallery.set_right("after", file_info.full_storage_url, res_ann)
-    gallery.update()
+    gallery.update(options=False)

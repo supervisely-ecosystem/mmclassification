@@ -132,7 +132,7 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
     if len(final_tags) < 2:
         type = "error"
     elif len(final_tags) != len(selected_tags):
-        type = "warning"
+        type = "error"
     report.append({
         "title": "Final training tags",
         "count": len(final_tags),
@@ -140,7 +140,7 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         "description": f"If this number differs from the number of selected tags then it means that after data "
                        f"validation and cleaning some of the selected tags "
                        f"{list(set(selected_tags) - set(final_tags))} "
-                       f"have 0 examples in train set and will be skipped automatically"
+                       f"have 0 examples in train set. Please restart step 3 and deselect this tags manually"
     })
 
     cnt_errors = 0
@@ -150,15 +150,6 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
             cnt_errors += 1
         if item["type"] == "warning":
             cnt_warnings += 1
-
-    complete_color = "#13ce66"
-    complete_message = "Validation has been successfully completed"
-    if cnt_errors > 0:
-        complete_color = "red"
-        complete_message = "Validation has been failed, can not automatically resolve errors"
-    elif cnt_warnings > 0:
-        complete_color = "orange"
-        complete_message = "Validation has been successfully completed, all warnings will be resolved automatically"
 
     fields = [
         {"field": "data.report", "payload": report},

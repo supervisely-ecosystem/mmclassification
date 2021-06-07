@@ -12,7 +12,7 @@ disabled_tags = []
 
 progress_index = 3
 _preview_height = 120
-_max_examples_count = 20
+_max_examples_count = 12
 
 _ignore_tags = ["train", "val"]
 _allowed_tag_types = [sly.TagValueType.NONE]
