@@ -85,6 +85,7 @@ def main():
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
+#@TODO: tags cooccurance - добавить в readme, поменять там табличный виджет, сделать зафиксированные колонки и скрол горизонтальный
 #@TODO: gallery opacity slider
 #@TODO: restart step tags - optimize
 #@TODO: убрать маргины с карточек

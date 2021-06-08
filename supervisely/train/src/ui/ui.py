@@ -54,3 +54,4 @@ def restart(api: sly.Api, task_id, context, state, app_logger):
         {"field": "state.activeStep", "payload": restart_from_step},
     ]
     g.api.app.set_fields(g.task_id, fields)
+    g.api.app.set_field(task_id, "data.scrollIntoView", f"step{restart_from_step}")
