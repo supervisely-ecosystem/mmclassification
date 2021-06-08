@@ -46,8 +46,8 @@ def init(data, state):
 
 def restart(data, state):
     data["done3"] = False
-    state["collapsed3"] = True
-    state["disabled3"] = True
+    # state["collapsed3"] = True
+    # state["disabled3"] = True
 
 
 # def get_random_image():

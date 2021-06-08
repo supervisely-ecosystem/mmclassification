@@ -2,7 +2,9 @@
           subtitle="Report show data overview and automatically highlights possible issues in training data"
           :options="{collapsable: true}"
           :collapsed.sync="state.collapsed4"
-          :disabled="{disabled: state.disabled4, message: 'Select training tags at step2 before validate final training data'}">
+          :disabled="{disabled: state.disabled4, message: 'Select training tags at step2 before validate final training data'}"
+          ref="step4"
+>
     <table class="beautiful-table al mt10" v-if="data.report">
         <thead>
         <tr>

@@ -86,6 +86,11 @@ def init(data, state):
     data["gallery2"] = gallery2.to_json()
     state["collapsed5"] = True
     state["disabled5"] = True
+    data["done5"] = False
+
+
+def restart(data, state):
+    data["done5"] = False
 
 
 @g.my_app.callback("load_existing_pipeline")
@@ -129,3 +134,19 @@ def preview_augs(api: sly.Api, task_id, context, state, app_logger):
     file_info = api.file.upload(g.team_id, local_image_path, remote_preview_path)
     gallery.set_right("after", file_info.full_storage_url, res_ann)
     gallery.update(options=False)
+
+
+@g.my_app.callback("use_augs")
+@sly.timeit
+@g.my_app.ignore_errors_and_show_dialog_window()
+def use_augs(api: sly.Api, task_id, context, state, app_logger):
+    global selected_tags
+    selected_tags = state["selectedTags"]
+
+    fields = [
+        {"field": "data.done5", "payload": True},
+        {"field": "state.collapsed6", "payload": False},
+        {"field": "state.disabled6", "payload": False},
+        {"field": "state.activeStep", "payload": 6},
+    ]
+    g.api.app.set_fields(g.task_id, fields)

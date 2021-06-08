@@ -85,11 +85,10 @@ def main():
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
+#@TODO: debug error imgcorruptlike
+#@TODO: scroll to active step - after restart and on finish
 #@TODO: tags cooccurance - добавить в readme, поменять там табличный виджет, сделать зафиксированные колонки и скрол горизонтальный
-#@TODO: gallery opacity slider
-#@TODO: restart step tags - optimize
 #@TODO: убрать маргины с карточек
-#@TODO: add need_gpu in config
 #@TODO: save_set_to_json - save in imagenet format, rename clean_bad_images - add filed - tag index and save to json for our custom dataset
 #@TODO: save session link in artifacts dir
 #@TODO: state["workersPerGPU"] = 0# 2  # 0 - for debug @TODO: for debug
@@ -114,5 +113,4 @@ def main():
 
 # implement save_best renaming
 if __name__ == "__main__":
-
     sly.main_wrapper("main", main)

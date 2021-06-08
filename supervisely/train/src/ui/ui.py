@@ -46,7 +46,15 @@ def restart(api: sly.Api, task_id, context, state, app_logger):
     if restart_from_step <= 4:
         validate_training_data.init(data, state)
     if restart_from_step <= 5:
-        augs.init(data, state)
+        if restart_from_step == 5:
+            augs.restart(data, state)
+        else:
+            augs.init(data, state)
+    if restart_from_step <= 6:
+        if restart_from_step == 6:
+            model_architectures.restart(data, state)
+        else:
+            model_architectures.init(data, state)
 
     fields = [
         {"field": "data", "payload": data, "append": True, "recursive": False},

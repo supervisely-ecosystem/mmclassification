@@ -380,10 +380,19 @@ def init(data, state):
     data["modelColumns"] = get_table_columns()
     state["selectedModel"] = "ResNet-34"
     state["weightsInitialization"] = "imagenet"
+    state["collapsed6"] = True
+    state["disabled6"] = True
+
 
     # @TODO: for debug
     # state["weightsPath"] = "/yolov5_train/coco128_002/2390/weights/best.pt"
     state["weightsPath"] = ""
+
+
+def restart(data, state):
+    data["done6"] = False
+    # state["collapsed6"] = True
+    # state["disabled6"] = True
 
 
 def prepare_weights(state):

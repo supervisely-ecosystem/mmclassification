@@ -87,7 +87,7 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         "title": "Images with tags collisions",
         "count": num_collision_images,
         "type": "warning" if num_collision_images > 0 else "pass",
-        "description": "Images with more than one training tags assigned, they will be removed from train/val sets"
+        "description": "Images with more than one training tags assigned, they will be removed from train/val sets. Use app 'Tags Co-Occurrence Matrix' to discover such images"
     })
 
     # remove collision images from sets
