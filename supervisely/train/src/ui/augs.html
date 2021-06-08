@@ -28,9 +28,10 @@
                     </sly-copy-to-clipboard>
                 </sly-field>
                 <sly-field title="Preview augmentation pipeline on random image">
-                    <el-button type="primary" class="regular mb10" @click="command('preview_augs')">Preview</el-button>
+                    <el-button type="primary" class="regular" @click="command('preview_augs')">Preview</el-button>
                     <sly-grid-gallery
                             v-if="data.gallery && state.augsType == 'template'"
+                            class="mt10"
                             :content="data.gallery.content"
                             :options="data.gallery.options">
                         <template v-slot:card-footer="{ annotation }">

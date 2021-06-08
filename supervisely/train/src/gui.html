@@ -67,7 +67,11 @@
         <span slot="footer" class="dialog-footer">
             <el-button @click="state.restartFrom = null">Cancel</el-button>
             <el-button type="primary" class="regular"
-                       @click="command('restart')">Confirm</el-button>
+                       @click="command('restart');
+                               $nextTick(() => { $refs['card3'].$el.scrollIntoView({behavior: 'smooth', block: 'center'}); });
+                               ">
+                Confirm
+            </el-button>
         </span>
     </el-dialog>
 
