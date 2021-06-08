@@ -5,7 +5,7 @@
           :collapsed.sync="state.collapsed2"
           :disabled="{disabled: state.disabled2, message: 'Download data at step 1 before create train/val splits'}">
 
-<!--    v-model="state.splitMethod"-->
+    <!--    v-model="state.splitMethod"-->
     <el-tabs type="border-card" class="el-tabs-cards" v-model="state.splitMethod">
         <el-tab-pane name="random" :disabled="data.done2">
             <el-radio slot="label" v-model="state.splitMethod" label="random" :disabled="data.done2">
@@ -86,7 +86,8 @@
             </sly-field>
             <sly-field title="Images without selected tags"
                        description="Choose what to do with untagged images">
-                <el-select v-model="state.untaggedImages" :disabled="data.done2" placeholder="Select" style="width: 280px;">
+                <el-select v-model="state.untaggedImages" :disabled="data.done2" placeholder="Select"
+                           style="width: 280px;">
                     <el-option key="ignore" label="ignore untagged images" value="ignore"></el-option>
                     <el-option key="train" label="add untagged images to train set" value="train"></el-option>
                     <el-option key="val" label="add untagged images to val set" value="val"></el-option>
@@ -130,7 +131,7 @@
             type="primary"
             class="mt10 regular"
             :loading="state.splitInProgress"
-            :disabled="data.done2"
+            v-if="!data.done2"
             @click="command('create_splits')">
         Create
     </el-button>
@@ -143,5 +144,10 @@
                 {{data.valImagesCount}} images in val
             </span>
         </div>
+        <el-button type="primary" class="regular mt10"
+                   @click="state.restartDialog = true;"
+                   v-if="data.done2">
+            <i class="zmdi zmdi-time-restore-setting mr5"></i> Recreate splits
+        </el-button>
     </div>
 </sly-card>

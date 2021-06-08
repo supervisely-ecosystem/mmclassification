@@ -10,13 +10,11 @@
             images)</a>
         <sly-icon slot="icon" :options="{ imageUrl: `${data.projectPreviewUrl}` }"/>
     </sly-field>
-    <!--    <div slot="header">-->
-    <!--    </div>-->
     <el-button
             type="primary"
             class="regular"
             @click="command('download_project')"
-            :disabled="data.done1">
+            v-if="!data.done1">
         Download
     </el-button>
     <div v-if="data.progress1" class="mt10">
