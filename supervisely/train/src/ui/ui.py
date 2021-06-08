@@ -15,10 +15,10 @@ import monitoring as monitoring
 @sly.timeit
 def init(data, state):
     state["activeStep"] = 1
-    state["restartDialog"] = False
+    state["restartFrom"] = None
     input_project.init(data, state)
-    tags.init(data, state)
     train_val_split.init(g.project_info, g.project_meta, data, state)
+    tags.init(data, state)
     validate_training_data.init(data, state)
     augs.init(data, state)
     model_architectures.init(data, state)
@@ -32,4 +32,25 @@ def init(data, state):
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def restart(api: sly.Api, task_id, context, state, app_logger):
-    pass
+    restart_from_step = state["restartFrom"]
+    data = {}
+    state = {}
+
+    if restart_from_step <= 2:
+        train_val_split.init(g.project_info, g.project_meta, data, state)
+    if restart_from_step <= 3:
+        tags.init(data, state)
+    if restart_from_step <= 4:
+        validate_training_data.init(data, state)
+    if restart_from_step <= 5:
+        augs.init(data, state)
+
+    fields = [
+        {"field": "data", "payload": data, "append": True, "recursive": False},
+        {"field": "state", "payload": state, "append": True, "recursive": False},
+        {"field": "state.restartFrom", "payload": None},
+        {"field": f"state.collapsed{restart_from_step}", "payload": False},
+        {"field": f"state.disabled{restart_from_step}", "payload": False},
+        {"field": "state.activeStep", "payload": restart_from_step},
+    ]
+    g.api.app.set_fields(g.task_id, fields)
