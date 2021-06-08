@@ -26,7 +26,8 @@ _templates = [
 
 _custom_pipeline_path = None
 custom_pipeline = None
-gallery: CompareGallery = None
+gallery1: CompareGallery = None
+gallery2: CompareGallery = None
 remote_preview_path = "/temp/preview_augs.jpg"
 
 
@@ -78,9 +79,11 @@ def init(data, state):
     state["customAugsPath"] = ""  # "/mmclass-heavy-no-fliplr.json"  # @TODO: for debug
     data["customAugsPy"] = None
 
-    global gallery
-    gallery = CompareGallery(g.task_id, g.api, "data.gallery", g.project_meta)
-    data["gallery"] = gallery.to_json()
+    global gallery1, gallery2
+    gallery1 = CompareGallery(g.task_id, g.api, "data.gallery1", g.project_meta)
+    data["gallery1"] = gallery1.to_json()
+    gallery2 = CompareGallery(g.task_id, g.api, "data.gallery2", g.project_meta)
+    data["gallery2"] = gallery2.to_json()
     state["collapsed5"] = True
     state["disabled5"] = True
 
@@ -105,11 +108,13 @@ def load_existing_pipeline(api: sly.Api, task_id, context, state, app_logger):
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def preview_augs(api: sly.Api, task_id, context, state, app_logger):
-    global gallery
+    global gallery1, gallery2
     image_info = td.get_random_image()
     if state["augsType"] == "template":
+        gallery = gallery1
         augs_ppl = get_template_by_name(state["augsTemplateName"])
     else:
+        gallery = gallery2
         augs_ppl = custom_pipeline
 
     img = api.image.download_np(image_info.id)

@@ -39,7 +39,10 @@ def restart(api: sly.Api, task_id, context, state, app_logger):
     if restart_from_step <= 2:
         train_val_split.init(g.project_info, g.project_meta, data, state)
     if restart_from_step <= 3:
-        tags.init(data, state)
+        if restart_from_step == 3:
+            tags.restart(data, state)
+        else:
+            tags.init(data, state)
     if restart_from_step <= 4:
         validate_training_data.init(data, state)
     if restart_from_step <= 5:

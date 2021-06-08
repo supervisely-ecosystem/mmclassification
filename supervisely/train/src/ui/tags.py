@@ -44,6 +44,12 @@ def init(data, state):
     init_progress(progress_index, data)
 
 
+def restart(data, state):
+    data["done3"] = False
+    state["collapsed3"] = True
+    state["disabled3"] = True
+
+
 # def get_random_image():
 #     rand_key = random.choice(list(tag2images.keys()))
 #     image_info_dict = random.choice(tag2images[rand_key])
