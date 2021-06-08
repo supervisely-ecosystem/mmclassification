@@ -17,6 +17,7 @@ def init(data, state):
     data["validationReport"] = None
     data["cntErrors"] = 0
     data["cntWarnings"] = 0
+    data["report"] = None
 
 
 @g.my_app.callback("validate_data")

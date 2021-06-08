@@ -34,22 +34,22 @@
         </tr>
         </tbody>
     </table>
-    <el-button type="primary" class="regular"
+    <el-button type="primary" class="regular mt10"
                v-if="!data.done4"
                @click="command('validate_data')">
         Validate
     </el-button>
-    <div v-if="data.done4">
+    <div v-if="data.done4" class="mt10">
         <div v-if="data.cntErrors > 0" style="color: red">
-            <i class="zmdi zmdi-close-circle mr5 mt10"></i>
+            <i class="zmdi zmdi-close-circle mr5"></i>
             <span>Validation failed, errors can not be automatically resolved</span>
         </div>
         <div v-if="data.cntErrors === 0 && data.cntWarnings > 0" style="color: orange">
-            <i class="zmdi zmdi-alert-triangle mr5 mt10"></i>
+            <i class="zmdi zmdi-alert-triangle mr5"></i>
             <span>Validation completed, all warnings will be resolved automatically</span>
         </div>
         <div v-if="data.cntErrors === 0 && data.cntWarnings === 0" style="color: #13ce66">
-            <i class="zmdi zmdi-check-circle mr5 mt10"></i>
+            <i class="zmdi zmdi-check-circle mr5"></i>
             <span>Validation successfully completed</span>
         </div>
     </div>
