@@ -32,19 +32,23 @@ def download(api: sly.Api, task_id, context, state, app_logger):
     # sly.fs.silent_remove(_cache_path) # for debug
     # *******************************************
 
-    if sly.fs.dir_exists(g.project_dir):
-        pass
-    else:
-        sly.fs.mkdir(g.project_dir)
-        download_progress = get_progress_cb(progress_index, "Download project", g.project_info.items_count * 2)
-        sly.download_project(g.api, g.project_id, g.project_dir,
-                             cache=g.my_app.cache, progress_cb=download_progress,
-                             only_image_tags=True, save_image_info=True)
-        reset_progress(progress_index)
+    try:
+        if sly.fs.dir_exists(g.project_dir):
+            pass
+        else:
+            sly.fs.mkdir(g.project_dir)
+            download_progress = get_progress_cb(progress_index, "Download project", g.project_info.items_count * 2)
+            sly.download_project(g.api, g.project_id, g.project_dir,
+                                 cache=g.my_app.cache, progress_cb=download_progress,
+                                 only_image_tags=True, save_image_info=True)
+            reset_progress(progress_index)
 
-    global project_fs
-    project_fs = sly.Project(g.project_dir, sly.OpenMode.READ)
-    #cache_images_infos()
+        global project_fs
+        project_fs = sly.Project(g.project_dir, sly.OpenMode.READ)
+        #cache_images_infos()
+    except Exception as e:
+        reset_progress(progress_index)
+        raise e
 
     fields = [
         {"field": "data.done1", "payload": True},
