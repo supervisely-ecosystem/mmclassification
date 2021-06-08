@@ -85,20 +85,9 @@ def main():
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
-# - keep all project tags, disable 0 tags and train/val tags
-
-# #f6f8fa
-#@TODO: warn - there are images without tags ...
-#@TODO: small demo data - generate synth
-#@TODO: сделать табличку tags, that will be skipped + колонка reason
-#- total number of images
-#- every tag - train/val images
-#- number of images without training tag (will be skipped)
-#- number of images with several training tags (confusion, will be skipped)
-#- click to visualize images for legend
-
+#@TODO: gallery opacity slider
+#@TODO: restart step tags - optimize
 #@TODO: убрать маргины с карточек
-#@TODO: кнопки книз карточки
 #@TODO: add need_gpu in config
 #@TODO: save_set_to_json - save in imagenet format, rename clean_bad_images - add filed - tag index and save to json for our custom dataset
 #@TODO: save session link in artifacts dir

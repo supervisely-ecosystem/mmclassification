@@ -4,8 +4,7 @@
                     you need to unpack them first using app 'Unpack key-value tags' from Ecosystem"
           :options="{collapsable: true}"
           :collapsed.sync="state.collapsed3"
-          :disabled="{disabled: state.disabled3, message: 'Generate train/val splits at step 2 before preview training tags'}"
-          ref="card3">
+          :disabled="{disabled: state.disabled3, message: 'Generate train/val splits at step 2 before preview training tags'}">
     <sly-class-balance v-if="data.tagsBalance"
                        v-model="state.selectedTags"
                        :content="data.tagsBalance"

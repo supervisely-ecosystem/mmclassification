@@ -27,20 +27,20 @@
                         </sly-editor>
                     </sly-copy-to-clipboard>
                 </sly-field>
-                <sly-field title="Preview augmentation pipeline on random image">
-                    <el-button type="primary" class="regular" @click="command('preview_augs')">Preview</el-button>
-                    <sly-grid-gallery
-                            v-if="data.gallery && state.augsType == 'template'"
-                            class="mt10"
-                            :content="data.gallery.content"
-                            :options="data.gallery.options">
-                        <template v-slot:card-footer="{ annotation }">
-                            <div class="mt5" style="text-align: center">
-                                <el-tag type="primary">{{annotation.title}}</el-tag>
-                            </div>
-                        </template>
-                    </sly-grid-gallery>
-                </sly-field>
+                <el-button type="primary" class="regular" @click="command('preview_augs')">
+                    Preview on random image
+                </el-button>
+                <sly-grid-gallery
+                        v-if="data.gallery && state.augsType == 'template'"
+                        class="mt10"
+                        :content="data.gallery.content"
+                        :options="data.gallery.options">
+                    <template v-slot:card-footer="{ annotation }">
+                        <div class="mt5" style="text-align: center">
+                            <el-tag type="primary">{{annotation.title}}</el-tag>
+                        </div>
+                    </template>
+                </sly-grid-gallery>
             </el-tab-pane>
             <el-tab-pane name="custom">
                 <el-radio slot="label" v-model="state.augsType" label="custom">
@@ -55,7 +55,7 @@
                                 style="margin-left: 5px;"
                                 type="primary" class="regular" size="small"
                                 :disabled="state.customAugsPath.length === 0"
-                                @click="command('load_existing_pipeline')">
+                                @click="data.gallery = null; command('load_existing_pipeline')">
                             Load
                         </el-button>
                     </div>
@@ -67,6 +67,22 @@
                         </sly-editor>
                     </sly-copy-to-clipboard>
                 </sly-field>
+                <div v-if="data.customAugsPy">
+                    <el-button type="primary" class="regular" @click="command('preview_augs')">
+                        Preview on random image
+                    </el-button>
+                    <sly-grid-gallery
+                            v-if="data.gallery && state.augsType == 'custom'"
+                            class="mt10"
+                            :content="data.gallery.content"
+                            :options="data.gallery.options">
+                        <template v-slot:card-footer="{ annotation }">
+                            <div class="mt5" style="text-align: center">
+                                <el-tag type="primary">{{annotation.title}}</el-tag>
+                            </div>
+                        </template>
+                    </sly-grid-gallery>
+                </div>
             </el-tab-pane>
         </el-tabs>
     </sly-card>
