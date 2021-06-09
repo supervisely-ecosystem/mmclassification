@@ -27,7 +27,6 @@ project_dir = os.path.join(my_app.data_dir, "sly_project")
 project_meta = sly.ProjectMeta.from_json(api.project.get_meta(project_id))
 
 artifacts_dir = os.path.join(my_app.data_dir, "artifacts")
-sly.fs.mkdir(artifacts_dir, remove_content_if_exists=True)  # only for debug, nothing to remove in prod
 
 #global root_source_dir
 root_source_dir = str(Path(sys.argv[0]).parents[3])
