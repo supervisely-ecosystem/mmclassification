@@ -60,16 +60,20 @@ def parse_args():
 
 
 def main():
+    print("--------> 1")
     args = parse_args()
 
+    print("--------> 2")
     cfg = Config.fromfile(args.config)
 
+    print("--------> 3")
     if args.options is not None:
         cfg.merge_from_dict(args.options)
     # set cudnn_benchmark
     if cfg.get('cudnn_benchmark', False):
         torch.backends.cudnn.benchmark = True
 
+    print("--------> 4")
     # work_dir is determined in this priority: CLI > segment in file > filename
     if args.work_dir is not None:
         # update configs according to CLI args if args.work_dir is not None
@@ -85,6 +89,7 @@ def main():
     else:
         cfg.gpu_ids = range(1) if args.gpus is None else range(args.gpus)
 
+    print("--------> 5")
     # init distributed env first, since logger depends on the dist info.
     if args.launcher == 'none':
         distributed = False
@@ -94,6 +99,7 @@ def main():
         _, world_size = get_dist_info()
         cfg.gpu_ids = range(world_size)
 
+    print("--------> 6")
     # create work_dir
     mmcv.mkdir_or_exist(osp.abspath(cfg.work_dir))
     # init the logger before other steps
@@ -101,6 +107,7 @@ def main():
     log_file = osp.join(cfg.work_dir, f'{timestamp}.log')
     logger = get_root_logger(log_file=log_file, log_level=cfg.log_level)
 
+    print("--------> 7")
     # init the meta dict to record some important information such as
     # environment info and seed, which will be logged
     meta = dict()

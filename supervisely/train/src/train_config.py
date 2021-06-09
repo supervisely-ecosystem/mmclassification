@@ -65,7 +65,7 @@ def generate_dataset_config(state):
                        py_config, 0, re.MULTILINE)
 
     py_config = re.sub(r"num_workers_per_gpu\s*=\s*(\d+)",
-                       lambda m: _replace_function("workersPerGPU", state["workersPerGPU"], "{} = {}", m),
+                       lambda m: _replace_function("num_workers_per_gpu", state["workersPerGPU"], "{} = {}", m),
                        py_config, 0, re.MULTILINE)
 
     py_config = re.sub(r"validation_interval\s*=\s*(\d+)",
