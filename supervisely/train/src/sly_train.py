@@ -11,21 +11,11 @@ from sly_train_args import init_script_arguments
 @g.my_app.ignore_errors_and_show_dialog_window()
 def train(api: sly.Api, task_id, context, state, app_logger):
     try:
-        # # convert Supervisely project to YOLOv5 format
-        # progress_cb = get_progress_cb("Convert Supervisely to YOLOv5 format", len(train_set) + len(val_set))
-        # yolov5_format.transform(project_dir, train_data_dir, train_set, val_set, progress_cb)
-
         # init sys.argv for main training script
         init_script_arguments(state)
         from tools.train import main as mm_train #@TODO: move to imports section on top
         mm_train()
 
-        #
-        # # start train script
-        # api.app.set_field(task_id, "state.activeNames", ["labels", "train", "pred", "metrics"])  # "logs",
-        # get_progress_cb("YOLOv5: Scanning data ", 1)(1)
-        # train_yolov5.main()
-        #
         # # upload artifacts directory to Team Files
         # upload_artifacts(g.local_artifacts_dir, g.remote_artifacts_dir)
         # set_task_output()

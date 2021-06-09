@@ -26,7 +26,6 @@ _base_ = [
 """
 
 sly.fs.mkdir(configs_dir)
-sly.fs.clean_dir(configs_dir)  # for debug
 
 
 def _replace_function(var_name, var_value, template, match):
