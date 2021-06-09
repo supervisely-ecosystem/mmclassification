@@ -29,6 +29,10 @@ def init(data, state):
     state["pyConfigsViewOptions"] = data["configsPyViewOptionsRead"]
     state["advancedPy"] = False
 
+    state["collapsed8"] = True
+    state["disabled8"] = True
+    state["done8"] = False
+
 
 @g.my_app.callback("preview_configs")
 @sly.timeit

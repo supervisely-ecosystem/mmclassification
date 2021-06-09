@@ -57,6 +57,12 @@
         <sly-stepper-item>
             {% include 'supervisely/train/src/ui/architectures.html' %}
         </sly-stepper-item>
+        <sly-stepper-item>
+            {% include 'supervisely/train/src/ui/hyperparameters.html' %}
+        </sly-stepper-item>
+        <sly-stepper-item>
+            {% include 'supervisely/train/src/ui/hyperparameters_python.html' %}
+        </sly-stepper-item>
     </sly-stepper>
 
     <el-dialog
@@ -75,7 +81,5 @@
     </el-dialog>
 
 
-    {% include 'supervisely/train/src/ui/hyperparameters.html' %}
-    {% include 'supervisely/train/src/ui/hyperparameters_python.html' %}
     {% include 'supervisely/train/src/ui/monitoring.html' %}
 </div>
