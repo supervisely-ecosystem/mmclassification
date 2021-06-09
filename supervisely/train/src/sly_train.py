@@ -1,14 +1,9 @@
 import os
 import supervisely_lib as sly
-
-import input_project
 import sly_globals as g
 import ui as ui
-import architectures
 from sly_train_progress import get_progress_cb
 from sly_train_args import init_script_arguments
-from splits import get_train_val_sets, verify_train_val_sets#, save_set_to_json
-import train_config
 
 
 @g.my_app.callback("train")
@@ -16,34 +11,9 @@ import train_config
 @g.my_app.ignore_errors_and_show_dialog_window()
 def train(api: sly.Api, task_id, context, state, app_logger):
     try:
-        architectures.prepare_weights(state)
-
-        input_project.download()
-
-        # split to train / validation sets (paths to images and annotations)
-        train_set, val_set = get_train_val_sets(g.project_dir, state)
-
-        # save selectedTags -> ground-truth labels
-        tag_names = state["selectedTags"]
-        gt_labels = {tag_name: idx for idx, tag_name in enumerate(tag_names)}
-        sly.json.dump_json_file(gt_labels, os.path.join(g.project_dir, "gt_labels.json"))
-
-        progress = get_progress_cb(
-            "Validating and cleaning training data (remove images without training tags)",
-            len(train_set) + len(val_set)
-        )
-        num_images_not_tags, num_images_multiple_tags, train_set, val_set = input_project.clean_bad_images(project_dir, train_set, val_set, progress)
-        verify_train_val_sets(train_set, val_set)
-        #save_set_to_json(os.path.join(g.project_dir, "train_set.json"), train_set)
-        #save_set_to_json(os.path.join(g.project_dir, "val_set.json"), val_set)
-        sly.logger.info(f"Train set: {len(train_set)} images")
-        sly.logger.info(f"Val set: {len(val_set)} images")
-
         # # convert Supervisely project to YOLOv5 format
         # progress_cb = get_progress_cb("Convert Supervisely to YOLOv5 format", len(train_set) + len(val_set))
         # yolov5_format.transform(project_dir, train_data_dir, train_set, val_set, progress_cb)
-
-        train_config.save_from_state(state)
 
         # init sys.argv for main training script
         init_script_arguments(state)

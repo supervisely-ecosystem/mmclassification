@@ -2,6 +2,21 @@ import train_config
 import supervisely_lib as sly
 import sly_globals as g
 
+opts = {
+    "mode": 'ace/mode/python',
+    "showGutter": False,
+    "maxLines": 100,
+    "highlightActiveLine": False
+}
+opts_read = {
+    **opts,
+    "readOnly": True
+}
+opts_write = {
+    **opts,
+    "readOnly": False
+}
+
 
 def init(data, state):
     state["modelPyConfig"] = ""
@@ -10,23 +25,9 @@ def init(data, state):
     state["runtimePyConfig"] = ""
     state["mainPyConfig"] = ""
 
-    data["configsPyViewOptionsRead"] = {
-        "mode": 'ace/mode/python',
-        "showGutter": False,
-        "readOnly": True,
-        "maxLines": 100,
-        "highlightActiveLine": False
-    }
-
-    data["configsPyViewOptionsWrite"] = {
-        "mode": 'ace/mode/python',
-        "showGutter": True,
-        "readOnly": False,
-        "maxLines": 100,
-        "highlightActiveLine": True
-    }
-
-    state["pyConfigsViewOptions"] = data["configsPyViewOptionsRead"]
+    data["configsPyViewOptionsRead"] = opts_read
+    data["configsPyViewOptionsWrite"] = opts_write
+    state["pyConfigsViewOptions"] = opts_read
     state["advancedPy"] = False
 
     state["collapsed8"] = True
@@ -62,10 +63,12 @@ def preview_configs(api: sly.Api, task_id, context, state, app_logger):
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def accept_py_configs(api: sly.Api, task_id, context, state, app_logger):
+    train_config.save_from_state(state)
     fields = [
         {"field": "data.done8", "payload": True},
         {"field": "state.collapsed9", "payload": False},
         {"field": "state.disabled9", "payload": False},
         {"field": "state.activeStep", "payload": 9},
+        {"field": "state.pyConfigsViewOptions", "payload": opts_read},
     ]
     g.api.app.set_fields(g.task_id, fields)

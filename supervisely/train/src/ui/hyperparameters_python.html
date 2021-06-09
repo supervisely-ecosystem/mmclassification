@@ -23,6 +23,7 @@
             <el-switch
                     class="mr10"
                     v-model="state.advancedPy"
+                    :disabled="data.done8"
                     on-color="#13ce66"
                     off-color="#B8B8B8"
                     @input="x => {
@@ -89,8 +90,7 @@
             </sly-editor>
         </sly-copy-to-clipboard>
     </sly-field>
-
-    <el-button type="primary" class="regular mt10"
+    <el-button type="primary" class="regular"
                @click="command('accept_py_configs')"
                v-if="!data.done8 && state.modelPyConfig.length > 0">
         Finish step

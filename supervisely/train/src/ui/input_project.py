@@ -10,6 +10,7 @@ _images_infos = None # dataset_name -> image_name -> image_info
 _cache_base_filename = os.path.join(g.my_app.data_dir, "images_info")
 _cache_path = _cache_base_filename + ".db"
 project_fs: sly.Project = None
+_image_id_to_paths = {}
 
 
 def init(data, state):
@@ -82,14 +83,22 @@ def download(api: sly.Api, task_id, context, state, app_logger):
 #         sly.logger.info(f"images infos for project id={g.project_id} has been successfully cached")
 
 
+
 def get_image_info_from_cache(dataset_name, item_name):
     dataset_fs = project_fs.datasets.get(dataset_name)
     img_info_path = dataset_fs.get_img_info_path(item_name)
     image_info_dict = sly.json.load_json_file(img_info_path)
     ImageInfo = namedtuple('ImageInfo', image_info_dict)
     info = ImageInfo(**image_info_dict)
+
+    # add additional info - helps to save split paths to txt files
+    _image_id_to_paths[info.id] = dataset_fs.get_item_paths(item_name)._asdict()
+
     return info
 
+
+def get_paths_by_image_id(image_id):
+    return _image_id_to_paths[image_id]
 
 
 # def clean_sets_and_calc_stats(project_dir, train_set, val_set, progress_cb):

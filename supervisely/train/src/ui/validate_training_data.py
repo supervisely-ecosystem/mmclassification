@@ -1,6 +1,8 @@
 from collections import defaultdict
+import os
 import supervisely_lib as sly
 import sly_globals as g
+import input_project
 import random
 import tags
 
@@ -159,6 +161,20 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         {"field": "data.cntWarnings", "payload": cnt_warnings},
     ]
     if cnt_errors == 0:
+        # save selected tags
+        gt_labels = {tag_name: idx for idx, tag_name in enumerate(final_tags)}
+        sly.json.dump_json_file(gt_labels, os.path.join(g.project_dir, "gt_labels.json"))
+
+        # save splits
+        #final_tags2images[tag_name][split].extend(_final_infos)
+        split_paths = defaultdict(list)
+        _splits_to_dump = defaultdict(lambda: defaultdict(list))
+        for tag_name, splits in final_tags2images.items():
+            for split_name, infos in splits.items():
+                paths = [input_project.get_paths_by_image_id(info.id) for info in infos]
+                split_paths[split_name].extend(paths)
+        sly.json.dump_json_file(split_paths, os.path.join(g.project_dir, "splits.json"))
+
         fields.extend([
             {"field": "state.collapsed5", "payload": False},
             {"field": "state.disabled5", "payload": False},
