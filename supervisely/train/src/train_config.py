@@ -150,6 +150,10 @@ def generate_runtime_config(state):
                        lambda m: _replace_function("log_interval", state["metricsPeriod"], "{} = {}", m),
                        py_config, 0, re.MULTILINE)
 
+    py_config = re.sub(r"load_from\s*=\s*(None)",
+                       lambda m: _replace_function("load_from", architectures.local_weights_path, "{} = '{}'", m),
+                       py_config, 0, re.MULTILINE)
+
     with open(runtime_config_path, 'w') as f:
         f.write(py_config)
 

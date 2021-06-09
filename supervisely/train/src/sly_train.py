@@ -80,6 +80,7 @@ def main():
 # уменьшить скругления + сделать кликабельность по названию?
 #@TODO: add to readme - unpack KV tag
 #@TODO: min version instance
+#@TODO: resume_from???? - hard to implement without saving all data and configurations
 
 # implement save_best renaming
 if __name__ == "__main__":
