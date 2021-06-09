@@ -28,10 +28,10 @@
                     @input="x => {
                                 state.advancedPy = x;
                                 if (x === true) {
-                                    state.pyConfigsViewOptions = state.configsPyViewOptionsWrite;
+                                    state.pyConfigsViewOptions = data.configsPyViewOptionsWrite;
                                 }
                                 else {
-                                    state.pyConfigsViewOptions = state.configsPyViewOptionsRead;
+                                    state.pyConfigsViewOptions = data.configsPyViewOptionsRead;
                                 }
                                 command('preview_configs');
                             }"

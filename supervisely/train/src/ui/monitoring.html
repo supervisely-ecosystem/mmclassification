@@ -1,27 +1,26 @@
-<sly-card class="mt15"
-          title="9. Training progress"
+<sly-card title="Training progress"
           subtitle="Task progress, detailed logs, metrics charts, and other visualizations">
 
-    <div slot="header">
-        <el-button type="primary" class="regular"
-                   @click="state.started = true; command('train')"
-                   :disabled="state.selectedTags.length === 0 ||
-                              (state.weightsInitialization === 'custom' && state.weightsPath === '') ||
-                              state.modelPyConfig.length === 0 ||
-                              state.started === true"
-        >
-            Start training
-        </el-button>
-    </div>
-    <div v-show="state.selectedTags.length === 0" class="mt10" style="color: red">
-        Please select training tags at step #2
-    </div>
-    <div class="mt5" v-show="state.weightsInitialization === 'custom' && state.weightsPath === ''" style="color: red">
-        Please define path to custom model weights at step #6
-    </div>
-    <div class="mt5" v-show="state.modelPyConfig.length === 0" style="color: red">
-        Please generate previews for training configuration at step #8
-    </div>
+<!--    <div slot="header">-->
+<!--        <el-button type="primary" class="regular"-->
+<!--                   @click="state.started = true; command('train')"-->
+<!--                   :disabled="state.selectedTags.length === 0 ||-->
+<!--                              (state.weightsInitialization === 'custom' && state.weightsPath === '') ||-->
+<!--                              state.modelPyConfig.length === 0 ||-->
+<!--                              state.started === true"-->
+<!--        >-->
+<!--            Start training-->
+<!--        </el-button>-->
+<!--    </div>-->
+<!--    <div v-show="state.selectedTags.length === 0" class="mt10" style="color: red">-->
+<!--        Please select training tags at step #2-->
+<!--    </div>-->
+<!--    <div class="mt5" v-show="state.weightsInitialization === 'custom' && state.weightsPath === ''" style="color: red">-->
+<!--        Please define path to custom model weights at step #6-->
+<!--    </div>-->
+<!--    <div class="mt5" v-show="state.modelPyConfig.length === 0" style="color: red">-->
+<!--        Please generate previews for training configuration at step #8-->
+<!--    </div>-->
 
     <div v-if="data.progressName.length > 0" class="mt10">
         <div style="color: #20a0ff">{{data.progressName}}: {{data.currentProgressLabel}} /
@@ -29,8 +28,6 @@
         </div>
         <el-progress :percentage="Math.round(data.currentProgress * 100 / data.totalProgress)"></el-progress>
     </div>
-
-    <div class="mt10"></div>
 
 <!--    <el-collapse class="mt15" v-model="state.activeNames">-->
 <!--        <el-collapse-item title="Logs" name="logs">-->

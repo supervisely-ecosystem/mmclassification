@@ -56,3 +56,16 @@ def preview_configs(api: sly.Api, task_id, context, state, app_logger):
         {"field": "state.mainPyConfig", "payload": main_py_config},
     ]
     api.task.set_fields(task_id, fields)
+
+
+@g.my_app.callback("accept_py_configs")
+@sly.timeit
+@g.my_app.ignore_errors_and_show_dialog_window()
+def accept_py_configs(api: sly.Api, task_id, context, state, app_logger):
+    fields = [
+        {"field": "data.done8", "payload": True},
+        {"field": "state.collapsed9", "payload": False},
+        {"field": "state.disabled9", "payload": False},
+        {"field": "state.activeStep", "payload": 9},
+    ]
+    g.api.app.set_fields(g.task_id, fields)
