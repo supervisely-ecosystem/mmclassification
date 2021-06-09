@@ -9,6 +9,14 @@ def init(data, state):
     _init_output(data)
     #metrics.init(data, state)
 
+    state["collapsed9"] = True
+    state["disabled9"] = True
+    state["done9"] = False
+
+
+def restart(data, state):
+    data["done9"] = False
+
 
 def _init_start_state(state):
     state["started"] = False

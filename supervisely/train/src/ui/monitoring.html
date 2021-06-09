@@ -1,5 +1,9 @@
 <sly-card title="Training progress"
-          subtitle="Task progress, detailed logs, metrics charts, and other visualizations">
+          subtitle="Task progress, detailed logs, metrics charts, and other visualizations"
+          :options="{collapsable: true}"
+          :collapsed.sync="state.collapsed9"
+          :disabled="{disabled: state.disabled9, message: 'Finish previous steps before run training'}"
+          ref="step9">
 
 <!--    <div slot="header">-->
 <!--        <el-button type="primary" class="regular"-->
