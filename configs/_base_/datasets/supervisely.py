@@ -6,6 +6,7 @@ batch_size_per_gpu = 32
 num_workers_per_gpu = 2
 validation_interval = 1
 save_best = None
+project_dir = None
 
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
@@ -37,11 +38,13 @@ data = dict(
     workers_per_gpu=num_workers_per_gpu,
     train=dict(
         type=dataset_type,
-        data_prefix='train',
+        project_dir=project_dir,
+        split_name='train',
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
-        data_prefix='val',
+        project_dir=project_dir,
+        split_name='val',
         pipeline=test_pipeline),
     )
 evaluation = dict(interval=validation_interval, save_best=save_best, metric='accuracy')

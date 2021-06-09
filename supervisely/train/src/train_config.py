@@ -78,6 +78,10 @@ def generate_dataset_config(state):
                        lambda m: _replace_function("save_best", save_best, "{} = {}\n", m),
                        py_config, 0, re.MULTILINE)
 
+    py_config = re.sub(r"project_dir\s*=\s*(None)",
+                       lambda m: _replace_function("project_dir", g.project_dir, "{} = '{}'", m),
+                       py_config, 0, re.MULTILINE)
+
     with open(dataset_config_path, 'w') as f:
         f.write(py_config)
     return dataset_config_path, py_config
