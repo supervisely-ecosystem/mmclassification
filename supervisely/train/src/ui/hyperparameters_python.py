@@ -34,6 +34,10 @@ def init(data, state):
     state["done8"] = False
 
 
+def restart(data, state):
+    data["done8"] = False
+
+
 @g.my_app.callback("preview_configs")
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
