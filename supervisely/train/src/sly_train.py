@@ -24,7 +24,7 @@ def train(api: sly.Api, task_id, context, state, app_logger):
     #     raise e  # app will handle this error and show modal window
 
     # stop application
-    get_progress_cb("Finished, app is stopped automatically", 1)(1)
+    #get_progress_cb("Finished, app is stopped automatically", 1)(1)
     g.my_app.stop()
 
 
