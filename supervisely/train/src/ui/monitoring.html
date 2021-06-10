@@ -11,53 +11,74 @@
     >
         Start training
     </el-button>
-    <sly-field title="Metrics" description="Real-time training metrics">
-        <sly-field title="Smoothing" description="Change the smoothing of line charts">
-                <sly-icon slot="icon" :options="{ color: '#006ad4', bgColor: '#bbe2ff', rounded: false }">
-                    <i class="zmdi zmdi-trending-up"></i>
-                </sly-icon>
-                <el-slider
-                        :value="state.smoothing"
-                        :min="0" :max="0.95" :step="0.05" show-input
-                        style="width: 450px;"
-                        @input="(val)=>{
-                                state.smoothing = val;
-                                data.mGIoU.options.smoothingWeight = val;
-                                data.mObjectness.options.smoothingWeight = val;
-                                data.mClassification.options.smoothingWeight = val;
-                            }"
-                >
-                </el-slider>
-            </sly-field>
-            <div class="fflex" v-if="state.activeNames.includes('metrics')">
-                <sly-line-chart
-                        style="width: 33%;"
-                        :options.sync="data.mGIoU.options"
-                        :content="data.mGIoU.series">
-                </sly-line-chart>
-                <sly-line-chart
-                        style="width: 33%;"
-                        :options.sync="data.mObjectness.options"
-                        :content="data.mObjectness.series">
-                </sly-line-chart>
-                <sly-line-chart
-                        style="width: 33%;"
-                        :options.sync="data.mClassification.options"
-                        :content="data.mClassification.series">
-                </sly-line-chart>
-            </div>
-            <div class="fflex mt15" v-if="state.activeNames.includes('metrics')">
-                <sly-line-chart
-                        style="width: 33%;"
-                        :options.sync="data.mPR.options"
-                        :content="data.mPR.series">
-                </sly-line-chart>
-                <sly-line-chart
-                        style="width: 33%;"
-                        :options.sync="data.mMAP.options"
-                        :content="data.mMAP.series">
-                </sly-line-chart>
-                <div style="width: 33%;"></div>
-            </div>
+
+    <sly-field v-if="data.eta" class="mt10"
+               title="ETA"
+               description="Gives an estimate of roughly how long the whole training process will take">
+        <i class="zmdi zmdi-time-countdown mr5"></i>{{data.eta}}
     </sly-field>
+    <div v-if="data.progressEpoch" class="mt10">
+        <div style="color: #20a0ff">
+            {{data.progressEpoch}}: {{data.progressCurrentEpoch}} / {{data.progressTotalEpoch}}
+        </div>
+        <el-progress :percentage="data.progressPercentEpoch"></el-progress>
+    </div>
+    <div v-if="data.progressIter" class="mt10">
+        <div style="color: #20a0ff">
+            {{data.progressIter}}: {{data.progressCurrentIter}} / {{data.progressTotalIter}}
+        </div>
+        <el-progress :percentage="data.progressPercentIter"></el-progress>
+    </div>
+
+<!--    <sly-field title="Training charts" description="Real-time training metrics">-->
+<!--        <sly-field title="Metrics" description="Real-time training metrics">-->
+<!--            <sly-field title="Smoothing" description="Change the smoothing of line charts">-->
+<!--                <sly-icon slot="icon" :options="{ color: '#006ad4', bgColor: '#bbe2ff', rounded: false }">-->
+<!--                    <i class="zmdi zmdi-trending-up"></i>-->
+<!--                </sly-icon>-->
+<!--                <el-slider-->
+<!--                        :value="state.smoothing"-->
+<!--                        :min="0" :max="0.95" :step="0.05" show-input-->
+<!--                        style="width: 450px;"-->
+<!--                        @input="(val)=>{-->
+<!--                                state.smoothing = val;-->
+<!--                                data.mGIoU.options.smoothingWeight = val;-->
+<!--                                data.mObjectness.options.smoothingWeight = val;-->
+<!--                                data.mClassification.options.smoothingWeight = val;-->
+<!--                            }"-->
+<!--                >-->
+<!--                </el-slider>-->
+<!--            </sly-field>-->
+<!--            <div class="fflex" v-if="state.activeNames.includes('metrics')">-->
+<!--                <sly-line-chart-->
+<!--                        style="width: 33%;"-->
+<!--                        :options.sync="data.mGIoU.options"-->
+<!--                        :content="data.mGIoU.series">-->
+<!--                </sly-line-chart>-->
+<!--                <sly-line-chart-->
+<!--                        style="width: 33%;"-->
+<!--                        :options.sync="data.mObjectness.options"-->
+<!--                        :content="data.mObjectness.series">-->
+<!--                </sly-line-chart>-->
+<!--                <sly-line-chart-->
+<!--                        style="width: 33%;"-->
+<!--                        :options.sync="data.mClassification.options"-->
+<!--                        :content="data.mClassification.series">-->
+<!--                </sly-line-chart>-->
+<!--            </div>-->
+<!--            <div class="fflex mt15" v-if="state.activeNames.includes('metrics')">-->
+<!--                <sly-line-chart-->
+<!--                        style="width: 33%;"-->
+<!--                        :options.sync="data.mPR.options"-->
+<!--                        :content="data.mPR.series">-->
+<!--                </sly-line-chart>-->
+<!--                <sly-line-chart-->
+<!--                        style="width: 33%;"-->
+<!--                        :options.sync="data.mMAP.options"-->
+<!--                        :content="data.mMAP.series">-->
+<!--                </sly-line-chart>-->
+<!--                <div style="width: 33%;"></div>-->
+<!--            </div>-->
+<!--        </sly-field>-->
+<!--    </sly-field>-->
 </sly-card>

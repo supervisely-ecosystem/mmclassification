@@ -11,6 +11,11 @@ def update_progress(count, index, api: sly.Api, task_id, progress: sly.Progress)
     _update_progress_ui(index, api, task_id, progress)
 
 
+def set_progress(count, index, api: sly.Api, task_id, progress: sly.Progress):
+    progress.set_current_value(count)
+    _update_progress_ui(index, api, task_id, progress)
+
+
 def _update_progress_ui(index, api: sly.Api, task_id, progress: sly.Progress, stdout_print=False):
     if progress.need_report():
         fields = [
@@ -25,9 +30,9 @@ def _update_progress_ui(index, api: sly.Api, task_id, progress: sly.Progress, st
         progress.report_progress()
 
 
-def get_progress_cb(index, message, total, is_size=False, min_report_percent=5):
+def get_progress_cb(index, message, total, is_size=False, min_report_percent=5, upd_func=update_progress):
     progress = sly.Progress(message, total, is_size=is_size, min_report_percent=min_report_percent)
-    progress_cb = partial(update_progress, index=index, api=globals.api, task_id=globals.task_id, progress=progress)
+    progress_cb = partial(upd_func, index=index, api=globals.api, task_id=globals.task_id, progress=progress)
     progress_cb(0)
     return progress_cb
 

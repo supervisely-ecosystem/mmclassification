@@ -1,13 +1,18 @@
 import supervisely_lib as sly
 #import sly_metrics as metrics
-
+from sly_train_progress import init_progress
 
 def init(data, state):
     #metrics.init(data, state)
 
+    init_progress("Epoch", data)
+    init_progress("Iter", data)
+    data["eta"] = None
+
     state["collapsed9"] = True
     state["disabled9"] = True
     state["done9"] = False
+
 
 
 def restart(data, state):
