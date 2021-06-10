@@ -57,3 +57,13 @@ def init_progress(index, data):
 def update_uploading_progress(count, api: sly.Api, task_id, progress: sly.Progress):
     progress.iters_done(count - progress.current)
     _update_progress_ui(api, task_id, progress, stdout_print=True)
+
+
+def add_progress_to_request(fields, index, progress: sly.Progress):
+    res = [
+        {"field": f"data.progress{index}", "payload": progress.message if progress is not None else None},
+        {"field": f"data.progressCurrent{index}", "payload": progress.current_label if progress is not None else None},
+        {"field": f"data.progressTotal{index}", "payload": progress.total_label if progress is not None else None},
+        {"field": f"data.progressPercent{index}", "payload": math.floor(progress.current * 100 / progress.total) if progress is not None else None},
+    ]
+    fields.extend(res)

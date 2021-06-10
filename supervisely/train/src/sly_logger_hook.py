@@ -1,7 +1,9 @@
 import datetime
 from mmcv.runner.hooks import HOOKS
 from mmcv.runner.hooks.logger.text import TextLoggerHook
-from sly_train_progress import get_progress_cb, set_progress
+import supervisely_lib as sly
+from sly_train_progress import get_progress_cb, set_progress, add_progress_to_request
+import sly_globals as g
 
 
 @HOOKS.register_module()
@@ -14,7 +16,7 @@ class SuperviselyLoggerHook(TextLoggerHook):
                  interval_exp_name=1000):
         super(SuperviselyLoggerHook, self).__init__(by_epoch, interval, ignore_last, reset_flag, interval_exp_name)
         self.progress_epoch = None
-        self.progress_iter_set = None
+        self.progress_iter = None
 
 
     def _log_info(self, log_dict, runner):
@@ -32,16 +34,21 @@ class SuperviselyLoggerHook(TextLoggerHook):
         pass
 
         if self.progress_epoch is None:
-            self.progress_epoch = get_progress_cb("Epoch", "Epoch", runner.max_epochs, min_report_percent=1)
-        if self.progress_iter_set is None:
-            self.progress_iter_set = get_progress_cb("Iter", "Iterations", runner.max_iters, min_report_percent=1, upd_func=set_progress)
-        self.progress_iter_set(log_dict['iter'])
+            self.progress_epoch = sly.Progress("Epochs", runner.max_epochs)
+        if self.progress_iter is None:
+            self.progress_iter = sly.Progress("Iterations", len(runner.data_loader))
 
+        fields = []
         if log_dict['mode'] == 'val':
-            #if runner.iter == runner.max_iters:
-            self.progress_epoch(1)
+            self.progress_epoch.set_current_value(log_dict["epoch"])
+            self.progress_iter.set_current_value(0)
+        else:
+            self.progress_iter.set_current_value(log_dict['iter'])
+            fields.append({"field": "data.eta", "payload": log_dict['sly_eta']})
 
-
+        add_progress_to_request(fields, "Epoch", self.progress_epoch)
+        add_progress_to_request(fields, "Iter", self.progress_iter)
+        g.api.app.set_fields(g.task_id, fields)
 
         #download_progress = get_progress_cb(progress_index, "Download project", g.project_info.items_count * 2)
 
