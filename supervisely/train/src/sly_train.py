@@ -55,19 +55,16 @@ def main():
 #@TODO: custom augs - reimplement prepare data in BaseDataset
 #@TODO: SuperviselyLoggerHook in default_runtime
 #@TODO: move mm_train import on top
-#@TODO: runtime load_from / or args --resume-from
 #@TODO: release new version of SDK before release app
 #@TODO: if OOM error, make a special message for that
 #@TODO: custom weights - load-from option
-#@TODO: random weights initialization?
-#@TODO: --resume-from - continue training
 #@TODO: readme - add py-configs to training artifacts
 #@TODO: readme - tags co-occurrence-matrix
 #Oops! Something went wrong, please try again or contact tech support. Find more info in the app logs. Error: AttributeError("'dict' object has no attribute 'optimizer'")
-# уменьшить скругления + сделать кликабельность по названию?
 #@TODO: add to readme - unpack KV tag
 #@TODO: min version instance
-#@TODO: resume_from???? - hard to implement without saving all data and configurations
+#@TODO: resume_from - hard to implement without saving all data and configurations
+
 
 # implement save_best renaming
 if __name__ == "__main__":
