@@ -42,9 +42,9 @@ def init_chart(title, names, xs, ys, smoothing=None):
 def init_charts(data, state):
     #demo_x = [[], []] #[[1, 2, 3, 4], [2, 4, 6, 8]]
     #demo_y = [[], []] #[[10, 15, 13, 17], [16, 5, 11, 9]]
-    data["chartLR"] = init_chart("Learning Rate", names=["train"], xs=[[]], ys=[[]], smoothing=0.6)
+    data["chartLR"] = init_chart("LR", names=["train"], xs=[[]], ys=[[]], smoothing=0.6)
     data["chartTrainLoss"] = init_chart("Loss", names=["train"], xs=[[]], ys=[[]], smoothing=0.6)
-    data["chartValAccuracy"] = init_chart("Val accuracy", names=["top-1", "top-5"], xs=[[], []], ys=[[], []], smoothing=0.6)
+    data["chartValAccuracy"] = init_chart("Val Acc", names=["top-1", "top-5"], xs=[[], []], ys=[[], []], smoothing=0.6)
 
     data["chartTime"] = init_chart("Time", names=["time"], xs=[[]], ys=[[]])
     data["chartDataTime"] = init_chart("Data Time", names=["data_time"], xs=[[]], ys=[[]])
