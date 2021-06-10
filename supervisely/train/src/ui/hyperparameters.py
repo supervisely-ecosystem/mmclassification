@@ -28,7 +28,7 @@ def init(data, state):
 
     state["lrPolicyEnabled"] = False
 
-    file_path = os.path.join(g.root_source_dir, "configs/_base_/schedules/supervisely_lr_policy.py")
+    file_path = os.path.join(g.root_source_dir, "supervisely/train/configs/lr_policy.py")
     with open(file_path) as f:
         state["lrPolicyPyConfig"] = f.read()
 

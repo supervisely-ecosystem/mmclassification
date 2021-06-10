@@ -3,65 +3,8 @@ import os
 import numpy as np
 import supervisely_lib as sly
 
-from .base_dataset import BaseDataset
-from .builder import DATASETS
-
-
-def has_file_allowed_extension(filename, extensions):
-    """Checks if a file is an allowed extension.
-
-    Args:
-        filename (string): path to a file
-
-    Returns:
-        bool: True if the filename ends with a known image extension
-    """
-    filename_lower = filename.lower()
-    return any(filename_lower.endswith(ext) for ext in extensions)
-
-
-def find_folders(root):
-    """Find classes by folders under a root.
-
-    Args:
-        root (string): root directory of folders
-
-    Returns:
-        folder_to_idx (dict): the map from folder name to class idx
-    """
-    folders = [
-        d for d in os.listdir(root) if os.path.isdir(os.path.join(root, d))
-    ]
-    folders.sort()
-    folder_to_idx = {folders[i]: i for i in range(len(folders))}
-    return folder_to_idx
-
-
-def get_samples(root, folder_to_idx, extensions):
-    """Make dataset by walking all images under a root.
-
-    Args:
-        root (string): root directory of folders
-        folder_to_idx (dict): the map from class name to class idx
-        extensions (tuple): allowed extensions
-
-    Returns:
-        samples (list): a list of tuple where each element is (image, label)
-    """
-    samples = []
-    root = os.path.expanduser(root)
-    for folder_name in sorted(os.listdir(root)):
-        _dir = os.path.join(root, folder_name)
-        if not os.path.isdir(_dir):
-            continue
-
-        for _, _, fns in sorted(os.walk(_dir)):
-            for fn in sorted(fns):
-                if has_file_allowed_extension(fn, extensions):
-                    path = os.path.join(folder_name, fn)
-                    item = (path, folder_to_idx[folder_name])
-                    samples.append(item)
-    return samples
+from mmcls.datasets.base_dataset import BaseDataset
+from mmcls.datasets.builder import DATASETS
 
 
 @DATASETS.register_module()

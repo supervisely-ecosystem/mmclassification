@@ -52,7 +52,7 @@ def generate_model_config(state):
 
 
 def generate_dataset_config(state):
-    config_path = os.path.join(g.root_source_dir, "configs/_base_/datasets/supervisely.py")
+    config_path = os.path.join(g.root_source_dir, "supervisely/train/configs/dataset.py")
     with open(config_path) as f:
         py_config = f.read()
 
@@ -127,7 +127,7 @@ def generate_schedule_config(state):
 
 
 def generate_runtime_config(state):
-    config_path = os.path.join(g.root_source_dir, "configs/_base_/default_runtime.py")
+    config_path = os.path.join(g.root_source_dir, "supervisely/train/configs/runtime.py")
     with open(config_path) as f:
         py_config = f.read()
 
