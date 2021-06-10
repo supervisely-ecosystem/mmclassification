@@ -4,6 +4,7 @@ import sly_globals as g
 import ui as ui
 from sly_train_progress import get_progress_cb
 from sly_train_args import init_script_arguments
+import sly_logger_hook
 
 
 @g.my_app.callback("train")
@@ -45,6 +46,7 @@ def main():
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
+# {'mode': 'train', 'epoch': 1, 'iter': 10, 'lr': 0.001, 'memory': 1839, 'data_time': 0.2636455535888672, 'loss': 4.4233519554138185, 'time': 0.35094327926635743}
 # Error: AttributeError("'ConfigDict' object has no attribute 'lr_config'")
 #@TODO: debug error imgcorruptlike
 #@TODO: scroll to active step - after restart and on finish
