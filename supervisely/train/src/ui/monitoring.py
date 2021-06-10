@@ -5,6 +5,7 @@ from sly_train_progress import init_progress
 def init(data, state):
     init_progress("Epoch", data)
     init_progress("Iter", data)
+    init_progress("UploadDir", data)
     data["eta"] = None
 
     init_charts(data, state)

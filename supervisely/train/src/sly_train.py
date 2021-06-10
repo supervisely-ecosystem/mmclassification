@@ -2,9 +2,32 @@ import os
 import supervisely_lib as sly
 import sly_globals as g
 import ui as ui
-from sly_train_progress import get_progress_cb
+from sly_train_progress import _update_progress_ui
 from sly_train_args import init_script_arguments
 import sly_logger_hook
+from functools import partial
+
+
+def upload_artifacts_and_log_progress():
+    fields = [
+        {"field": "data.progressEpoch", "payload": None},
+        {"field": "data.progressIter", "payload": None},
+        {"field": "data.eta", "payload": None},
+    ]
+    g.api.app.set_fields(g.task_id, fields)
+
+    def upload_monitor(monitor, api: sly.Api, task_id, progress: sly.Progress):
+        if progress.total == 0:
+            progress.set(monitor.bytes_read, monitor.len, report=False)
+        else:
+            progress.set_current_value(monitor.bytes_read, report=False)
+        _update_progress_ui("UploadDir", g.api, g.task_id, progress)
+
+    progress = sly.Progress("Upload artifacts directory", 0, is_size=True)
+    progress_cb = partial(upload_monitor, api=g.api, task_id=g.task_id, progress=progress)
+
+    remote_dir = f"/mmclassification/{g.task_id}_{g.project_info.name}"
+    g.api.file.upload_directory(g.team_id, g.artifacts_dir, remote_dir, progress_size_cb=progress_cb)
 
 
 @g.my_app.callback("train")
@@ -13,29 +36,10 @@ import sly_logger_hook
 def train(api: sly.Api, task_id, context, state, app_logger):
     #try:
         # init sys.argv for main training script
-    from functools import partial
 
-    def upload_monitor(monitor, api: sly.Api, task_id, progress: sly.Progress):
-        if progress.total == 0:
-            progress.set(monitor.bytes_read, monitor.len)
-        else:
-            progress.set_current_value(monitor.bytes_read)
+    # hide progress bars and eta
 
-        # if hasattr(monitor, 'last_percent') is False:
-        #     monitor.last_percent = 0
-        # cur_percent = int(monitor.bytes_read * 100.0 / monitor.len)
-        # print(cur_percent)
-        # print(monitor.len)
-        # if cur_percent - monitor.last_percent > 15 or cur_percent == 100:
-        #     #self._api.task.set_fields(task_id, [{"field": "data.previewProgress", "payload": cur_percent}])
-        #     monitor.last_percent = cur_percent
-
-    progress = sly.Progress("Upload artifacts directory", 0, is_size=True)
-    progress_cb = partial(upload_monitor, api=g.api, task_id=g.task_id, progress=progress)
-
-    remote_dir = f"/mmclassification/{g.task_id}_{g.project_info.name}"
-    api.file.upload_directory(g.team_id, g.artifacts_dir, remote_dir, progress_size_cb=progress_cb)
-
+    upload_artifacts_and_log_progress()
     return
     init_script_arguments(state)
     from tools.train import main as mm_train #@TODO: move to imports section on top

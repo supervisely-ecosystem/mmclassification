@@ -17,6 +17,12 @@
                description="Gives an estimate of roughly how long the whole training process will take">
         <b style="color: #20a0ff"><i class="zmdi zmdi-time-countdown mr5"></i>{{data.eta}}</b>
     </sly-field>
+    <div v-if="data.progressUploadDir" class="mt10">
+        <div style="color: #20a0ff">
+            {{data.progressUploadDir}}: {{data.progressCurrentUploadDir}} / {{data.progressTotalUploadDir}}
+        </div>
+        <el-progress :percentage="data.progressPercentUploadDir"></el-progress>
+    </div>
     <div v-if="data.progressEpoch" class="mt10">
         <div style="color: #20a0ff">
             {{data.progressEpoch}}: {{data.progressCurrentEpoch}} / {{data.progressTotalEpoch}}
