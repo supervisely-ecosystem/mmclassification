@@ -50,15 +50,24 @@ class SuperviselyLoggerHook(TextLoggerHook):
         add_progress_to_request(fields, "Iter", self.progress_iter)
         g.api.app.set_fields(g.task_id, fields)
 
-        #download_progress = get_progress_cb(progress_index, "Download project", g.project_info.items_count * 2)
-
-        # epoch progress
-        # iter progress
-        # : eta when training will be finished string
-        # ETA gives an estimate of roughly how long the whole training process will take
-
         # train
         # charts: lr, time, data_time, memory, loss
+        epoch_float = float(self.progress_epoch.current) + float(self.progress_iter.current) / float(self.progress_iter.total)
+        fields.extend([
+            {"field": "data.chartLR.series[0].data", "payload": [[epoch_float, log_dict["lr"]]], "append": True},
+            {"field": "data.chartTrainLoss.series[0].data", "payload": [[epoch_float, log_dict["loss"]]], "append": True},
+            {"field": "data.chartValAccuracy.series[0].data", "payload": [[epoch_float, log_dict["accuracy_top-1"]]], "append": True},
+            {"field": "data.chartValAccuracy.series[1].data", "payload": [[epoch_float, log_dict["accuracy_top-5"]]], "append": True},
+        ])
+
+        if 'time' in log_dict.keys():
+            fields.extend([
+                {"field": "data.chartTime.series[0].data", "payload": [[epoch_float, log_dict["time"]]], "append": True},
+                {"field": "data.chartDataTime.series[0].data", "payload": [[epoch_float, log_dict["data_time"]]], "append": True},
+                {"field": "data.chartMemory.series[0].data", "payload": [[epoch_float, log_dict["memory"]]], "append": True},
+            ])
+
+        globals.api.app.set_fields(globals.task_id, fields)
 
         # val
         # charts: accuracy (accuracy_top-1, accuracy_top-5)

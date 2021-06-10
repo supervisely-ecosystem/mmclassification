@@ -1,18 +1,19 @@
 import supervisely_lib as sly
-#import sly_metrics as metrics
 from sly_train_progress import init_progress
 
-def init(data, state):
-    #metrics.init(data, state)
 
+def init(data, state):
     init_progress("Epoch", data)
     init_progress("Iter", data)
     data["eta"] = None
+
+    init_charts(data, state)
 
     state["collapsed9"] = True
     state["disabled9"] = True
     state["done9"] = False
 
+    state["started"] = False
 
 
 def restart(data, state):
@@ -38,34 +39,15 @@ def init_chart(title, names, xs, ys, smoothing=None):
     return result
 
 
-def init(data, state):
-    demo_x = [[], []] #[[1, 2, 3, 4], [2, 4, 6, 8]]
-    demo_y = [[], []] #[[10, 15, 13, 17], [16, 5, 11, 9]]
-    data["mGIoU"] = init_chart("GIoU",
-                               names=["train", "val"],
-                               xs=demo_x,
-                               ys=demo_y,
-                               smoothing=0.6)
+def init_charts(data, state):
+    #demo_x = [[], []] #[[1, 2, 3, 4], [2, 4, 6, 8]]
+    #demo_y = [[], []] #[[10, 15, 13, 17], [16, 5, 11, 9]]
+    data["chartLR"] = init_chart("Learning Rate", names=["train"], xs=[[]], ys=[[]], smoothing=0.6)
+    data["chartTrainLoss"] = init_chart("Loss", names=["train"], xs=[[]], ys=[[]], smoothing=0.6)
+    data["chartValAccuracy"] = init_chart("Val accuracy", names=["top-1", "top-5"], xs=[[], []], ys=[[], []], smoothing=0.6)
 
-    data["mObjectness"] = init_chart("Objectness",
-                                     names=["train", "val"],
-                                     xs=demo_x,
-                                     ys=demo_y,
-                                     smoothing=0.6)
-
-    data["mClassification"] = init_chart("Classification",
-                                         names=["train", "val"],
-                                         xs=demo_x,
-                                         ys=demo_y,
-                                         smoothing=0.6)
-
-    data["mPR"] = init_chart("Pr + Rec",
-                             names=["precision", "recall"],
-                             xs=demo_x,
-                             ys=demo_y)
-
-    data["mMAP"] = init_chart("mAP",
-                              names=["mAP@0.5", "mAP@0.5:0.95"],
-                              xs=demo_x,
-                              ys=demo_y)
+    data["chartTime"] = init_chart("Time", names=["time"], xs=[[]], ys=[[]])
+    data["chartDataTime"] = init_chart("Data Time", names=["data_time"], xs=[[]], ys=[[]])
+    data["chartMemory"] = init_chart("Memory", names=["memory"], xs=[[]], ys=[[]])
     state["smoothing"] = 0.6
+
