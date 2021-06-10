@@ -30,7 +30,7 @@
         <el-progress :percentage="data.progressPercentIter"></el-progress>
     </div>
 
-    <sly-field title="Smoothing" description="Change the smoothing of line charts" v-if="state.started === true">
+    <sly-field class="mt15" title="Smoothing" description="Change the smoothing of line charts" v-if="state.started === true">
         <sly-icon slot="icon" :options="{ color: '#006ad4', bgColor: '#bbe2ff', rounded: false }">
             <i class="zmdi zmdi-trending-up"></i>
         </sly-icon>

@@ -18,7 +18,6 @@ class SuperviselyLoggerHook(TextLoggerHook):
         self.progress_epoch = None
         self.progress_iter = None
 
-
     def _log_info(self, log_dict, runner):
         super(SuperviselyLoggerHook, self)._log_info(log_dict, runner)
 
@@ -29,8 +28,8 @@ class SuperviselyLoggerHook(TextLoggerHook):
             eta_sec = time_sec_avg * (runner.max_iters - runner.iter - 1)
             eta_str = str(datetime.timedelta(seconds=int(eta_sec)))
             log_dict['sly_eta'] = eta_str
-            #log_dict['sly_time'] = f'{log_dict["time"]:.3f}'
-            #log_dict['sly_data_time'] = f'{log_dict["data_time"]:.3f}'
+            # log_dict['sly_time'] = f'{log_dict["time"]:.3f}'
+            # log_dict['sly_data_time'] = f'{log_dict["data_time"]:.3f}'
         pass
 
         if self.progress_epoch is None:
@@ -48,26 +47,30 @@ class SuperviselyLoggerHook(TextLoggerHook):
 
         add_progress_to_request(fields, "Epoch", self.progress_epoch)
         add_progress_to_request(fields, "Iter", self.progress_iter)
-        g.api.app.set_fields(g.task_id, fields)
 
-        # train
-        # charts: lr, time, data_time, memory, loss
-        epoch_float = float(self.progress_epoch.current) + float(self.progress_iter.current) / float(self.progress_iter.total)
-        fields.extend([
-            {"field": "data.chartLR.series[0].data", "payload": [[epoch_float, log_dict["lr"]]], "append": True},
-            {"field": "data.chartTrainLoss.series[0].data", "payload": [[epoch_float, log_dict["loss"]]], "append": True},
-            {"field": "data.chartValAccuracy.series[0].data", "payload": [[epoch_float, log_dict["accuracy_top-1"]]], "append": True},
-            {"field": "data.chartValAccuracy.series[1].data", "payload": [[epoch_float, log_dict["accuracy_top-5"]]], "append": True},
-        ])
-
-        if 'time' in log_dict.keys():
+        epoch_float = \
+            float(self.progress_epoch.current) + float(self.progress_iter.current) / float(self.progress_iter.total)
+        if log_dict['mode'] == 'train':
             fields.extend([
-                {"field": "data.chartTime.series[0].data", "payload": [[epoch_float, log_dict["time"]]], "append": True},
-                {"field": "data.chartDataTime.series[0].data", "payload": [[epoch_float, log_dict["data_time"]]], "append": True},
-                {"field": "data.chartMemory.series[0].data", "payload": [[epoch_float, log_dict["memory"]]], "append": True},
+                {"field": "data.chartLR.series[0].data", "payload": [[epoch_float, log_dict["lr"]]], "append": True},
+                {"field": "data.chartTrainLoss.series[0].data", "payload": [[epoch_float, log_dict["loss"]]],
+                 "append": True},
+            ])
+            if 'time' in log_dict.keys():
+                fields.extend([
+                    {"field": "data.chartTime.series[0].data", "payload": [[epoch_float, log_dict["time"]]],
+                     "append": True},
+                    {"field": "data.chartDataTime.series[0].data", "payload": [[epoch_float, log_dict["data_time"]]],
+                     "append": True},
+                    {"field": "data.chartMemory.series[0].data", "payload": [[epoch_float, log_dict["memory"]]],
+                     "append": True},
+                ])
+        if log_dict['mode'] == 'val':
+            fields.extend([
+                {"field": "data.chartValAccuracy.series[0].data",
+                 "payload": [[log_dict["epoch"], log_dict["accuracy_top-1"]]], "append": True},
+                {"field": "data.chartValAccuracy.series[1].data",
+                 "payload": [[log_dict["epoch"], log_dict["accuracy_top-5"]]], "append": True},
             ])
 
-        globals.api.app.set_fields(globals.task_id, fields)
-
-        # val
-        # charts: accuracy (accuracy_top-1, accuracy_top-5)
+        g.api.app.set_fields(g.task_id, fields)

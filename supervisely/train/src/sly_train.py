@@ -13,13 +13,37 @@ import sly_logger_hook
 def train(api: sly.Api, task_id, context, state, app_logger):
     #try:
         # init sys.argv for main training script
+    from functools import partial
+
+    def upload_monitor(monitor, api: sly.Api, task_id, progress: sly.Progress):
+        if progress.total == 0:
+            progress.set(monitor.bytes_read, monitor.len)
+        else:
+            progress.set_current_value(monitor.bytes_read)
+
+        # if hasattr(monitor, 'last_percent') is False:
+        #     monitor.last_percent = 0
+        # cur_percent = int(monitor.bytes_read * 100.0 / monitor.len)
+        # print(cur_percent)
+        # print(monitor.len)
+        # if cur_percent - monitor.last_percent > 15 or cur_percent == 100:
+        #     #self._api.task.set_fields(task_id, [{"field": "data.previewProgress", "payload": cur_percent}])
+        #     monitor.last_percent = cur_percent
+
+    progress = sly.Progress("Upload artifacts directory", 0, is_size=True)
+    progress_cb = partial(upload_monitor, api=g.api, task_id=g.task_id, progress=progress)
+
+    remote_dir = f"/mmclassification/{g.task_id}_{g.project_info.name}"
+    api.file.upload_directory(g.team_id, g.artifacts_dir, remote_dir, progress_size_cb=progress_cb)
+
+    return
     init_script_arguments(state)
     from tools.train import main as mm_train #@TODO: move to imports section on top
     mm_train()
-
-        # # upload artifacts directory to Team Files
-        # upload_artifacts(g.local_artifacts_dir, g.remote_artifacts_dir)
-        # set_task_output()
+    api.file.upload()
+    # upload artifacts directory to Team Files
+    #upload_artifacts(g.local_artifacts_dir, g.remote_artifacts_dir)
+    #set_task_output()
     # except Exception as e:
     #     api.app.set_field(task_id, "state.started", False)
     #     raise e  # app will handle this error and show modal window
