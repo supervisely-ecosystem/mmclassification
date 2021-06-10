@@ -15,7 +15,7 @@ train_pipeline = [
     dict(type='LoadImageFromFile'),
 
     # *****************************************************
-    # your custom augs (defined in UI at step #4) will be applied here
+    # your custom augs (defined in UI at step #5) will be applied here
     # *****************************************************
 
     dict(type='Resize', size=(input_size, input_size)),
@@ -39,12 +39,12 @@ data = dict(
     train=dict(
         type=dataset_type,
         project_dir=project_dir,
-        split_name='train',
+        data_prefix='train',
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
         project_dir=project_dir,
-        split_name='val',
+        data_prefix='val',
         pipeline=test_pipeline),
     )
 evaluation = dict(interval=validation_interval, save_best=save_best, metric='accuracy')

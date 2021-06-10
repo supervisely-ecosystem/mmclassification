@@ -71,13 +71,13 @@ class Supervisely(BaseDataset):
 
     CLASSES = None
 
-    def __init__(self, project_dir, split_name, pipeline):
+    def __init__(self, project_dir, data_prefix, pipeline, test_mode=False):
         self.gt_labels = sly.json.load_json_file(os.path.join(project_dir, "gt_labels.json"))
         Supervisely.CLASSES = sorted(self.gt_labels, key=self.gt_labels.get)
-        self.items = sly.json.load_json_file(os.path.join(project_dir, "splits.json"))[split_name]
+        self.split_name = data_prefix
+        self.items = sly.json.load_json_file(os.path.join(project_dir, "splits.json"))[self.split_name]
         self.project_fs = sly.Project(project_dir, sly.OpenMode.READ)
-        self.split_name = split_name
-        super(Supervisely, self).__init__(data_prefix=split_name, pipeline=pipeline)
+        super(Supervisely, self).__init__(data_prefix=self.split_name, pipeline=pipeline, test_mode=test_mode)
 
     def load_annotations(self):
         classes_set = set(Supervisely.CLASSES)

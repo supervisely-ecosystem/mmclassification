@@ -98,7 +98,7 @@ def generate_schedule_config(state):
     if state["gradClipEnabled"] is True:
         grad_clip = f"optimizer_config = dict(grad_clip=dict(max_norm={state['maxNorm']}))"
 
-    ls_updater = ""
+    lr_updater = ""
     if state["lrPolicyEnabled"] is True:
         py_text = state["lrPolicyPyConfig"]
         py_lines = py_text.splitlines()
@@ -106,7 +106,7 @@ def generate_schedule_config(state):
         for line in py_lines:
             res_line = line.strip()
             if res_line != "" and res_line[0] != "#":
-                ls_updater += res_line
+                lr_updater += res_line
                 num_uncommented += 1
         if num_uncommented == 0:
             raise ValueError("LR policy is enabled but not defined, please uncomment and modify one of the provided examples")
@@ -114,10 +114,11 @@ def generate_schedule_config(state):
             raise ValueError("several LR policies were uncommented, please keep only one")
 
     runner = f"runner = dict(type='EpochBasedRunner', max_epochs={state['epochs']})"
-
+    if lr_updater == "":
+        lr_updater = "lr_config = dict(policy='fixed')"
     py_config = optimizer + os.linesep + \
                 grad_clip + os.linesep + \
-                ls_updater + os.linesep + \
+                lr_updater + os.linesep + \
                 runner + os.linesep
 
     with open(schedule_config_path, 'w') as f:

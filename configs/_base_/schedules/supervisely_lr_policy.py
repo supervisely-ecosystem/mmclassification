@@ -8,6 +8,7 @@
 # Configs examples (PLEASE, KEEP IT IN ONE LINE):
 # ***********************************************
 
+#lr_config = dict(policy='fixed')
 #lr_config = dict(policy='step', step=[100, 150])
 #lr_config = dict(policy='step', step=[30, 60, 90])
 #lr_config = dict(policy='step', step=[40, 80, 120])
