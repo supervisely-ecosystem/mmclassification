@@ -46,6 +46,7 @@ def main():
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
+#@TODO: cooccurance table
 # {'mode': 'train', 'epoch': 1, 'iter': 10, 'lr': 0.001, 'memory': 1839, 'data_time': 0.2636455535888672, 'loss': 4.4233519554138185, 'time': 0.35094327926635743}
 # Error: AttributeError("'ConfigDict' object has no attribute 'lr_config'")
 #@TODO: debug error imgcorruptlike

@@ -8,10 +8,12 @@ import torch.distributed as dist
 import mmcv
 from mmcv.runner.hooks import HOOKS
 from mmcv.runner.hooks.logger.base import LoggerHook
+from mmcv.runner.hooks.logger.text import TextLoggerHook
+
 
 
 @HOOKS.register_module()
-class SuperviselyLoggerHook(LoggerHook):
+class SuperviselyLoggerHook(TextLoggerHook):
     """Logger hook in Supervisely training dashboard.
     Args:
         by_epoch (bool): Whether EpochBasedRunner is used.
@@ -167,6 +169,17 @@ class SuperviselyLoggerHook(LoggerHook):
                 log_dict['memory'] = self._get_max_memory(runner)
 
         log_dict = dict(log_dict, **runner.log_buffer.output)
+        log_dict['max_iters'] = runner.max_iters
+
+        if 'time' in log_dict.keys():
+            self.time_sec_tot += (log_dict['time'] * self.interval)
+            time_sec_avg = self.time_sec_tot / (
+                    runner.iter - self.start_iter + 1)
+            eta_sec = time_sec_avg * (runner.max_iters - runner.iter - 1)
+            eta_str = str(datetime.timedelta(seconds=int(eta_sec)))
+            log_dict['eta'] = eta_str
+            log_dict['time'] = f'{log_dict["time"]:.3f}'
+            log_dict['data_time'] = f'{log_dict["data_time"]:.3f}'
 
         self._log_info(log_dict, runner)
         self._dump_log(log_dict, runner)
