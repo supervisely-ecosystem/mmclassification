@@ -48,9 +48,9 @@ def init_chart(title, names, xs, ys, smoothing=None):
 
 
 def init_charts(data, state):
-    #demo_x = [[], []] #[[1, 2, 3, 4], [2, 4, 6, 8]]
-    #demo_y = [[], []] #[[10, 15, 13, 17], [16, 5, 11, 9]]
-    data["chartLR"] = init_chart("LR", names=["train"], xs=[[]], ys=[[]], smoothing=0.6)
+    # demo_x = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]
+    # demo_y = [[0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001]]
+    data["chartLR"] = init_chart("LR", names=["train"], xs = [[]], ys = [[]], smoothing=0.6)
     data["chartTrainLoss"] = init_chart("Loss", names=["train"], xs=[[]], ys=[[]], smoothing=0.6)
     data["chartValAccuracy"] = init_chart("Val Acc", names=["top-1", "top-5"], xs=[[], []], ys=[[], []], smoothing=0.6)
 
@@ -83,7 +83,7 @@ def upload_artifacts_and_log_progress():
             progress.set_current_value(monitor.bytes_read, report=False)
         _update_progress_ui("UploadDir", g.api, g.task_id, progress)
 
-    progress = sly.Progress("Upload artifacts directory", 0, is_size=True)
+    progress = sly.Progress("Upload directory with training artifacts to Team Files", 0, is_size=True)
     progress_cb = partial(upload_monitor, api=g.api, task_id=g.task_id, progress=progress)
 
     remote_dir = f"/mmclassification/{g.task_id}_{g.project_info.name}"
@@ -111,7 +111,7 @@ def train(api: sly.Api, task_id, context, state, app_logger):
 
     # show result directory in UI
     fields = [
-        {"field": "data.outputName", "payload": g.api.file.get_url(file_info.id)},
+        {"field": "data.outputUrl", "payload": g.api.file.get_url(file_info.id)},
         {"field": "data.outputName", "payload": remote_dir},
         {"field": "state.done9", "payload": True},
         {"field": "state.started", "payload": False},
