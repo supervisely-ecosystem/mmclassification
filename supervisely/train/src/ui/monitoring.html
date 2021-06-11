@@ -5,12 +5,26 @@
 <sly-card title="Training progress"
           subtitle="Task progress, detailed logs, metrics charts, and other visualizations"
           ref="step9">
-    <el-button type="primary" class="regular"
+    <el-button v-if="!state.done9"
+               type="primary" class="regular"
                @click="state.started = true; command('train')"
-               :disabled="state.started === true"
+               :loading="state.started === true"
     >
-        Start training
+        <i class="zmdi zmdi-play mr5"></i> Train
     </el-button>
+    <div class="mt10" v-if="data.outputUrl">
+        <div>
+            <i class="zmdi zmdi-check-circle mr5" style="color: #13ce66"></i>
+            <span style="color: #5a6772;">Training has been successfully finished</span>
+        </div>
+        <sly-field title="Training artifacts"
+                   description="Training artifacts has been uploaded to Team Files">
+            <a slot="title" target="_blank" :href="`${data.outputUrl}`">{{data.outputName}}</a>
+            <sly-icon slot="icon" :options="{ color: '#33c94c', bgColor: '#d9f7e4', rounded: false }">
+                <i class="zmdi zmdi-folder"></i>
+            </sly-icon>
+        </sly-field>
+    </div>
 
     <sly-field v-if="data.eta" class="mt10"
                title="ETA"
@@ -36,7 +50,8 @@
         <el-progress :percentage="data.progressPercentIter"></el-progress>
     </div>
 
-    <sly-field class="mt15" title="Smoothing" description="Change the smoothing of line charts" v-if="state.started === true">
+    <sly-field class="mt15" title="Smoothing" description="Change the smoothing of line charts"
+               v-if="state.started === true">
         <sly-icon slot="icon" :options="{ color: '#006ad4', bgColor: '#bbe2ff', rounded: false }">
             <i class="zmdi zmdi-trending-up"></i>
         </sly-icon>

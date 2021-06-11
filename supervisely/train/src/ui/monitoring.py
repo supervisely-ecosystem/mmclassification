@@ -1,5 +1,9 @@
+import os
 import supervisely_lib as sly
 from sly_train_progress import init_progress
+import sly_globals as g
+
+_open_lnk_name = "open_app.lnk"
 
 
 def init(data, state):
@@ -15,6 +19,9 @@ def init(data, state):
     state["done9"] = False
 
     state["started"] = False
+
+    data["outputName"] = None
+    data["outputUrl"] = None
 
 
 def restart(data, state):
@@ -52,3 +59,75 @@ def init_charts(data, state):
     data["chartMemory"] = init_chart("Memory", names=["memory"], xs=[[]], ys=[[]])
     state["smoothing"] = 0.6
 
+
+def _save_link_to_ui(local_dir, app_url):
+    # save report to file *.lnk (link to report)
+    local_path = os.path.join(local_dir, _open_lnk_name)
+    sly.fs.ensure_base_path(local_path)
+    with open(local_path, "w") as text_file:
+        print(app_url, file=text_file)
+
+
+from sly_train_progress import _update_progress_ui
+from sly_train_args import init_script_arguments
+from functools import partial
+
+
+def upload_artifacts_and_log_progress():
+    _save_link_to_ui(g.artifacts_dir, g.my_app.app_url)
+
+    def upload_monitor(monitor, api: sly.Api, task_id, progress: sly.Progress):
+        if progress.total == 0:
+            progress.set(monitor.bytes_read, monitor.len, report=False)
+        else:
+            progress.set_current_value(monitor.bytes_read, report=False)
+        _update_progress_ui("UploadDir", g.api, g.task_id, progress)
+
+    progress = sly.Progress("Upload artifacts directory", 0, is_size=True)
+    progress_cb = partial(upload_monitor, api=g.api, task_id=g.task_id, progress=progress)
+
+    remote_dir = f"/mmclassification/{g.task_id}_{g.project_info.name}"
+    res_dir = g.api.file.upload_directory(g.team_id, g.artifacts_dir, remote_dir, progress_size_cb=progress_cb)
+    return res_dir
+
+
+@g.my_app.callback("train")
+@sly.timeit
+# @g.my_app.ignore_errors_and_show_dialog_window()
+def train(api: sly.Api, task_id, context, state, app_logger):
+    # try:
+
+    # hide progress bars and eta
+    fields = [
+        {"field": "data.progressEpoch", "payload": None},
+        {"field": "data.progressIter", "payload": None},
+        {"field": "data.eta", "payload": None},
+    ]
+    g.api.app.set_fields(g.task_id, fields)
+
+    remote_dir = upload_artifacts_and_log_progress()
+    file_info = api.file.get_info_by_path(g.team_id, os.path.join(remote_dir, _open_lnk_name))
+    api.task.set_output_directory(task_id, file_info.id, remote_dir)
+
+    # show result directory in UI
+    fields = [
+        {"field": "data.outputName", "payload": g.api.file.get_url(file_info.id)},
+        {"field": "data.outputName", "payload": remote_dir},
+        {"field": "state.done9", "payload": True},
+        {"field": "state.started", "payload": False},
+    ]
+    g.api.app.set_fields(g.task_id, fields)
+
+
+    return
+    # init sys.argv for main training script
+    init_script_arguments(state)
+    from tools.train import main as mm_train  # @TODO: move to imports section on top
+    mm_train()
+    # except Exception as e:
+    #     api.app.set_field(task_id, "state.started", False)
+    #     raise e  # app will handle this error and show modal window
+
+    # stop application
+    # get_progress_cb("Finished, app is stopped automatically", 1)(1)
+    g.my_app.stop()
