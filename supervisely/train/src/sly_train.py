@@ -25,12 +25,13 @@ def main():
 
 #@TODO: handle training errors
 #@TODO: save references
-#@TODO: add augs
+#@TODO: custom augs - reimplement prepare data in BaseDataset
+
 #@TODO: tags cooccurance - добавить в readme, поменять там табличный виджет, сделать зафиксированные колонки и скрол горизонтальный
 #@TODO: save session link in artifacts dir
 #@TODO: state["workersPerGPU"] = 0# 2  # 0 - for debug @TODO: for debug
 #@TODO: add ON/OFF for custom augmentations
-#@TODO: custom augs - reimplement prepare data in BaseDataset
+
 #@TODO: move mm_train import on top
 #@TODO: release new version of SDK before release app
 #@TODO: if OOM error, make a special message for that
