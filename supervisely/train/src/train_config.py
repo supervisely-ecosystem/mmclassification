@@ -4,6 +4,7 @@ import supervisely_lib as sly
 
 import sly_globals as g
 import architectures
+import augs
 
 model_config_name = "model_config.py"
 dataset_config_name = "dataset_config.py"
@@ -55,6 +56,10 @@ def generate_dataset_config(state):
     config_path = os.path.join(g.root_source_dir, "supervisely/train/configs/dataset.py")
     with open(config_path) as f:
         py_config = f.read()
+
+    py_config = re.sub(r"augs_config_path\s*=\s*(None)",
+                       lambda m: _replace_function("augs_config_path", augs.augs_config_path, "{} = '{}'", m),
+                       py_config, 0, re.MULTILINE)
 
     py_config = re.sub(r"input_size\s*=\s*(\d+)",
                        lambda m: _replace_function("input_size", state["imgSize"], "{} = {}", m),

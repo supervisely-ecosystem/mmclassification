@@ -34,6 +34,7 @@ remote_preview_path = "/temp/preview_augs.jpg"
 
 augs_json_config = None
 augs_py_preview = None
+augs_config_path = None
 
 
 def _load_template(json_path):
@@ -150,9 +151,13 @@ def preview_augs(api: sly.Api, task_id, context, state, app_logger):
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def use_augs(api: sly.Api, task_id, context, state, app_logger):
-    sly.json.dump_json_file(augs_json_config, os.path.join(train_config.configs_dir, "augs_config.json"))
-    augs_config_path = os.path.join(train_config.configs_dir, "augs_preview.py")
-    with open(augs_config_path, 'w') as f:
+    global augs_config_path
+
+    augs_config_path = os.path.join(train_config.configs_dir, "augs_config.json")
+    sly.json.dump_json_file(augs_json_config, augs_config_path)
+
+    augs_py_path = os.path.join(train_config.configs_dir, "augs_preview.py")
+    with open(augs_py_path, 'w') as f:
         f.write(augs_py_preview)
 
     fields = [

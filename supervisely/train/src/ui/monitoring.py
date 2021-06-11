@@ -97,6 +97,11 @@ def upload_artifacts_and_log_progress():
 def train(api: sly.Api, task_id, context, state, app_logger):
     # try:
 
+    # init sys.argv for main training script
+    init_script_arguments(state)
+    from tools.train import main as mm_train  # @TODO: move to imports section on top
+    mm_train()
+
     # hide progress bars and eta
     fields = [
         {"field": "data.progressEpoch", "payload": None},
@@ -118,12 +123,6 @@ def train(api: sly.Api, task_id, context, state, app_logger):
     ]
     g.api.app.set_fields(g.task_id, fields)
 
-
-    return
-    # init sys.argv for main training script
-    init_script_arguments(state)
-    from tools.train import main as mm_train  # @TODO: move to imports section on top
-    mm_train()
     # except Exception as e:
     #     api.app.set_field(task_id, "state.started", False)
     #     raise e  # app will handle this error and show modal window

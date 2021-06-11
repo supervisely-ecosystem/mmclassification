@@ -3,6 +3,7 @@ import supervisely_lib as sly
 import sly_globals as g
 import ui as ui
 import sly_logger_hook  # to register hook
+import sly_imgaugs  # to register first part of the pipeline
 
 
 def main():

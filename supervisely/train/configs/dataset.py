@@ -1,5 +1,6 @@
 # dataset settings
 dataset_type = 'Supervisely'
+augs_config_path = None
 
 input_size = 256
 batch_size_per_gpu = 32
@@ -13,11 +14,7 @@ img_norm_cfg = dict(
 
 train_pipeline = [
     dict(type='LoadImageFromFile'),
-
-    # *****************************************************
-    # your custom augs (defined in UI at step #5) will be applied here
-    # *****************************************************
-
+    dict(type='SlyImgAugs', config_path=augs_config_path),
     dict(type='Resize', size=(input_size, input_size)),
     dict(type='Normalize', **img_norm_cfg),
     dict(type='ImageToTensor', keys=['img']),

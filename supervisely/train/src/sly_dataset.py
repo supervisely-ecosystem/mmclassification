@@ -1,5 +1,5 @@
 import os
-
+import copy
 import numpy as np
 import supervisely_lib as sly
 
@@ -46,8 +46,12 @@ class Supervisely(BaseDataset):
 
             gt_index = self.gt_labels[gt_label]
             data_infos.append({
-                "img_prefix": self.split_name,
+                "img_prefix": self.split_name, #@TODO: remove it
                 "img_info": {'filename': img_path},
                 "gt_label": np.array(gt_index, dtype=np.int64)
             })
         return data_infos
+
+    def prepare_data(self, idx):
+        results = copy.deepcopy(self.data_infos[idx])
+        return self.pipeline(results)
