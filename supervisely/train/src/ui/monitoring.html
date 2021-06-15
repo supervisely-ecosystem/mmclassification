@@ -62,9 +62,9 @@
                     style="width: 450px;"
                     @input="(val)=>{
                                 state.smoothing = val;
-                                data.mGIoU.options.smoothingWeight = val;
-                                data.mObjectness.options.smoothingWeight = val;
-                                data.mClassification.options.smoothingWeight = val;
+                                data.chartLR.options.smoothingWeight = val;
+                                data.chartTrainLoss.options.smoothingWeight = val;
+                                data.chartValAccuracy.options.smoothingWeight = val;
                             }"
             >
             </el-slider>

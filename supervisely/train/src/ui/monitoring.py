@@ -28,7 +28,7 @@ def restart(data, state):
     data["done9"] = False
 
 
-def init_chart(title, names, xs, ys, smoothing=None):
+def init_chart(title, names, xs, ys, smoothing=None, yrange=None, decimals=None):
     series = []
     for name, x, y in zip(names, xs, ys):
         series.append({
@@ -44,14 +44,20 @@ def init_chart(title, names, xs, ys, smoothing=None):
     }
     if smoothing is not None:
         result["options"]["smoothingWeight"] = smoothing
+    if yrange is not None:
+        result["options"]["yaxisInterval"] = yrange
+    if decimals is not None:
+        result["options"]["decimalsInFloat"] = decimals
     return result
 
 
 def init_charts(data, state):
     # demo_x = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]
     # demo_y = [[0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001]]
-    data["chartLR"] = init_chart("LR", names=["train"], xs = [[]], ys = [[]], smoothing=0.6)
-    data["chartTrainLoss"] = init_chart("Loss", names=["train"], xs=[[]], ys=[[]], smoothing=0.6)
+    data["chartLR"] = init_chart("LR", names=["train"], xs = [[]], ys = [[]], smoothing=0.6,
+                                 yrange=[state["lr"] - state["lr"] / 2.0, state["lr"] + state["lr"] / 2.0],
+                                 decimals=6)
+    data["chartTrainLoss"] = init_chart("Train Loss", names=["train"], xs=[[]], ys=[[]], smoothing=0.6)
     data["chartValAccuracy"] = init_chart("Val Acc", names=["top-1", "top-5"], xs=[[], []], ys=[[], []], smoothing=0.6)
 
     data["chartTime"] = init_chart("Time", names=["time"], xs=[[]], ys=[[]])
