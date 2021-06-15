@@ -1,6 +1,8 @@
+import os
 from collections import defaultdict
-import input_project
 import supervisely_lib as sly
+
+import input_project
 import splits
 import sly_globals as g
 from sly_train_progress import get_progress_cb, reset_progress, init_progress
@@ -170,6 +172,7 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
     }
 
     subsample_urls = {tag_name: urls[:_max_examples_count] for tag_name, urls in tag2urls.items()}
+    sly.json.dump_json_file(tag2urls, os.path.join(g.artifacts_dir, "tag2urls.json"))
 
     reset_progress(progress_index)
     fields = [

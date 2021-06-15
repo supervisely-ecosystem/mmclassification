@@ -93,39 +93,39 @@ def upload_artifacts_and_log_progress():
 
 @g.my_app.callback("train")
 @sly.timeit
-# @g.my_app.ignore_errors_and_show_dialog_window()
+@g.my_app.ignore_errors_and_show_dialog_window()
 def train(api: sly.Api, task_id, context, state, app_logger):
-    # try:
+    try:
+        sly.json.dump_json_file(state, os.path.join(g.artifacts_dir, "ui_state.json"))
 
-    # init sys.argv for main training script
-    init_script_arguments(state)
-    from tools.train import main as mm_train  # @TODO: move to imports section on top
-    mm_train()
+        # init sys.argv for main training script
+        init_script_arguments(state)
+        from tools.train import main as mm_train  # @TODO: move to imports section on top
+        mm_train()
 
-    # hide progress bars and eta
-    fields = [
-        {"field": "data.progressEpoch", "payload": None},
-        {"field": "data.progressIter", "payload": None},
-        {"field": "data.eta", "payload": None},
-    ]
-    g.api.app.set_fields(g.task_id, fields)
+        # hide progress bars and eta
+        fields = [
+            {"field": "data.progressEpoch", "payload": None},
+            {"field": "data.progressIter", "payload": None},
+            {"field": "data.eta", "payload": None},
+        ]
+        g.api.app.set_fields(g.task_id, fields)
 
-    remote_dir = upload_artifacts_and_log_progress()
-    file_info = api.file.get_info_by_path(g.team_id, os.path.join(remote_dir, _open_lnk_name))
-    api.task.set_output_directory(task_id, file_info.id, remote_dir)
+        remote_dir = upload_artifacts_and_log_progress()
+        file_info = api.file.get_info_by_path(g.team_id, os.path.join(remote_dir, _open_lnk_name))
+        api.task.set_output_directory(task_id, file_info.id, remote_dir)
 
-    # show result directory in UI
-    fields = [
-        {"field": "data.outputUrl", "payload": g.api.file.get_url(file_info.id)},
-        {"field": "data.outputName", "payload": remote_dir},
-        {"field": "state.done9", "payload": True},
-        {"field": "state.started", "payload": False},
-    ]
-    g.api.app.set_fields(g.task_id, fields)
-
-    # except Exception as e:
-    #     api.app.set_field(task_id, "state.started", False)
-    #     raise e  # app will handle this error and show modal window
+        # show result directory in UI
+        fields = [
+            {"field": "data.outputUrl", "payload": g.api.file.get_url(file_info.id)},
+            {"field": "data.outputName", "payload": remote_dir},
+            {"field": "state.done9", "payload": True},
+            {"field": "state.started", "payload": False},
+        ]
+        g.api.app.set_fields(g.task_id, fields)
+    except Exception as e:
+        api.app.set_field(task_id, "state.started", False)
+        raise e  # app will handle this error and show modal window
 
     # stop application
     # get_progress_cb("Finished, app is stopped automatically", 1)(1)
