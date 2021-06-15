@@ -54,12 +54,15 @@ def generate_model_config(state):
 
 def generate_dataset_config(state):
     config_path = os.path.join(g.root_source_dir, "supervisely/train/configs/dataset.py")
+    if augs.augs_config_path is None:
+        config_path = os.path.join(g.root_source_dir, "supervisely/train/configs/dataset_no_augs.py")
     with open(config_path) as f:
         py_config = f.read()
 
-    py_config = re.sub(r"augs_config_path\s*=\s*(None)",
-                       lambda m: _replace_function("augs_config_path", augs.augs_config_path, "{} = '{}'", m),
-                       py_config, 0, re.MULTILINE)
+    if augs.augs_config_path is not None:
+        py_config = re.sub(r"augs_config_path\s*=\s*(None)",
+                           lambda m: _replace_function("augs_config_path", augs.augs_config_path, "{} = '{}'", m),
+                           py_config, 0, re.MULTILINE)
 
     py_config = re.sub(r"input_size\s*=\s*(\d+)",
                        lambda m: _replace_function("input_size", state["imgSize"], "{} = {}", m),

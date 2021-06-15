@@ -167,3 +167,19 @@ def use_augs(api: sly.Api, task_id, context, state, app_logger):
         {"field": "state.activeStep", "payload": 6},
     ]
     g.api.app.set_fields(g.task_id, fields)
+
+
+@g.my_app.callback("skip_augs")
+@sly.timeit
+@g.my_app.ignore_errors_and_show_dialog_window()
+def skip_augs(api: sly.Api, task_id, context, state, app_logger):
+    global augs_config_path
+    augs_config_path = None
+
+    fields = [
+        {"field": "data.done5", "payload": True},
+        {"field": "state.collapsed6", "payload": False},
+        {"field": "state.disabled6", "payload": False},
+        {"field": "state.activeStep", "payload": 6},
+    ]
+    g.api.app.set_fields(g.task_id, fields)
