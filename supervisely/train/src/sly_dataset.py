@@ -51,7 +51,3 @@ class Supervisely(BaseDataset):
                 "gt_label": np.array(gt_index, dtype=np.int64)
             })
         return data_infos
-
-    def prepare_data(self, idx):
-        results = copy.deepcopy(self.data_infos[idx])
-        return self.pipeline(results)
