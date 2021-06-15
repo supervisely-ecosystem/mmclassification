@@ -22,6 +22,9 @@ project_dir = os.path.join(my_app.data_dir, "sly_project")
 project_meta = sly.ProjectMeta.from_json(api.project.get_meta(project_id))
 
 artifacts_dir = os.path.join(my_app.data_dir, "artifacts")
+sly.fs.mkdir(artifacts_dir)
+info_dir = os.path.join(artifacts_dir, "info")
+sly.fs.mkdir(info_dir)
 
 root_source_dir = str(Path(sys.argv[0]).parents[3])
 sly.logger.info(f"Root source directory: {root_source_dir}")

@@ -80,7 +80,7 @@ from functools import partial
 
 
 def upload_artifacts_and_log_progress():
-    _save_link_to_ui(g.artifacts_dir, g.my_app.app_url)
+    _save_link_to_ui(g.info_dir, g.my_app.app_url)
 
     def upload_monitor(monitor, api: sly.Api, task_id, progress: sly.Progress):
         if progress.total == 0:
@@ -102,7 +102,7 @@ def upload_artifacts_and_log_progress():
 @g.my_app.ignore_errors_and_show_dialog_window()
 def train(api: sly.Api, task_id, context, state, app_logger):
     try:
-        sly.json.dump_json_file(state, os.path.join(g.artifacts_dir, "ui_state.json"))
+        sly.json.dump_json_file(state, os.path.join(g.info_dir, "ui_state.json"))
 
         # init sys.argv for main training script
         init_script_arguments(state)

@@ -48,16 +48,6 @@ def init(data, state):
 
 def restart(data, state):
     data["done3"] = False
-    # state["collapsed3"] = True
-    # state["disabled3"] = True
-
-
-# def get_random_image():
-#     rand_key = random.choice(list(tag2images.keys()))
-#     image_info_dict = random.choice(tag2images[rand_key])
-#     ImageInfo = namedtuple('ImageInfo', image_info_dict)
-#     info = ImageInfo(**image_info_dict)
-#     return info
 
 
 def init_cache(split_items, split_name, progress_cb):
@@ -99,7 +89,6 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
         {"name": "val", "key": "val", "color": "#ffa500"},
     ]
 
-    #@TODO: validate tags - info
     disabled_tags = []
     _working_tags = set(tag2images.keys())
     for tag_meta in g.project_meta.tag_metas:
@@ -136,13 +125,6 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
         train_count = len(segment_infos["train"])
         val_count = len(segment_infos["val"])
 
-        # @TODO: for debug
-        # @TODO: for debug
-        # @TODO: for debug
-        # if tag_name != "my-tag-123":
-        #     train_count = random.randint(0, train_count)
-        #     val_count = random.randint(0, val_count)
-
         disabled = False
         if train_count == 0:
             disabled = True
@@ -172,7 +154,7 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
     }
 
     subsample_urls = {tag_name: urls[:_max_examples_count] for tag_name, urls in tag2urls.items()}
-    sly.json.dump_json_file(tag2urls, os.path.join(g.artifacts_dir, "tag2urls.json"))
+    sly.json.dump_json_file(tag2urls, os.path.join(g.info_dir, "tag2urls.json"))
 
     reset_progress(progress_index)
     fields = [

@@ -164,6 +164,7 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         # save selected tags
         gt_labels = {tag_name: idx for idx, tag_name in enumerate(final_tags)}
         sly.json.dump_json_file(gt_labels, os.path.join(g.project_dir, "gt_labels.json"))
+        sly.json.dump_json_file(gt_labels, os.path.join(g.info_dir, "gt_labels.json"))
 
         # save splits
         #final_tags2images[tag_name][split].extend(_final_infos)
