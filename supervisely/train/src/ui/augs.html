@@ -89,8 +89,8 @@
     </el-tabs>
 
     <div class="fflex mt10" v-if="!data.done5">
-        <el-button type="primary" class="regular" @click="command('use_augs')">Use {{state.augsType}} augs</el-button>
-        <el-button type="warning" class="regular ml10" :plain="true" @click="command('use_augs')">Train without augs</el-button>
+        <el-button type="primary" class="regular mr10" @click="command('use_augs')">Use {{state.augsType}} augs</el-button>
+        <el-button type="warning" class="regular" :plain="true" @click="command('use_augs')">Train without augs</el-button>
     </div>
 
     <div v-if="data.done5">
