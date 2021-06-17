@@ -118,7 +118,7 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         g.api.app.set_fields(g.task_id, fields)
 
         remote_dir = upload_artifacts_and_log_progress()
-        file_info = api.file.get_info_by_path(g.team_id, os.path.join(remote_dir, _open_lnk_name))
+        file_info = api.file.get_info_by_path(g.team_id, os.path.join(remote_dir, "info", _open_lnk_name))
         api.task.set_output_directory(task_id, file_info.id, remote_dir)
 
         # show result directory in UI
