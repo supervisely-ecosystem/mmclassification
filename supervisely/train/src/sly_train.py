@@ -20,17 +20,14 @@ def main():
     data["taskId"] = g.task_id
 
     ui.init(data, state)  # init data for UI widgets
-    #sly.fs.clean_dir(g.my_app.data_dir)
+    #sly.fs.clean_dir(g.my_app.data_dir) #@TODO: for debug
     g.my_app.run(data=data, state=state)
 
 
 #@TODO: tags cooccurance - добавить в readme, поменять там табличный виджет, сделать зафиксированные колонки и скрол горизонтальный
-#@TODO: state["workersPerGPU"] = 0# 2  # 0 - for debug @TODO: for debug
-#@TODO: add ON/OFF for custom augmentations
 #@TODO: move mm_train import on top
 #@TODO: custom weights - load-from option
-#@TODO: readme - add py-configs to training artifacts
-#@TODO: readme - tags co-occurrence-matrix
+#@TODO: readme - describe all training artifacts
 #@TODO: add to readme - unpack KV tag
 #@TODO: resume_from - hard to implement without saving all data and configurations
 if __name__ == "__main__":

@@ -2,6 +2,7 @@ import os
 import supervisely_lib as sly
 from sly_train_progress import init_progress
 import sly_globals as g
+from tools.train import main as mm_train
 
 _open_lnk_name = "open_app.lnk"
 
@@ -104,9 +105,7 @@ def train(api: sly.Api, task_id, context, state, app_logger):
     try:
         sly.json.dump_json_file(state, os.path.join(g.info_dir, "ui_state.json"))
 
-        # init sys.argv for main training script
         init_script_arguments(state)
-        from tools.train import main as mm_train  # @TODO: move to imports section on top
         mm_train()
 
         # hide progress bars and eta
@@ -134,5 +133,4 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         raise e  # app will handle this error and show modal window
 
     # stop application
-    # get_progress_cb("Finished, app is stopped automatically", 1)(1)
     g.my_app.stop()
