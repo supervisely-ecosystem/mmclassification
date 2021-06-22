@@ -81,7 +81,7 @@ from functools import partial
 
 
 def upload_artifacts_and_log_progress():
-    _save_link_to_ui(g.info_dir, g.my_app.app_url)
+    _save_link_to_ui(g.artifacts_dir, g.my_app.app_url)
 
     def upload_monitor(monitor, api: sly.Api, task_id, progress: sly.Progress):
         if progress.total == 0:
@@ -117,7 +117,7 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         g.api.app.set_fields(g.task_id, fields)
 
         remote_dir = upload_artifacts_and_log_progress()
-        file_info = api.file.get_info_by_path(g.team_id, os.path.join(remote_dir, "info", _open_lnk_name))
+        file_info = api.file.get_info_by_path(g.team_id, os.path.join(remote_dir, _open_lnk_name))
         api.task.set_output_directory(task_id, file_info.id, remote_dir)
 
         # show result directory in UI

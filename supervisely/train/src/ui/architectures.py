@@ -386,7 +386,7 @@ def init(data, state):
     state["disabled6"] = True
     init_progress(6, data)
 
-    state["weightsPath"] = ""
+    state["weightsPath"] = "/mmclassification/5687_synthetic products v2_003/checkpoints/epoch_10.pth"  #@TODO: for debug
     data["done6"] = False
 
 
