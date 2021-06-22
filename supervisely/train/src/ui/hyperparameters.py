@@ -4,7 +4,7 @@ import sly_globals as g
 
 
 def init(data, state):
-    state["epochs"] = 10
+    state["epochs"] = 5
     state["gpusId"] = '0'
 
     state["imgSize"] = 256
@@ -14,7 +14,7 @@ def init(data, state):
     state["metricsPeriod"] = 10
     state["checkpointInterval"] = 1
     state["maxKeepCkptsEnabled"] = True
-    state["maxKeepCkpts"] = 5
+    state["maxKeepCkpts"] = 3
     state["saveLast"] = True
     state["saveBest"] = True
 
