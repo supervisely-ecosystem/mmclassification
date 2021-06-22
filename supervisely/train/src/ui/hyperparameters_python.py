@@ -33,7 +33,7 @@ def init(data, state):
 
     state["collapsed8"] = True
     state["disabled8"] = True
-    state["done8"] = False
+    data["done8"] = False
 
 
 def restart(data, state):

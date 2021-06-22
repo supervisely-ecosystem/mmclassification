@@ -387,7 +387,7 @@ def init(data, state):
     init_progress(6, data)
 
     state["weightsPath"] = ""
-    state["done6"] = False
+    data["done6"] = False
 
 
 def restart(data, state):

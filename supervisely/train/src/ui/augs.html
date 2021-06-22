@@ -5,7 +5,11 @@
           :disabled="{disabled: state.disabled5, message: 'Validate data at step 4 before configure augmentations'}"
           ref="step5"
 >
-    <el-tabs type="border-card" class="el-tabs-cards" v-model="state.augsType">
+    <div class="fflex">
+        <el-switch v-model="state.useAugs" :disabled="data.done5"></el-switch>
+        <div class="ml10">Augmentations</div>
+    </div>
+    <el-tabs type="border-card" class="el-tabs-cards mt10" v-model="state.augsType" v-if="state.useAugs">
         <el-tab-pane name="template" :disabled="data.done5">
             <el-radio slot="label" v-model="state.augsType" label="template" :disabled="data.done5">
                 Default templates
@@ -88,18 +92,35 @@
         </el-tab-pane>
     </el-tabs>
 
-    <div class="fflex mt10" v-if="!data.done5">
-        <el-button type="primary" class="regular mr10" @click="command('use_augs')">Use {{state.augsType}} augs</el-button>
-        <el-button type="warning" class="regular" :plain="true" @click="command('use_augs')">Train without augs</el-button>
+    <div v-if="state.useAugs">
+        <div class="fflex mt10" v-if="!data.done5">
+            <el-button type="primary" class="regular" @click="command('use_augs')">Use {{state.augsType}} augs
+            </el-button>
+        </div>
+        <div v-if="data.done5">
+            <i class="zmdi zmdi-check-circle mr5 mt10" style="color: #13ce66"></i>
+            <span style="color: #5a6772;">Augmentations has been successfully defined</span>
+        </div>
+        <el-button type="warning" class="regular mt10" :plain="true"
+                   @click="state.restartFrom = 5;"
+                   v-if="data.done5">
+            <i class="zmdi zmdi-rotate-left mr5"></i> Select other augs
+        </el-button>
+    </div>
+    <div v-if="!state.useAugs">
+        <div class="fflex mt10" v-if="!data.done5">
+            <el-button type="primary" class="regular" @click="command('use_augs')">Next step</el-button>
+        </div>
+        <div v-if="data.done5">
+            <i class="zmdi zmdi-check-circle mr5 mt10" style="color: #13ce66"></i>
+            <span style="color: #5a6772;">You choose training without augmentations</span>
+        </div>
+        <el-button type="warning" class="regular mt10" :plain="true"
+                   @click="state.restartFrom = 5;"
+                   v-if="data.done5">
+            <i class="zmdi zmdi-rotate-left mr5"></i> Change
+        </el-button>
     </div>
 
-    <div v-if="data.done5">
-        <i class="zmdi zmdi-check-circle mr5 mt10" style="color: #13ce66"></i>
-        <span style="color: #5a6772;">Augmentations has been successfully defined</span>
-    </div>
-    <el-button type="warning" class="regular mt10" :plain="true"
-               @click="state.restartFrom = 5;"
-               v-if="data.done5">
-        <i class="zmdi zmdi-rotate-left mr5"></i> Select other augs
-    </el-button>
+
 </sly-card>
