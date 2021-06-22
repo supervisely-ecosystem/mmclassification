@@ -154,7 +154,12 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
     }
 
     subsample_urls = {tag_name: urls[:_max_examples_count] for tag_name, urls in tag2urls.items()}
-    sly.json.dump_json_file(tag2urls, os.path.join(g.info_dir, "tag2urls.json"))
+
+    tags_examples = defaultdict(list)
+    for tag_name, urls in tag2urls.items():
+        for example in urls[:_max_examples_count]:
+            tags_examples[tag_name].append(example["preview"])
+    sly.json.dump_json_file(tags_examples, os.path.join(g.info_dir, "tag2urls.json"))
 
     reset_progress(progress_index)
     fields = [

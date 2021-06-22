@@ -101,7 +101,7 @@
     </div>
     <el-button type="warning" class="regular mt10" :plain="true"
                @click="state.restartFrom = 8;"
-               v-if="data.done8">
+               v-if="data.done8 && !state.started">
         <i class="zmdi zmdi-rotate-left mr5"></i> Change configs
     </el-button>
 

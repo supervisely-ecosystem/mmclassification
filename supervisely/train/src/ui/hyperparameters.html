@@ -146,7 +146,7 @@
     </div>
     <el-button type="warning" class="regular mt10" :plain="true"
                @click="state.restartFrom = 7;"
-               v-if="data.done7">
+               v-if="data.done7 && !state.started">
         <i class="zmdi zmdi-rotate-left mr5"></i> Change hyperparameters
     </el-button>
 </sly-card>

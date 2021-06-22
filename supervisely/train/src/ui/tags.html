@@ -60,7 +60,7 @@
             </div>
             <el-button type="warning" class="regular mt10" :plain="true"
                        @click="state.restartFrom = 3;"
-                       v-if="data.done3">
+                       v-if="data.done3 && !state.started">
                 <i class="zmdi zmdi-rotate-left mr5"></i> Select other tags
             </el-button>
         </div>

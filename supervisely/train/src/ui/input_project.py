@@ -46,7 +46,6 @@ def download(api: sly.Api, task_id, context, state, app_logger):
 
         global project_fs
         project_fs = sly.Project(g.project_dir, sly.OpenMode.READ)
-        #cache_images_infos()
     except Exception as e:
         reset_progress(progress_index)
         raise e
@@ -58,30 +57,6 @@ def download(api: sly.Api, task_id, context, state, app_logger):
         {"field": "state.activeStep", "payload": 2},
     ]
     g.api.app.set_fields(g.task_id, fields)
-
-
-# def cache_images_infos():
-#     global _images_infos
-#
-#     if sly.fs.file_exists(_cache_path):
-#         sly.logger.info("Cache exists, read images info from cache")
-#         with shelve.open(_cache_base_filename, flag='r') as s:
-#             _images_infos = s["images_infos"]
-#     else:
-#         progress = get_progress_cb(progress_index, "Cache project info", g.project_info.items_count)
-#         _images_infos = {}
-#         for dataset_info in g.api.dataset.get_list(g.project_id):
-#             name_to_info = {}
-#             for info in g.api.image.get_list(dataset_info.id):
-#                 name_to_info[info.name] = info._asdict()
-#                 progress(1)
-#             _images_infos[dataset_info.name] = name_to_info
-#         reset_progress(progress_index)
-#
-#         with shelve.open(_cache_base_filename) as s:
-#             s["images_infos"] = _images_infos
-#         sly.logger.info(f"images infos for project id={g.project_id} has been successfully cached")
-
 
 
 def get_image_info_from_cache(dataset_name, item_name):
@@ -99,76 +74,3 @@ def get_image_info_from_cache(dataset_name, item_name):
 
 def get_paths_by_image_id(image_id):
     return _image_id_to_paths[image_id]
-
-
-# def clean_sets_and_calc_stats(project_dir, train_set, val_set, progress_cb):
-#     project = sly.Project(project_dir, sly.OpenMode.READ)
-#     train_tags = sly.json.load_json_file(os.path.join(project_dir, "gt_labels.json"))
-#
-#     def _clean_and_calc(split, stats):
-#         res_split = []
-#         for item in split:
-#             ann = sly.Annotation.load_json_file(item.ann_path, project.meta)
-#
-#             name = None
-#             num_train_tags_on_image = 0
-#             for tag in ann.img_tags:
-#                 tag: sly.Tag
-#                 if tag.name in train_tags:
-#                     name = tag.name
-#                     num_train_tags_on_image += 1
-#
-#             if num_training_tags_on_image == 0:
-#                 stats["no tags"] += 1
-#             elif num_training_tags_on_image > 1:
-#                 stats["collision"] += 1
-#             else:
-#                 if name is None:
-#                     raise RuntimeError("Tag name is None")
-#                 stats[name] += 1
-#
-#
-#     stats = defaultdict(int)
-#
-#
-#
-#     num_images_not_tags = 0
-#     num_images_multiple_tags = 0
-#
-#     to_remove = {}
-#     for dataset in project.datasets:
-#         to_remove[dataset.name] = {}
-#         for item_name in dataset:
-#             img_path, ann_path = dataset.get_item_paths(item_name)
-#             ann = sly.Annotation.load_json_file(ann_path, project.meta)
-#
-#             num_training_tags_on_image = 0
-#             for tag in ann.img_tags:
-#                 tag: sly.Tag
-#                 if tag.name in train_tags:
-#                     num_training_tags_on_image += 1
-#
-#             if num_training_tags_on_image == 0:
-#                 sly.logger.warn(f"Image {item_name} in dataset {dataset.name} does not have any any of the training tags, will be ignored")
-#                 to_remove[dataset.name][item_name] = 1
-#                 dataset.delete_item(item_name)  # to be sure that there are no bad images in training
-#                 num_images_not_tags += 1
-#             if num_training_tags_on_image > 1:
-#                 sly.logger.warn(f"Conflict: multiple training tags were assigned to image {item_name} in dataset {dataset.name}, will be ignored")
-#                 to_remove[dataset.name][item_name] = 1
-#                 dataset.delete_item(item_name)  # to be sure that there are no bad images in training
-#                 num_images_multiple_tags += 1
-#
-#             progress_cb(1)
-#
-#     def _filter(items, to_remove):
-#         filtered = []
-#         for item in items:
-#             if item.name in to_remove[item.dataset_name]:
-#                 continue  # remove item
-#             filtered.append(item)
-#         return filtered
-#
-#     filtered_train_set = _filter(train_set, to_remove)
-#     filtered_val_set = _filter(val_set, to_remove)
-#     return num_images_not_tags, num_images_multiple_tags, filtered_train_set, filtered_val_set

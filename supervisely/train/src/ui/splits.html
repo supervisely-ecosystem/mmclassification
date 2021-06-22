@@ -147,7 +147,7 @@
         </div>
         <el-button type="warning" class="regular mt10" :plain="true"
                    @click="state.restartFrom = 2;"
-                   v-if="data.done2">
+                   v-if="data.done2 && !state.started">
             <i class="zmdi zmdi-rotate-left mr5"></i> Recreate splits
         </el-button>
     </div>

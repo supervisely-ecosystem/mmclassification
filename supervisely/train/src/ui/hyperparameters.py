@@ -4,12 +4,12 @@ import sly_globals as g
 
 
 def init(data, state):
-    state["epochs"] = 6  # 10 @TODO: for debug
+    state["epochs"] = 10
     state["gpusId"] = '0'
 
     state["imgSize"] = 256
     state["batchSizePerGPU"] = 32
-    state["workersPerGPU"] = 0  # 2  #@TODO: 0 - for debug
+    state["workersPerGPU"] = 2  #@TODO: 0 - for debug
     state["valInterval"] = 1
     state["metricsPeriod"] = 10
     state["checkpointInterval"] = 1

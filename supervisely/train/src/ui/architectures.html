@@ -63,7 +63,7 @@
     </div>
     <el-button type="warning" class="regular mt10" :plain="true"
                @click="state.restartFrom = 6;"
-               v-if="data.done6">
+               v-if="data.done6 && !state.started">
         <i class="zmdi zmdi-rotate-left mr5"></i> Select another model
     </el-button>
 </sly-card>

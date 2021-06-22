@@ -23,8 +23,6 @@ def main():
     #sly.fs.clean_dir(g.my_app.data_dir)
     g.my_app.run(data=data, state=state)
 
-#@TODO: Error: TypeError("'<=' not supported between instances of 'NoneType' and 'int'")
-# {"message": "please, contact support: task_id=5536, TypeError(\"'<=' not supported between instances of 'NoneType' and 'int'\")", "exc_str": "'<=' not supported between instances of 'NoneType' and 'int'", "timestamp": "2021-06-15T15:07:09.657Z", "level": "error", "stack": ["Traceback (most recent call last):", "  File \"/mmclassification/supervisely_lib/app/app_service.py\", line 394, in wrapper", "    f(*args, **kwargs)", "  File \"/mmclassification/supervisely/train/src/ui/ui.py\", line 39, in restart", "    if restart_from_step <= 2:", "TypeError: '<=' not supported between instances of 'NoneType' and 'int'"]}
 
 #@TODO: tags cooccurance - добавить в readme, поменять там табличный виджет, сделать зафиксированные колонки и скрол горизонтальный
 #@TODO: state["workersPerGPU"] = 0# 2  # 0 - for debug @TODO: for debug
