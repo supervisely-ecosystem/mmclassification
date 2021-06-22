@@ -46,7 +46,6 @@ class Supervisely(BaseDataset):
 
             gt_index = self.gt_labels[gt_label]
             data_infos.append({
-                "img_prefix": self.split_name, #@TODO: remove it
                 "img_info": {'filename': img_path},
                 "gt_label": np.array(gt_index, dtype=np.int64)
             })

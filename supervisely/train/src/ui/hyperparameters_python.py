@@ -65,17 +65,6 @@ def preview_configs(api: sly.Api, task_id, context, state, app_logger):
 @g.my_app.ignore_errors_and_show_dialog_window()
 def accept_py_configs(api: sly.Api, task_id, context, state, app_logger):
     train_config.save_from_state(state)
-
-    # # save train args to file - for quick debug
-    # # @TODO: REMOVE IT REMOVE IT REMOVE IT REMOVE ITREMOVE ITREMOVE IT
-    # sly.json.dump_json_file(
-    #     {
-    #         "work-dir": g.artifacts_dir,
-    #         "gpu-ids": state["gpusId"],
-    #     },
-    #     os.path.join(g.artifacts_dir, "mm_args.json")
-    # )
-
     fields = [
         {"field": "data.done8", "payload": True},
         {"field": "state.collapsed9", "payload": False},
