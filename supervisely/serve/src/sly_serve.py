@@ -161,6 +161,7 @@ def main():
     g.my_app.run()
 
 
+#@TODO: handle exceptions in every callback and return error back
 #@TODO: add select device with groups
 #@TODO: release new sdk with api.file.list2
 #@TODO: readme + gif - how to replace tag2urls file + release another app
