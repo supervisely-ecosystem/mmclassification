@@ -41,5 +41,10 @@ data = dict(
         project_dir=project_dir,
         data_prefix='val',
         pipeline=test_pipeline),
-    )
+    test=dict(
+        type=dataset_type,
+        project_dir=project_dir,
+        data_prefix='test',
+        pipeline=test_pipeline),
+)
 evaluation = dict(interval=validation_interval, save_best=save_best, metric='accuracy')

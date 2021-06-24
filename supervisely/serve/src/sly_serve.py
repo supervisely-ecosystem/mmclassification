@@ -140,10 +140,13 @@ def inference_batch_ids(api: sly.Api, task_id, context, state, app_logger):
 
 
 def debug_inference():
-    pass
-    # image = sly.image.read("./data/images/bus.jpg")  # RGB
-    # ann = inference(model, half, device, imgsz, image, meta, debug_visualization=True)
-    # print(json.dumps(ann, indent=4))
+    image_id = 903277
+    image_path = f"./data/images/{image_id}.jpg"
+    if not sly.fs.file_exists(image_path):
+        g.my_app.public_api.image.download_path(image_id, image_path)
+
+    image = sly.image.read(image_path)  # RGB
+    res = nn_utils.inference_model(g.model, image_path, topn=5)
 
 
 def main():
@@ -157,6 +160,7 @@ def main():
     nn_utils.download_model_and_configs()
     nn_utils.construct_model_meta()
     nn_utils.deploy_model()
+    debug_inference()
 
     g.my_app.run()
 

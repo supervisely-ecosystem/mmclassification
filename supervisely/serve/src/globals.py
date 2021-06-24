@@ -26,7 +26,7 @@ remote_info_dir = os.path.join(remote_exp_dir, "info")
 local_weights_path = os.path.join(my_app.data_dir, sly.fs.get_file_name_with_ext(remote_weights_path))
 local_configs_dir = os.path.join(my_app.data_dir, "configs")
 sly.fs.mkdir(local_configs_dir)
-local_model_config_path = os.path.join(local_configs_dir, "model_config.py")
+local_model_config_path = os.path.join(local_configs_dir, "train_config.py")
 
 local_info_dir = os.path.join(my_app.data_dir, "info")
 sly.fs.mkdir(local_info_dir)
