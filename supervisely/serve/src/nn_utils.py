@@ -57,3 +57,69 @@ def deploy_model():
     sly.logger.info("Model has been successfully deployed")
 
 
+
+# def inference_model(model, img, topn=5):
+#     """Inference image(s) with the classifier.
+#
+#     Args:
+#         model (nn.Module): The loaded classifier.
+#         img (str/ndarray): The image filename or loaded image.
+#
+#     Returns:
+#         result (dict): The classification results that contains
+#             `class_name`, `pred_label` and `pred_score`.
+#     """
+#     cfg = model.cfg
+#     device = next(model.parameters()).device  # model device
+#     # build the data pipeline
+#     if isinstance(img, str):
+#         if cfg.data.test.pipeline[0]['type'] != 'LoadImageFromFile':
+#             cfg.data.test.pipeline.insert(0, dict(type='LoadImageFromFile'))
+#         data = dict(img_info=dict(filename=img), img_prefix=None)
+#     else:
+#         if cfg.data.test.pipeline[0]['type'] == 'LoadImageFromFile':
+#             cfg.data.test.pipeline.pop(0)
+#         data = dict(img=img)
+#     test_pipeline = Compose(cfg.data.test.pipeline)
+#     data = test_pipeline(data)
+#     data = collate([data], samples_per_gpu=1)
+#     if next(model.parameters()).is_cuda:
+#         # scatter to specified GPU
+#         data = scatter(data, [device])[0]
+#
+#     # forward the model
+#     with torch.no_grad():
+#         scores = model(return_loss=False, **data)
+#         model_out = scores[0]
+#         top_scores = model_out[model_out.argsort()[-topn:]][::-1]
+#         top_labels = model_out.argsort()[-topn:][::-1]
+#         result = []
+#         for label, score in zip(top_labels, top_scores):
+#             result.append({
+#                 'pred_label': label,
+#                 'pred_score': float(score),
+#                 'pred_class': model.CLASSES[label]
+#             })
+#     return result
+#
+#
+# def visualize_predictions(data_dir, input_path, predictions_nn, vis_path):
+#     predictions = [(pred["pred_class"], pred["pred_score"]) for pred in predictions_nn]
+#     size = (224, 224)
+#     input_image = sly.image.read(input_path)
+#     input_image = sly.image.resize(input_image, size)
+#     res = None
+#     for (upc, conf) in predictions:
+#         upc_gt_dir = os.path.join(data_dir, upc, "gt")
+#         gt_paths = sly.fs.list_files(upc_gt_dir, ".jpg")
+#         for gt_path in gt_paths:
+#             gt_image = sly.image.read(gt_path)
+#             gt_image = sly.image.resize(gt_image, size)
+#             row = np.hstack((input_image, gt_image))
+#             cv2.putText(row, f'{upc}: {conf:.3f}', (11, 21), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+#             cv2.putText(row, f'{upc}: {conf:.3f}', (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
+#             if res is None:
+#                 res = row
+#             else:
+#                 res = np.vstack((res, row))
+#     sly.image.write(vis_path, res)

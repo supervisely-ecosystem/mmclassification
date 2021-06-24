@@ -30,7 +30,7 @@ def get_session_info(api: sly.Api, task_id, context, state, app_logger):
     info = {
         "app": "MM Classification Serve",
         "weights": g.remote_weights_path,
-        "device": str(g.device_str),
+        "device": g.device,
         "session_id": task_id,
         "tags_count": len(g.meta.tag_metas),
     }
@@ -163,5 +163,7 @@ def main():
 
 #@TODO: add select device with groups
 #@TODO: release new sdk with api.file.list2
+#@TODO: readme + gif - how to replace tag2urls file + release another app
+#@TODO: interface to replace tag2urls file
 if __name__ == "__main__":
     sly.main_wrapper("main", main)
