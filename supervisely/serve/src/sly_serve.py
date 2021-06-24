@@ -150,12 +150,13 @@ def main():
     sly.logger.info("Script arguments", extra={
         "context.teamId": g.team_id,
         "context.workspaceId": g.workspace_id,
-        "modal.state.weightsPath": g.remote_weights_path
+        "modal.state.weightsPath": g.remote_weights_path,
+        "device": g.device
     })
 
     nn_utils.download_model_and_configs()
     nn_utils.construct_model_meta()
-    #nn_utils.deploy_model()
+    nn_utils.deploy_model()
 
     g.my_app.run()
 

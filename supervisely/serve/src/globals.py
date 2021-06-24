@@ -17,7 +17,7 @@ sys.path.append(root_source_path)
 team_id = int(os.environ['context.teamId'])
 workspace_id = int(os.environ['context.workspaceId'])
 remote_weights_path = os.environ['modal.state.weightsPath']
-device_str = os.environ['modal.state.device']
+device = os.environ['modal.state.device']
 
 remote_exp_dir = str(pathlib.Path(remote_weights_path).parents[1])
 remote_configs_dir = os.path.join(remote_exp_dir, "configs")
@@ -26,13 +26,14 @@ remote_info_dir = os.path.join(remote_exp_dir, "info")
 local_weights_path = os.path.join(my_app.data_dir, sly.fs.get_file_name_with_ext(remote_weights_path))
 local_configs_dir = os.path.join(my_app.data_dir, "configs")
 sly.fs.mkdir(local_configs_dir)
+local_model_config_path = os.path.join(local_configs_dir, "model_config.py")
+
 local_info_dir = os.path.join(my_app.data_dir, "info")
 sly.fs.mkdir(local_info_dir)
 local_gt_labels_path = os.path.join(local_info_dir, "gt_labels.json")
 local_labels_urls_path = os.path.join(local_info_dir, "tag2urls.json")
 
 model = None
-device = None
 meta: sly.ProjectMeta = None
 gt_labels = None
 labels_urls = None
