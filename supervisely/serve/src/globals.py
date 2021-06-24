@@ -35,5 +35,6 @@ local_labels_urls_path = os.path.join(local_info_dir, "tag2urls.json")
 
 model = None
 meta: sly.ProjectMeta = None
-gt_labels = None
+gt_labels = None  # name -> index
+gt_index_to_labels = None  # index -> name
 labels_urls = None

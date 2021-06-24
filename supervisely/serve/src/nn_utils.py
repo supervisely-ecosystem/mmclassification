@@ -48,6 +48,8 @@ def download_model_and_configs():
 def construct_model_meta():
     g.labels_urls = sly.json.load_json_file(g.local_labels_urls_path)
     g.gt_labels = sly.json.load_json_file(g.local_gt_labels_path)
+    g.gt_index_to_labels = {index: name for name, index in g.gt_labels.items()}
+
     tag_metas = []
     for name, index in g.gt_labels.items():
         tag_metas.append(sly.TagMeta(name, sly.TagValueType.NONE))
@@ -100,7 +102,7 @@ def inference_model(model, img, topn=5):
             result.append({
                 'pred_label': label,
                 'pred_score': float(score),
-                'pred_class': model.CLASSES[label]
+                'pred_class': g.gt_index_to_labels[label]
             })
     return result
 #
