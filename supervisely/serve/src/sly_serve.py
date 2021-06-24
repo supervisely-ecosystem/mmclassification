@@ -1,13 +1,8 @@
+import os
+
 import globals as g
 import nn_utils
 import supervisely_lib as sly
-
-
-# settings_path = os.path.join(root_source_path, "supervisely/serve/custom_settings.yaml")
-# sly.logger.info(f"Custom inference settings path: {settings_path}")
-# with open(settings_path, 'r') as file:
-#     default_settings_str = file.read()
-#     default_settings = yaml.safe_load(default_settings_str)
 
 
 @g.my_app.callback("get_model_meta")
@@ -38,16 +33,29 @@ def get_session_info(api: sly.Api, task_id, context, state, app_logger):
     g.my_app.send_response(request_id, data=info)
 
 
-@g.my_app.callback("get_custom_inference_settings")
-@sly.timeit
-def get_custom_inference_settings(api: sly.Api, task_id, context, state, app_logger):
-    pass
-    # request_id = context["request_id"]
-    # my_app.send_response(request_id, data={"settings": default_settings_str})
-
-
 def inference_image_path(image_path, context, state, app_logger):
-    pass
+    app_logger.debug("Input path", extra={"path": image_path})
+    res_path = image_path
+    if "rectangle" in state:
+        top, left, bottom, right = state["rectangle"]
+        rect = sly.Rectangle(top, left, bottom, right)
+
+        image = sly.image.read(image_path)  # RGB image
+        canvas_rect = sly.Rectangle.from_size(image.shape[:2])
+        results = rect.crop(canvas_rect)
+        if len(results) != 1:
+            return {
+                "message": "roi rectangle out of image bounds",
+                "roi": state["rectangle"],
+                "img_size": {"height": image.shape[0], "width": image.shape[1]}
+            }
+        rect = results[0]
+        cropped_image = sly.image.crop(image, rect)
+        res_path = os.path.join(g.my_app.data_dir, sly.rand_str(10) + sly.fs.get_file_ext(image_path))
+        sly.image.write(res_path, cropped_image)
+
+    res = nn_utils.inference_model(g.model, res_path, topn=5)
+    return res
     # app_logger.debug("Input path", extra={"path": image_path})
     #
     # rect = None
@@ -144,8 +152,6 @@ def debug_inference():
     image_path = f"./data/images/{image_id}.jpg"
     if not sly.fs.file_exists(image_path):
         g.my_app.public_api.image.download_path(image_id, image_path)
-
-    image = sly.image.read(image_path)  # RGB
     res = nn_utils.inference_model(g.model, image_path, topn=5)
 
 
@@ -160,11 +166,11 @@ def main():
     nn_utils.download_model_and_configs()
     nn_utils.construct_model_meta()
     nn_utils.deploy_model()
-    debug_inference()
 
     g.my_app.run()
 
 
+#@TODO: inference_image_path topn
 #@TODO: handle exceptions in every callback and return error back
 #@TODO: add select device with groups
 #@TODO: release new sdk with api.file.list2
