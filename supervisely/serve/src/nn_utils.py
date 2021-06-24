@@ -1,108 +1,103 @@
-import torch
-import numpy as np
+import os
+import pathlib
 import supervisely_lib as sly
 
+import globals as g
 
-from utils.torch_utils import select_device
-from models.experimental import attempt_load
-from utils.general import check_img_size, non_max_suppression, scale_coords
-from utils.datasets import letterbox
+
+# from utils.torch_utils import select_device
+# from models.experimental import attempt_load
+# from utils.general import check_img_size, non_max_suppression, scale_coords
+# from utils.datasets import letterbox
 
 
 CONFIDENCE = "confidence"
 IMG_SIZE = 640
 
 
-def construct_model_meta(model):
-    names = model.module.names if hasattr(model, 'module') else model.names
-
-    colors = None
-    if hasattr(model, 'module') and hasattr(model.module, 'colors'):
-        colors = model.module.colors
-    elif hasattr(model, 'colors'):
-        colors = model.colors
-    else:
-        colors = []
-        for i in range(len(names)):
-            colors.append(sly.color.generate_rgb(exist_colors=colors))
-
-    obj_classes = [sly.ObjClass(name, sly.Rectangle, color) for name, color in zip(names, colors)]
-    tags = [sly.TagMeta(CONFIDENCE, sly.TagValueType.ANY_NUMBER)]
-
-    meta = sly.ProjectMeta(obj_classes=sly.ObjClassCollection(obj_classes),
-                           tag_metas=sly.TagMetaCollection(tags))
-    return meta
-
-
-def load_model(weights_path, imgsz=640, device='cpu'):
-    device = select_device(device)
-    half = device.type != 'cpu'  # half precision only supported on CUDA
-
-    # Load model
-    model = attempt_load(weights_path, map_location=device)  # load FP32 model
-
-    if hasattr(model, 'module') and hasattr(model.module, 'img_size'):
-        imgsz = model.module.img_size[0]
-    elif hasattr(model, 'img_size'):
-        imgsz = model.img_size[0]
-    else:
-        sly.logger.warning(f"Image size is not found in model checkpoint. Use default: {IMG_SIZE}")
-        imgsz = IMG_SIZE
-    stride = int(model.stride.max())  # model stride
-    imgsz = check_img_size(imgsz, s=stride)  # check img_size
-
-    if half:
-        model.half()  # to FP16
-
-    if device.type != 'cpu':
-        model(torch.zeros(1, 3, imgsz, imgsz).to(device).type_as(next(model.parameters())))  # run once
-
-    return model, half, device, imgsz, stride
+# def init_model(config, checkpoint=None, device='cuda:0', options=None):
+#     """Initialize a classifier from config file.
+#
+#     Args:
+#         config (str or :obj:`mmcv.Config`): Config file path or the config
+#             object.
+#         checkpoint (str, optional): Checkpoint path. If left as None, the model
+#             will not load any weights.
+#         options (dict): Options to override some settings in the used config.
+#
+#     Returns:
+#         nn.Module: The constructed classifier.
+#     """
+#     if isinstance(config, str):
+#         config = mmcv.Config.fromfile(config)
+#     elif not isinstance(config, mmcv.Config):
+#         raise TypeError('config must be a filename or Config object, '
+#                         f'but got {type(config)}')
+#     if options is not None:
+#         config.merge_from_dict(options)
+#     config.model.pretrained = None
+#     model = build_classifier(config.model)
+#     if checkpoint is not None:
+#         map_loc = 'cpu' if device == 'cpu' else None
+#         checkpoint = load_checkpoint(model, checkpoint, map_location=map_loc)
+#         if 'CLASSES' in checkpoint['meta']:
+#             model.CLASSES = checkpoint['meta']['CLASSES']
+#         else:
+#             from mmcls.datasets import ImageNet
+#             warnings.simplefilter('once')
+#             warnings.warn('Class names are not saved in the checkpoint\'s '
+#                           'meta data, use imagenet by default.')
+#             model.CLASSES = ImageNet.CLASSES
+#     model.cfg = config  # save the config in the model for convenience
+#     model.to(device)
+#     model.eval()
+#     return model
 
 
-def inference(model, half, device, imgsz, stride, image: np.ndarray, meta: sly.ProjectMeta, conf_thres=0.25, iou_thres=0.45,
-              augment=False, agnostic_nms=False, debug_visualization=False) -> sly.Annotation:
-    names = model.module.names if hasattr(model, 'module') else model.names
+@sly.timeit
+def download_model_and_configs():
+    if not g.remote_weights_path.endswith(".pth"):
+        raise ValueError(f"Unsupported weights extension {sly.fs.get_file_ext(g.remote_weights_path)}. "
+                         f"Supported extension: '.pth'")
 
-    img0 = image # RGB
-    # Padded resize
-    img = letterbox(img0, new_shape=imgsz, stride=stride)[0]
-    img = img.transpose(2, 0, 1)  # to 3x416x416
-    img = np.ascontiguousarray(img)
+    info = g.api.file.get_info_by_path(g.team_id, g.remote_weights_path)
+    if info is None:
+        raise FileNotFoundError(f"Weights file not found: {g.remote_weights_path}")
 
-    img = torch.from_numpy(img).to(device)
-    img = img.half() if half else img.float()  # uint8 to fp16/32
-    img /= 255.0  # 0 - 255 to 0.0 - 1.0
-    if img.ndimension() == 3:
-        img = img.unsqueeze(0)
+    progress = sly.Progress("Downloading weights", info.sizeb, is_size=True, need_info_log=True)
+    g.local_weights_path = os.path.join(g.my_app.data_dir, sly.fs.get_file_name_with_ext(g.remote_weights_path))
+    g.api.file.download(
+        g.team_id,
+        g.remote_weights_path,
+        g.local_weights_path,
+        cache=g.my_app.cache,
+        progress_cb=progress.iters_done_report
+    )
 
-    inf_out = model(img, augment=augment)[0]
+    def _download_dir(remote_dir, local_dir):
+        remote_files = g.api.file.list2(g.team_id, remote_dir)
+        progress = sly.Progress(f"Downloading {remote_dir}", len(remote_files), need_info_log=True)
+        for remote_file in remote_files:
+            local_file = os.path.join(local_dir, sly.fs.get_file_name_with_ext(remote_file.path))
+            if sly.fs.file_exists(local_file):  # @TODO: for debug
+                pass
+            else:
+                g.api.file.download(g.team_id, remote_file.path, local_file)
+            progress.iter_done_report()
 
-    # Apply NMS
-    labels = []
-    output = non_max_suppression(inf_out, conf_thres=conf_thres, iou_thres=iou_thres, agnostic=agnostic_nms)
-    for i, det in enumerate(output):
-        if det is not None and len(det):
-            det[:, :4] = scale_coords(img.shape[2:], det[:, :4], img0.shape).round()
+    _download_dir(g.remote_configs_dir, g.local_configs_dir)
+    _download_dir(g.remote_info_dir, g.local_info_dir)
 
-            for *xyxy, conf, cls in reversed(det):
-                top, left, bottom, right = int(xyxy[1]), int(xyxy[0]), int(xyxy[3]), int(xyxy[2])
-                rect = sly.Rectangle(top, left, bottom, right)
-                obj_class = meta.get_obj_class(names[int(cls)])
-                tag = sly.Tag(meta.get_tag_meta(CONFIDENCE), round(float(conf), 4))
-                label = sly.Label(rect, obj_class, sly.TagCollection([tag]))
-                labels.append(label)
+    sly.logger.info("Model has been successfully downloaded")
 
-    height, width = img0.shape[:2]
-    ann = sly.Annotation(img_size=(height, width), labels=labels)
 
-    if debug_visualization is True:
-        # visualize for debug purposes
-        vis = np.copy(img0)
-        ann.draw_contour(vis, thickness=2)
-        sly.image.write("vis.jpg", vis)
-
-    return ann.to_json()
+def construct_model_meta():
+    g.labels_urls = sly.json.load_json_file(g.local_labels_urls_path)
+    g.gt_labels = sly.json.load_json_file(g.local_gt_labels_path)
+    tag_metas = []
+    for name, index in g.gt_labels.items():
+        tag_metas.append(sly.TagMeta(name, sly.TagValueType.NONE))
+    g.meta = sly.ProjectMeta(tag_metas=sly.TagMetaCollection(tag_metas))
 
 
 
