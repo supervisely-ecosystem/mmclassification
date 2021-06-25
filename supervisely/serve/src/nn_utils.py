@@ -101,7 +101,7 @@ def inference_model(model, img, topn=5):
         result = []
         for label, score in zip(top_labels, top_scores):
             result.append({
-                'pred_label': label,
+                'pred_label': int(label),
                 'pred_score': float(score),
                 'pred_class': model.CLASSES[label]
             })

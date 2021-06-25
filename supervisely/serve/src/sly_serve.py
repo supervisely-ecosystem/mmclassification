@@ -1,8 +1,15 @@
 import os
+from functools import lru_cache
 
 import globals as g
 import nn_utils
 import supervisely_lib as sly
+
+
+@lru_cache(maxsize=10)
+def get_image_by_id(image_id):
+    img = g.api.image.download_np(image_id)
+    return img
 
 
 @g.my_app.callback("get_model_meta")
@@ -54,40 +61,10 @@ def inference_image_path(image_path, context, state, app_logger):
         res_path = os.path.join(g.my_app.data_dir, sly.rand_str(10) + sly.fs.get_file_ext(image_path))
         sly.image.write(res_path, cropped_image)
 
-    res = nn_utils.inference_model(g.model, res_path, topn=5)
+    res = nn_utils.inference_model(g.model, res_path, topn=state.get("topn", 5))
+    if "rectangle" in state:
+        sly.fs.silent_remove(res_path)
     return res
-    # app_logger.debug("Input path", extra={"path": image_path})
-    #
-    # rect = None
-    # if "rectangle" in state:
-    #     top, left, bottom, right = state["rectangle"]
-    #     rect = sly.Rectangle(top, left, bottom, right)
-    #
-    # settings = state.get("settings", {})
-    # for key, value in default_settings.items():
-    #     if key not in settings:
-    #         app_logger.warn("Field {!r} not found in inference settings. Use default value {!r}".format(key, value))
-    # debug_visualization = settings.get("debug_visualization", default_settings["debug_visualization"])
-    # conf_thres = settings.get("conf_thres", default_settings["conf_thres"])
-    # iou_thres = settings.get("iou_thres", default_settings["iou_thres"])
-    # augment = settings.get("augment", default_settings["augment"])
-    #
-    # image = sly.image.read(image_path)  # RGB image
-    # if rect is not None:
-    #     canvas_rect = sly.Rectangle.from_size(image.shape[:2])
-    #     results = rect.crop(canvas_rect)
-    #     if len(results) != 1:
-    #         return {
-    #             "message": "roi rectangle out of image bounds",
-    #             "roi": state["rectangle"],
-    #             "img_size": {"height": image.shape[0], "width": image.shape[1]}
-    #         }
-    #     rect = results[0]
-    #     image = sly.image.crop(image, rect)
-    # ann_json = inference(model, half, device, imgsz, stride, image, meta,
-    #                      conf_thres=conf_thres, iou_thres=iou_thres, augment=augment,
-    #                      debug_visualization=debug_visualization)
-    # return ann_json
 
 
 @g.my_app.callback("inference_image_url")
@@ -113,16 +90,18 @@ def inference_image_url(api: sly.Api, task_id, context, state, app_logger):
 @g.my_app.callback("inference_image_id")
 @sly.timeit
 def inference_image_id(api: sly.Api, task_id, context, state, app_logger):
-    pass
-    # app_logger.debug("Input data", extra={"state": state})
-    # image_id = state["image_id"]
-    # image_info = api.image.get_info_by_id(image_id)
-    # image_path = os.path.join(my_app.data_dir, sly.rand_str(10) + image_info.name)
-    # api.image.download_path(image_id, image_path)
-    # ann_json = inference_image_path(image_path, context, state, app_logger)
-    # sly.fs.silent_remove(image_path)
-    # request_id = context["request_id"]
-    # my_app.send_response(request_id, data=ann_json)
+    app_logger.debug("Input data", extra={"state": state})
+    image_id = state["image_id"]
+
+    image_info = api.image.get_info_by_id(image_id)
+    image_path = os.path.join(g.my_app.data_dir, f"{image_id}{sly.fs.get_file_ext(image_info.name)}")
+    img = get_image_by_id(image_id)
+    sly.image.write(image_path, img)
+
+    predictions = inference_image_path(image_path, context, state, app_logger)
+    sly.fs.silent_remove(image_path)
+    request_id = context["request_id"]
+    g.my_app.send_response(request_id, data=predictions)
 
 
 @g.my_app.callback("inference_batch_ids")
@@ -170,6 +149,7 @@ def main():
     g.my_app.run()
 
 
+#@TODO: add padding to object crop
 #@TODO: inference_image_path topn
 #@TODO: handle exceptions in every callback and return error back
 #@TODO: add select device with groups
