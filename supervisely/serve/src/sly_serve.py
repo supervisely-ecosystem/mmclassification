@@ -44,10 +44,22 @@ def inference_image_path(image_path, context, state, app_logger):
     app_logger.debug("Input path", extra={"path": image_path})
     res_path = image_path
     if "rectangle" in state:
-        top, left, bottom, right = state["rectangle"]
-        rect = sly.Rectangle(top, left, bottom, right)
-
         image = sly.image.read(image_path)  # RGB image
+
+        top, left, bottom, right = state["rectangle"]
+        height, width = image.shape[:2]
+        pad_percent = state.get("pad", 0)
+        if pad_percent > 0:
+            sly.logger.debug("before padding", extra={"top": top, "left": left, "right": right, "bottom": bottom})
+            pad_lr = int((right - left) / 100 * pad_percent)
+            pad_ud = int((bottom - top) / 100 * pad_percent)
+            top = max(0, top - pad_ud)
+            bottom = min(height - 1, bottom + pad_ud)
+            left = max(0, left - pad_lr)
+            right = min(width - 1, right + pad_lr)
+            sly.logger.debug("after padding", extra={"top": top, "left": left, "right": right, "bottom": bottom})
+
+        rect = sly.Rectangle(top, left, bottom, right)
         canvas_rect = sly.Rectangle.from_size(image.shape[:2])
         results = rect.crop(canvas_rect)
         if len(results) != 1:
@@ -130,10 +142,8 @@ def main():
     g.my_app.run()
 
 
-#@TODO: add padding to object crop
 #@TODO: handle exceptions in every callback and return error back
 #@TODO: add select device with groups
-#@TODO: release new sdk with api.file.list2
 #@TODO: readme + gif - how to replace tag2urls file + release another app
 #@TODO: interface to replace tag2urls file
 if __name__ == "__main__":
