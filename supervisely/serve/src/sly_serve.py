@@ -131,7 +131,6 @@ def main():
 
 
 #@TODO: add padding to object crop
-#@TODO: inference_image_path topn
 #@TODO: handle exceptions in every callback and return error back
 #@TODO: add select device with groups
 #@TODO: release new sdk with api.file.list2
