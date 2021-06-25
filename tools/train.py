@@ -121,8 +121,9 @@ def main():
     meta['env_info'] = env_info
 
     # log some basic info
+    cfg_pretty_text = cfg.pretty_text
     logger.info(f'Distributed training: {distributed}')
-    logger.info(f'Config:\n{cfg.pretty_text}')
+    logger.info(f'Config:\n{cfg_pretty_text}')
 
     # set random seeds
     if args.seed is not None:
@@ -144,7 +145,7 @@ def main():
         # checkpoints as meta data
         cfg.checkpoint_config.meta = dict(
             mmcls_version=__version__,
-            config=cfg.pretty_text,
+            config=cfg_pretty_text,
             CLASSES=datasets[0].CLASSES)
     # add an attribute for visualization convenience
     train_model(
