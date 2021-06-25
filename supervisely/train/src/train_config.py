@@ -21,8 +21,8 @@ main_config_path = os.path.join(configs_dir, main_config_name)
 
 main_config_template = f"""
 _base_ = [
-    '{model_config_path}', '{dataset_config_path}',
-    '{schedule_config_path}', '{runtime_config_path}'
+    './{model_config_name}', './{dataset_config_name}',
+    './{schedule_config_name}', './{runtime_config_name}'
 ]
 """
 
