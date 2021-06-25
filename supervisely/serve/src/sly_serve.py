@@ -1,4 +1,5 @@
 import os
+import functools
 from functools import lru_cache
 
 import globals as g
@@ -12,15 +13,31 @@ def get_image_by_id(image_id):
     return img
 
 
+def send_error_data(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        value = None
+        try:
+            value = func(*args, **kwargs)
+        except Exception as e:
+            request_id = kwargs["context"]["request_id"]
+            g.my_app.send_response(request_id, data={"error": repr(e)})
+        return value
+    return wrapper
+
+
 @g.my_app.callback("get_model_meta")
 @sly.timeit
+@send_error_data
 def get_model_meta(api: sly.Api, task_id, context, state, app_logger):
+    raise ValueError(123)
     request_id = context["request_id"]
     g.my_app.send_response(request_id, data=g.meta.to_json())
 
 
 @g.my_app.callback("get_tags_examples")
 @sly.timeit
+@send_error_data
 def get_tags_examples(api: sly.Api, task_id, context, state, app_logger):
     request_id = context["request_id"]
     g.my_app.send_response(request_id, data=g.labels_urls)
@@ -28,6 +45,7 @@ def get_tags_examples(api: sly.Api, task_id, context, state, app_logger):
 
 @g.my_app.callback("get_session_info")
 @sly.timeit
+@send_error_data
 def get_session_info(api: sly.Api, task_id, context, state, app_logger):
     info = {
         "app": "MM Classification Serve",
@@ -81,6 +99,7 @@ def inference_image_path(image_path, context, state, app_logger):
 
 @g.my_app.callback("inference_image_url")
 @sly.timeit
+@send_error_data
 def inference_image_url(api: sly.Api, task_id, context, state, app_logger):
     app_logger.debug("Input data", extra={"state": state})
     image_url = state["image_url"]
@@ -98,6 +117,7 @@ def inference_image_url(api: sly.Api, task_id, context, state, app_logger):
 
 @g.my_app.callback("inference_image_id")
 @sly.timeit
+@send_error_data
 def inference_image_id(api: sly.Api, task_id, context, state, app_logger):
     app_logger.debug("Input data", extra={"state": state})
     image_id = state["image_id"]
@@ -115,6 +135,7 @@ def inference_image_id(api: sly.Api, task_id, context, state, app_logger):
 
 @g.my_app.callback("inference_batch_ids")
 @sly.timeit
+@send_error_data
 def inference_batch_ids(api: sly.Api, task_id, context, state, app_logger):
     raise NotImplementedError("Please contact tech support")
 
@@ -142,7 +163,7 @@ def main():
     g.my_app.run()
 
 
-#@TODO: handle exceptions in every callback and return error back
+#@TODO: error message format?
 #@TODO: add select device with groups
 #@TODO: readme + gif - how to replace tag2urls file + release another app
 #@TODO: interface to replace tag2urls file
