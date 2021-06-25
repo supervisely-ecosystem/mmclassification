@@ -382,7 +382,7 @@ def init(data, state):
     models = get_models_list()
     data["models"] = models
     data["modelColumns"] = get_table_columns()
-    state["selectedModel"] = "ResNet-50"  # "ResNet-34"
+    state["selectedModel"] = "ResNet-34"  # "ResNet-50"
     state["weightsInitialization"] = "imagenet"  # "custom"  # "imagenet" #@TODO: for debug
     state["collapsed6"] = True
     state["disabled6"] = True
