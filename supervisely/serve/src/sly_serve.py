@@ -27,7 +27,7 @@ def get_session_info(api: sly.Api, task_id, context, state, app_logger):
         "weights": g.remote_weights_path,
         "device": g.device,
         "session_id": task_id,
-        "tags_count": len(g.meta.tag_metas),
+        "classes_count": len(g.meta.tag_metas),
     }
     request_id = context["request_id"]
     g.my_app.send_response(request_id, data=info)
