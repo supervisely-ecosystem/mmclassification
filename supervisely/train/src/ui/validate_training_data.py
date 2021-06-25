@@ -112,6 +112,14 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         if tag_name in final_tags2images and len(final_tags2images[tag_name]["train"]) > 0:
             final_tags.append(tag_name)
 
+    tags_examples = defaultdict(list)
+    for tag_name, infos in final_tags2images.items():
+        for info in (infos['train'] + infos['val'])[:tags._max_examples_count]:
+            tags_examples[tag_name].append(
+                g.api.image.preview_url(info.full_storage_url, height=tags._preview_height)
+            )
+    sly.json.dump_json_file(tags_examples, os.path.join(g.info_dir, "tag2urls.json"))
+
     report.append({
         "title": "Final images count",
         "count": final_images_count,

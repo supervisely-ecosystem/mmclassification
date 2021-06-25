@@ -27,12 +27,6 @@ def init(data, state):
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def download(api: sly.Api, task_id, context, state, app_logger):
-    # *******************************************
-    # sly.fs.mkdir(g.project_dir) # for debug
-    # sly.fs.remove_dir(g.project_dir)  # for debug
-    # sly.fs.silent_remove(_cache_path) # for debug
-    # *******************************************
-
     try:
         if sly.fs.dir_exists(g.project_dir):
             pass

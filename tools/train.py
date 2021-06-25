@@ -147,6 +147,7 @@ def main():
             mmcls_version=__version__,
             config=cfg_pretty_text,
             CLASSES=datasets[0].CLASSES)
+        model.CLASSES = datasets[0].CLASSES
     # add an attribute for visualization convenience
     train_model(
         model,
