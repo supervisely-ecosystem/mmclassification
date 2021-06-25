@@ -70,21 +70,18 @@ def inference_image_path(image_path, context, state, app_logger):
 @g.my_app.callback("inference_image_url")
 @sly.timeit
 def inference_image_url(api: sly.Api, task_id, context, state, app_logger):
-    pass
-    # app_logger.debug("Input data", extra={"state": state})
-    #
-    # image_url = state["image_url"]
-    # ext = sly.fs.get_file_ext(image_url)
-    # if ext == "":
-    #     ext = ".jpg"
-    # local_image_path = os.path.join(my_app.data_dir, sly.rand_str(15) + ext)
-    #
-    # sly.fs.download(image_url, local_image_path)
-    # ann_json = inference_image_path(local_image_path, context, state, app_logger)
-    # sly.fs.silent_remove(local_image_path)
-    #
-    # request_id = context["request_id"]
-    # my_app.send_response(request_id, data=ann_json)
+    app_logger.debug("Input data", extra={"state": state})
+    image_url = state["image_url"]
+    ext = sly.fs.get_file_ext(image_url)
+    if ext == "":
+        ext = ".jpg"
+    local_image_path = os.path.join(g.my_app.data_dir, sly.rand_str(15) + ext)
+    sly.fs.download(image_url, local_image_path)
+    results = inference_image_path(local_image_path, context, state, app_logger)
+    sly.fs.silent_remove(local_image_path)
+
+    request_id = context["request_id"]
+    g.my_app.send_response(request_id, data=results)
 
 
 @g.my_app.callback("inference_image_id")
@@ -107,23 +104,7 @@ def inference_image_id(api: sly.Api, task_id, context, state, app_logger):
 @g.my_app.callback("inference_batch_ids")
 @sly.timeit
 def inference_batch_ids(api: sly.Api, task_id, context, state, app_logger):
-    pass
-    # app_logger.debug("Input data", extra={"state": state})
-    # ids = state["batch_ids"]
-    # infos = api.image.get_info_by_id_batch(ids)
-    # paths = []
-    # for info in infos:
-    #     paths.append(os.path.join(my_app.data_dir, sly.rand_str(10) + info.name))
-    # api.image.download_paths(infos[0].dataset_id, ids, paths)
-    #
-    # results = []
-    # for image_path in paths:
-    #     ann_json = inference_image_path(image_path, context, state, app_logger)
-    #     results.append(ann_json)
-    #     sly.fs.silent_remove(image_path)
-    #
-    # request_id = context["request_id"]
-    # my_app.send_response(request_id, data=results)
+    raise NotImplementedError("Please contact tech support")
 
 
 def debug_inference():
