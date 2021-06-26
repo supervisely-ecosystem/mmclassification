@@ -30,7 +30,6 @@ def send_error_data(func):
 @sly.timeit
 @send_error_data
 def get_model_meta(api: sly.Api, task_id, context, state, app_logger):
-    raise ValueError(123)
     request_id = context["request_id"]
     g.my_app.send_response(request_id, data=g.meta.to_json())
 
