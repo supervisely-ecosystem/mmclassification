@@ -23,6 +23,7 @@ def main():
     g.my_app.run(data=data, state=state)
 
 
+#@TODO: fix LR min max values in chart
 #@TODO: tags cooccurance - добавить в readme, поменять там табличный виджет, сделать зафиксированные колонки и скрол горизонтальный
 #@TODO: move mm_train import on top
 #@TODO: custom weights - load-from option
