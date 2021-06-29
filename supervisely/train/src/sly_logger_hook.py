@@ -17,6 +17,7 @@ class SuperviselyLoggerHook(TextLoggerHook):
         super(SuperviselyLoggerHook, self).__init__(by_epoch, interval, ignore_last, reset_flag, interval_exp_name)
         self.progress_epoch = None
         self.progress_iter = None
+        self._lrs = []
 
     def _log_info(self, log_dict, runner):
         super(SuperviselyLoggerHook, self)._log_info(log_dict, runner)
@@ -28,9 +29,6 @@ class SuperviselyLoggerHook(TextLoggerHook):
             eta_sec = time_sec_avg * (runner.max_iters - runner.iter - 1)
             eta_str = str(datetime.timedelta(seconds=int(eta_sec)))
             log_dict['sly_eta'] = eta_str
-            # log_dict['sly_time'] = f'{log_dict["time"]:.3f}'
-            # log_dict['sly_data_time'] = f'{log_dict["data_time"]:.3f}'
-        pass
 
         if self.progress_epoch is None:
             self.progress_epoch = sly.Progress("Epochs", runner.max_epochs)
@@ -56,6 +54,12 @@ class SuperviselyLoggerHook(TextLoggerHook):
                 {"field": "data.chartTrainLoss.series[0].data", "payload": [[epoch_float, log_dict["loss"]]],
                  "append": True},
             ])
+            self._lrs.append(log_dict["lr"])
+            fields.append({
+                "field": "data.chartLR.options.yaxisInterval",
+                "payload": [min(self._lrs) - min(self._lrs) / 5.0, max(self._lrs) + max(self._lrs) / 5.0]
+            })
+
             if 'time' in log_dict.keys():
                 fields.extend([
                     {"field": "data.chartTime.series[0].data", "payload": [[epoch_float, log_dict["time"]]],
