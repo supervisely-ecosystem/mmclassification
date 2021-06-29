@@ -1,4 +1,3 @@
-import os
 import supervisely_lib as sly
 import sly_globals as g
 import ui as ui
@@ -23,12 +22,5 @@ def main():
     g.my_app.run(data=data, state=state)
 
 
-#@TODO: fix LR min max values in chart
-#@TODO: tags cooccurance - добавить в readme, поменять там табличный виджет, сделать зафиксированные колонки и скрол горизонтальный
-#@TODO: move mm_train import on top
-#@TODO: custom weights - load-from option
-#@TODO: readme - describe all training artifacts
-#@TODO: add to readme - unpack KV tag
-#@TODO: resume_from - hard to implement without saving all data and configurations
 if __name__ == "__main__":
     sly.main_wrapper("main", main)
