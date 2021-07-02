@@ -120,8 +120,8 @@
         <el-switch v-model="state.gradClipEnabled" on-color="#13ce66" off-color="#B8B8B8" :disabled="data.done7"></el-switch>
         <div class="fflex mt10">
             <div class="mr5">max_norm =</div>
-            <el-input-number :disabled="!state.gradClipEnabled"
-                             v-model="state.maxNorm" :min="0" :step="0.1" :debounce="1000" :disabled="data.done7">
+            <el-input-number :disabled="!state.gradClipEnabled || data.done7"
+                             v-model="state.maxNorm" :min="0" :step="0.1" :debounce="1000">
             </el-input-number>
         </div>
     </sly-field>
