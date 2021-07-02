@@ -57,7 +57,10 @@ class SuperviselyLoggerHook(TextLoggerHook):
             self._lrs.append(log_dict["lr"])
             fields.append({
                 "field": "data.chartLR.options.yaxisInterval",
-                "payload": [min(self._lrs) - min(self._lrs) / 5.0, max(self._lrs) + max(self._lrs) / 5.0]
+                "payload": [
+                    round(min(self._lrs) - min(self._lrs) / 10.0, 5),
+                    round(max(self._lrs) + max(self._lrs) / 10.0, 5)
+                ]
             })
 
             if 'time' in log_dict.keys():
