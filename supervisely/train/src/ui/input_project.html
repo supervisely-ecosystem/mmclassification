@@ -14,7 +14,7 @@
     <el-button
             type="primary"
             class="regular"
-            :loading="data.progress1"
+            :loading="!!data.progress1"
             @click="command('download_project')"
             v-if="!data.done1">
         Download
