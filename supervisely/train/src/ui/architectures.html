@@ -49,7 +49,7 @@
     </el-tabs>
     <el-button type="primary" class="regular mt10"
                @click="command('download_weights')"
-               :loading="data.progress6"
+               :loading="!!data.progress6"
                v-if="!data.done6">
         Download model weights
     </el-button>
