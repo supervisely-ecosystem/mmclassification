@@ -55,13 +55,13 @@
             <sly-icon slot="icon" :options="{ color: '#006ad4', bgColor: '#bbe2ff', rounded: false }">
                 <i class="zmdi zmdi-trending-up"></i>
             </sly-icon>
+<!--            data.chartLR.options.smoothingWeight = val;-->
             <el-slider
                     :value="state.smoothing"
                     :min="0" :max="0.95" :step="0.05" show-input
                     style="width: 450px;"
                     @input="(val)=>{
                                 state.smoothing = val;
-                                data.chartLR.options.smoothingWeight = val;
                                 data.chartTrainLoss.options.smoothingWeight = val;
                                 data.chartValAccuracy.options.smoothingWeight = val;
                             }"
