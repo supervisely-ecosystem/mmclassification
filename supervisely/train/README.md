@@ -21,7 +21,7 @@
 
 # Overview
 
-Train models from MMClassification toolbox on your custom data (Supervisely format is supported). 
+Train models from [MMClassification](https://github.com/open-mmlab/mmclassification) toolbox on your custom data (Supervisely format is supported). 
 - Configure Train / Validation splits, model architecture and training hyperparameters
 - Visualize and validate training data 
 - App automatically generates training py configs in MMClassification format
