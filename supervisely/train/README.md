@@ -56,7 +56,7 @@ Watch [how-to video](https://youtu.be/R9sbH3biCmQ) for more details:
      other datasets for validation (for example "ds_val"), it is completely up to you)
      <img src="https://i.imgur.com/Y956BvC.png"/>
    
-3. Preview all available tags in project with corresponding image examples. Select training tags (model will be trained to predict them).
+3. Preview all available tags with corresponding image examples. Select training tags (model will be trained to predict them).
    <img src="https://i.imgur.com/g7eY0AC.png"/>
 
 4. App validates data consistency and correctness and produces report.
