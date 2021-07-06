@@ -90,29 +90,98 @@ Watch [how-to video](https://youtu.be/R9sbH3biCmQ) for more details:
    <img src="https://i.imgur.com/a87AR7A.png"/>
 
 9. Start training
-     
-6. All training artifacts (metrics, visualizations, weights, ...) are uploaded to Team Files. Link to the directory is generated in UI after training. 
+   <img src="https://i.imgur.com/NsPUbyF.png"/>
+   
+10. All training artifacts (metrics, visualizations, weights, ...) are uploaded to Team Files. Link to the directory 
+    is generated in UI after training. 
    
    Save path is the following: ```"/mmclassification/<task id>_<input project name>/```
 
    For example: ```/mmclassification/5886_synthetic products v2/```
    
-6. Also in this directory you can find file `open_app.lnk`. It is a link to the finished UI session. It can be opened at any time to 
-   get more details about training: options, hyperparameters, metrics and so on.
+   Structure is the following:
+   ```
+   . 
+   ├── checkpoints
+   │   ├── 20210701_113427.log
+   │   ├── 20210701_113427.log.json
+   │   ├── best_accuracy_top-1_epoch_44.pth
+   │   ├── epoch_48.pth
+   │   ├── epoch_49.pth
+   │   ├── epoch_50.pth
+   │   └── latest.pth
+   ├── configs
+   │   ├── augs_config.json
+   │   ├── augs_preview.py
+   │   ├── dataset_config.py
+   │   ├── model_config.py
+   │   ├── runtime_config.py
+   │   ├── schedule_config.py
+   │   └── train_config.py
+   ├── info
+   │   ├── gt_labels.json
+   │   ├── tag2urls.json
+   │   └── ui_state.json
+   └── open_app.lnk
+   ```
+- `checkpoints` directory contains MMClassification logs and weights
+- `configs` directory contains all configs that app generated for MMClassification toolbox, they may be useful
+for advanced user who would like ot export models and use them outside Supervisely
+- info directory contains basic information about training
+   - `gt_labels.json` - mapping between class names and their indices, this file allows to understand NN predictions. For examples:
+   ```json
+  {
+      "cat": 0,
+      "dog": 1,
+      "bird": 2,
+      "frog": 3
+  }
+   ```
+  - `tag2urls.json` - for every tag some image examples were saved, this file is used when the model is integrated into labeling interface
+   ```json
+  {
+     "cat": [
+          "http://supervisely.private/a/b/c/01.jpg",
+          "http://supervisely.private/a/b/c/02.jpg"
+     ],
+     "dog": [
+         "http://supervisely.private/d/d/d/01.jpg",
+         "http://supervisely.private/d/d/d/02.jpg"
+     ],
+     "bird": [
+         "http://supervisely.private/c/c/c/01.jpg",
+         "http://supervisely.private/c/c/c/02.jpg"
+     ],
+     "frog": [
+         "http://supervisely.private/c/c/c/01.jpg",
+         "http://supervisely.private/c/c/c/02.jpg"
+     ]
+  }
+   ```
+  - `ui_state.json` file with all values defined in UI
+   ```json
+   {
+      "...": "...",
+      "epochs": 50,
+      "gpusId": "0",
+      "imgSize": 256,
+      "batchSizePerGPU": 64,
+      "workersPerGPU": 3,
+      "valInterval": 1,
+      "metricsPeriod": 10,
+      "checkpointInterval": 1,
+      "maxKeepCkptsEnabled": true,
+      "maxKeepCkpts": 3,
+      "saveLast": true,
+      "saveBest": true,
+      "optimizer": "SGD",
+      "lr": 0.001,
+      "momentum": 0.9,
+      "weightDecay": 0.0001,
+      "....": "..."
+   }
+  ```   
 
+- `open_app.lnk` - link to finished session, you can open finished training dashboard at any time and check all settings and visualizations   
    <img src="https://i.imgur.com/BVtNo7E.png"/>
-   
-   - go to `Team Files`
-   - open directory with training artifacts
-   - right click on file `open_app.lnk`
-   - open
-
-
-
-
-
-
-
-# Screenshot
-
-<img src="https://i.imgur.com/eiROUgb.png"/>
+  
