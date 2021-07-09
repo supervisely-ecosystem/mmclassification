@@ -151,7 +151,7 @@ def main():
     sly.logger.info("Script arguments", extra={
         "context.teamId": g.team_id,
         "context.workspaceId": g.workspace_id,
-        "modal.state.weightsPath": g.remote_weights_path,
+        "modal.state.slyFile": g.remote_weights_path,
         "device": g.device
     })
 

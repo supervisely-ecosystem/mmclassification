@@ -1,5 +1,5 @@
 <div align="center" markdown>
-<img src="https://i.imgur.com/1qXIdqs.png"/>
+<img src="https://i.imgur.com/ufxMDIH.png"/>
 
 # Serve YOLOv5
 
@@ -9,26 +9,25 @@
   <a href="#For-Developers">For Developers</a>
 </p>
 
-[![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](https://ecosystem.supervise.ly/apps/supervisely-ecosystem/yolov5/supervisely/serve)
+[![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](https://ecosystem.supervise.ly/apps/supervisely-ecosystem/mmclassification/supervisely/serve)
 [![](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://supervise.ly/slack)
-![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/supervisely-ecosystem/yolov5)
-[![views](https://app.supervise.ly/public/api/v3/ecosystem.counters?repo=supervisely-ecosystem/yolov5/supervisely/serve&counter=views&label=views)](https://supervise.ly)
-[![used by teams](https://app.supervise.ly/public/api/v3/ecosystem.counters?repo=supervisely-ecosystem/yolov5/supervisely/serve&counter=downloads&label=used%20by%20teams)](https://supervise.ly)
-[![runs](https://app.supervise.ly/public/api/v3/ecosystem.counters?repo=supervisely-ecosystem/yolov5/supervisely/serve&counter=runs&label=runs&123)](https://supervise.ly)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/supervisely-ecosystem/mmclassification)
+[![views](https://app.supervise.ly/public/api/v3/ecosystem.counters?repo=supervisely-ecosystem/mmclassification/supervisely/serve&counter=views&label=views)](https://supervise.ly)
+[![used by teams](https://app.supervise.ly/public/api/v3/ecosystem.counters?repo=supervisely-ecosystem/mmclassification/supervisely/serve&counter=downloads&label=used%20by%20teams)](https://supervise.ly)
+[![runs](https://app.supervise.ly/public/api/v3/ecosystem.counters?repo=supervisely-ecosystem/mmclassification/supervisely/serve&counter=runs&label=runs&123)](https://supervise.ly)
 
 </div>
 
+# TODO: tagging app
+
 # Overview
 
-App deploys YOLO v5 model (pretrained on COCO or custom one) as REST API service. Serve app is the simplest way how any model can be integrated into Supervisely. Once model is deployed, user gets the following benefits:
+App deploys MMClassification model trained in Supervisely as REST API service. Serve app is the simplest way how any model can be integrated into Supervisely. Once model is deployed, user gets the following benefits:
 
-1. Use out of the box apps for inference
-   - used directly in [labeling interface](https://ecosystem.supervise.ly/apps/supervisely-ecosystem%252Fnn-image-labeling%252Fannotation-tool) (images, videos)
-   - apply to [images project or dataset](https://ecosystem.supervise.ly/apps/supervisely-ecosystem%252Fnn-image-labeling%252Fproject-dataset)
-   - apply to videos (coming soon)
+1. Use out of the box apps for inference - [AI assisted tagging](https://github.com)
 2. Apps from Supervisely Ecosystem can use NN predictions: for visualization, for analysis, performance evaluation, etc ...
 3. Communicate with NN in custom python script (see section <a href="#For-developers">for developers</a>)
-4. App illustrates how to use NN weights. For example: you can train model in Supervisely, download its weights and use them the way you want.
+4. App illustrates how to use NN weights. For example: you can train model in Supervisely, download its weights and use them the way you want outside Supervisely.
 
 Watch usage demo:
 
@@ -39,14 +38,7 @@ Watch usage demo:
 
 # How To Run
 
-**For pretrained model**: just choose weights from dropdown menu and press `Run`. 
-
-<img src="https://i.imgur.com/SEuE2jD.png" width="400"/>
-
-
-**For custom weights**: 
-
-1. Training app saves artifacts to `Team Files`. Just copy path to weights `.pt` file. 
+1. Training app saves artifacts to `Team Files`. Just copy path to weights `.pth` file. 
    Training app saves results to the directory: `/yolov5_train/<training project name>/<session id>/weights`. 
    For example: `/yolov5_train/lemons_annotated/2577/weights/best.pt`
 
