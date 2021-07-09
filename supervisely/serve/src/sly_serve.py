@@ -162,9 +162,6 @@ def main():
     g.my_app.run()
 
 
-#@TODO: error message format?
-#@TODO: add select device with groups
 #@TODO: readme + gif - how to replace tag2urls file + release another app
-#@TODO: interface to replace tag2urls file
 if __name__ == "__main__":
     sly.main_wrapper("main", main)
