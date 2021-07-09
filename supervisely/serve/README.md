@@ -18,16 +18,16 @@
 
 </div>
 
-# TODO: tagging app
-
 # Overview
 
-App deploys MMClassification model trained in Supervisely as REST API service. Serve app is the simplest way how any model can be integrated into Supervisely. Once model is deployed, user gets the following benefits:
+App deploys MMClassification model trained in Supervisely as REST API service. Serve app is the simplest way how any model 
+can be integrated into Supervisely. Once model is deployed, user gets the following benefits:
 
 1. Use out of the box apps for inference - [AI assisted tagging](https://github.com)
 2. Apps from Supervisely Ecosystem can use NN predictions: for visualization, for analysis, performance evaluation, etc ...
 3. Communicate with NN in custom python script (see section <a href="#For-developers">for developers</a>)
-4. App illustrates how to use NN weights. For example: you can train model in Supervisely, download its weights and use them the way you want outside Supervisely.
+4. App illustrates how to use NN weights. For example: you can train model in Supervisely, download its weights and use 
+   them the way you want outside Supervisely.
 
 Watch usage demo:
 
