@@ -16,7 +16,7 @@ sys.path.append(root_source_path)
 
 team_id = int(os.environ['context.teamId'])
 workspace_id = int(os.environ['context.workspaceId'])
-remote_weights_path = os.environ['modal.state.weightsPath']
+remote_weights_path = os.environ['modal.state.slyFile']
 device = os.environ['modal.state.device']
 
 remote_exp_dir = str(pathlib.Path(remote_weights_path).parents[1])
