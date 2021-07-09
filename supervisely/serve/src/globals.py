@@ -14,6 +14,14 @@ root_source_path = str(pathlib.Path(sys.argv[0]).parents[3])
 sly.logger.info(f"Root source directory: {root_source_path}")
 sys.path.append(root_source_path)
 
+train_source_path = os.path.join(root_source_path, "supervisely/train/src")
+sly.logger.info(f"Train source directory: {train_source_path}")
+sys.path.append(train_source_path)
+
+serve_source_path = os.path.join(root_source_path, "supervisely/serve/src")
+sly.logger.info(f"Serve source directory: {serve_source_path}")
+sys.path.append(serve_source_path)
+
 team_id = int(os.environ['context.teamId'])
 workspace_id = int(os.environ['context.workspaceId'])
 remote_weights_path = os.environ['modal.state.slyFile']
