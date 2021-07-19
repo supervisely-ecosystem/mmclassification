@@ -1,7 +1,7 @@
 <div align="center" markdown>
 <img src="https://i.imgur.com/ufxMDIH.png"/>
 
-# Serve YOLOv5
+# Serve MMClassification
 
 <p align="center">
   <a href="#Overview">Overview</a> •
@@ -23,7 +23,7 @@
 App deploys MMClassification model trained in Supervisely as REST API service. Serve app is the simplest way how any model 
 can be integrated into Supervisely. Once model is deployed, user gets the following benefits:
 
-1. Use out of the box apps for inference - [AI assisted tagging](https://github.com)
+1. Use out of the box apps for inference - [AI assisted classification and tagging](https://ecosystem.supervise.ly/apps/ai-assisted-classification)
 2. Apps from Supervisely Ecosystem can use NN predictions: for visualization, for analysis, performance evaluation, etc ...
 3. Communicate with NN in custom python script (see section <a href="#For-developers">for developers</a>)
 4. App illustrates how to use NN weights. For example: you can train model in Supervisely, download its weights and use 
@@ -31,147 +31,86 @@ can be integrated into Supervisely. Once model is deployed, user gets the follow
 
 Watch usage demo:
 
-<a data-key="sly-embeded-video-link" href="https://youtu.be/cMBhn1Erluk" data-video-code="cMBhn1Erluk">
-    <img src="https://i.imgur.com/UlEMeem.png" alt="SLY_EMBEDED_VIDEO_LINK"  style="max-width:100%;">
+<a data-key="sly-embeded-video-link" href="https://youtu.be/HwIgu_f4duU" data-video-code="HwIgu_f4duU">
+    <img src="https://i.imgur.com/tohTu5R.png" alt="SLY_EMBEDED_VIDEO_LINK"  style="max-width:70%;">
 </a>
 
 
 # How To Run
 
-1. Training app saves artifacts to `Team Files`. Just copy path to weights `.pth` file. 
-   Training app saves results to the directory: `/yolov5_train/<training project name>/<session id>/weights`. 
-   For example: `/yolov5_train/lemons_annotated/2577/weights/best.pt`
+1. Go to the directory with weights in `Team Files`. Training app saves results to the 
+   directory: `/mmclassification/<session id>_<training project name>/checkpoints`. Then right click to weights `.pth` file,
+   for example: `/mmclassification/6181_synthetic products v2/checkpoints/latest.pth`
+   
+<img src="https://i.imgur.com/cmEzYGr.gif"/>
 
-<img src="https://i.imgur.com/VkSS58q.gif" width="800"/>
+2. Run `Serve MMClassification` app from context menu
 
-2. Paste path to modal window
-
-<img src="https://i.imgur.com/YbnwzI7.png" width="400"/>
-
-Then
-
-3. Choose device (optional): for GPU just provide device id (`0` or `1` or ...), or type `cpu`. Also in advanced section you can 
+3. Select device, both `gpu` and `cpu` are supported. Also in advanced section you can 
 change what agent should be used for deploy.
 
 4. Press `Run` button.
 
 5. Wait until you see following message in logs: `Model has been successfully deployed`
 
-<img src="https://i.imgur.com/wKs7zw0.png" width="800"/>
+<img src="https://i.imgur.com/AAKToCb.png" width="800"/>
+
+6. All deployed models are listed in `Team Apps`. You can view logs and stop them from this page.
+
+<img src="https://i.imgur.com/7eVkiIm.png"/>
 
 
 # For Developers
 
-This python example illustrates available methods of the deployed model. Now you can integrate network predictions to your python script. This is the way how other Supervisely Apps can communicate with NNs. And also you can use serving app as an example - how to use download NN weights outside Supervisely.
-
-To implement serving app developer has just to define four methods:
-- function [`get_session_info`](https://github.com/supervisely-ecosystem/yolov5/blob/master/supervisely/serve/src/sly_serve.py#L50) - information about deployed model (returns python dictionary with any useful information)
-- function [`construct_model_meta`](https://github.com/supervisely-ecosystem/yolov5/blob/master/supervisely/serve/src/nn_utils.py#L16) - returns model output classes and tags in [Supervisely format](https://docs.supervise.ly/data-organization/00_ann_format_navi)
-- function [`load_model`](https://github.com/supervisely-ecosystem/yolov5/blob/master/supervisely/serve/src/nn_utils.py#L37) - how to load model to the device (cpu or/and gpu) - [link](https://github.com/supervisely-ecosystem/yolov5/blob/master/supervisely/serve/src/sly_serve.py#L165)
-- function [`inference`](https://github.com/supervisely-ecosystem/yolov5/blob/master/supervisely/serve/src/nn_utils.py#L62)  - how to apply model to the image and how to convert predictions to [Supervisely format](https://docs.supervise.ly/data-organization/00_ann_format_navi)
+This python example illustrates available methods of the deployed model. Now you can integrate network predictions to 
+your python script. This is the way how other Supervisely Apps can communicate with NNs. And also you can use serving 
+app as an example - how to use downloaded NN weights outside Supervisely.
 
 
 ## Python Example: how to communicate with deployed model 
 ```python
 import json
-import yaml
-import numpy as np
 import supervisely_lib as sly
-
-
-def visualize(img: np.ndarray, ann: sly.Annotation, name, roi: sly.Rectangle = None):
-    vis = img.copy()
-    if roi is not None:
-        roi.draw_contour(vis, color=[255, 0, 0], thickness=3)
-    ann.draw_contour(vis, thickness=3)
-    sly.image.write(f"./images/{name}", vis)
 
 
 def main():
     api = sly.Api.from_env()
 
     # task id of the deployed model
-    task_id = 2723
+    task_id = 6918
 
     # get information about model
     info = api.task.send_request(task_id, "get_session_info", data={})
     print("Information about deployed model:")
     print(json.dumps(info, indent=4))
 
-    # get model output classes and tags
-    meta_json = api.task.send_request(task_id, "get_output_classes_and_tags", data={})
+    # get model output tags
+    meta_json = api.task.send_request(task_id, "get_model_meta", data={})
     model_meta = sly.ProjectMeta.from_json(meta_json)
-    print("Model produces following classes and tags")
+    print("Model predicts following tags:")
     print(model_meta)
 
-    # get model inference settings (optional)
-    resp = api.task.send_request(task_id, "get_custom_inference_settings", data={})
-    settings_yaml = resp["settings"]
-    settings = yaml.safe_load(settings_yaml)
-    # you can change this default settings and pass them to any inference method
-    print("Model inference settings:")
-    print(json.dumps(settings, indent=4))
+    # get urls for tags model predicts
+    # during training this information is saved and model can share this information by request
+    urls_for_tags = api.task.send_request(task_id, "get_tags_examples", data={})
+    print("Image examples (urls) for predicted tags:")
+    print(json.dumps(urls_for_tags, indent=4))
 
-    # inference for url
-    image_url = "https://i.imgur.com/tEkCb69.jpg"
+    # get predictions by image url
+    predictions = api.task.send_request(task_id, "inference_image_url", data={
+        "image_url": "https://i.imgur.com/R2bI8hi.jpg",
+        "topn": 2 # optional
+    })
+    print("Predictions for url")
+    print(json.dumps(predictions, indent=4))
 
-    # download image for further debug visualizations
-    save_path = f"./images/{sly.fs.get_file_name_with_ext(image_url)}"
-    sly.fs.ensure_base_path(save_path)  # create directories if needed
-    sly.fs.download(image_url, save_path)
-    img = sly.image.read(save_path)  # RGB
-
-    # apply model to image URl (full image)
-    # you can pass 'settings' dictionary to any inference method
-    # every model defines custom inference settings
-    ann_json = api.task.send_request(task_id, "inference_image_url",
-                                     data={
-                                         "image_url": image_url,
-                                         "settings": settings,
-                                     })
-    ann = sly.Annotation.from_json(ann_json, model_meta)
-    visualize(img, ann, "01_prediction_url.jpg")
-
-    # apply model to image URL (only ROI - region of interest)
-    height, width = img.shape[0], img.shape[1]
-    top, left, bottom, right = 0, 0, height - 1, int(width/2)
-    roi = sly.Rectangle(top, left, bottom, right)
-    ann_json = api.task.send_request(task_id, "inference_image_url",
-                                     data={
-                                         "image_url": image_url,
-                                         "rectangle": [top, left, bottom, right]
-                                     })
-    ann = sly.Annotation.from_json(ann_json, model_meta)
-    visualize(img, ann, "02_prediction_url_roi.jpg", roi)
-
-    # apply model to image id (full image)
-    image_id = 770730
-    ann_json = api.task.send_request(task_id, "inference_image_id", data={"image_id": image_id})
-    ann = sly.Annotation.from_json(ann_json, model_meta)
-    img = api.image.download_np(image_id)
-    visualize(img, ann, "03_prediction_id.jpg")
-
-    # apply model to image id (only ROI - region of interest)
-    image_id = 770730
-    img = api.image.download_np(image_id)
-    height, width = img.shape[0], img.shape[1]
-    top, left, bottom, right = 0, 0, height - 1, int(width / 2)
-    roi = sly.Rectangle(top, left, bottom, right)
-    ann_json = api.task.send_request(task_id, "inference_image_id",
-                                     data={
-                                         "image_id": image_id,
-                                         "rectangle": [top, left, bottom, right]
-                                     })
-    ann = sly.Annotation.from_json(ann_json, model_meta)
-    visualize(img, ann, "04_prediction_id_roi.jpg", roi)
-
-    # apply model to several images (using id)
-    batch_ids = [770730, 770727, 770729, 770720]
-    resp = api.task.send_request(task_id, "inference_batch_ids", data={"batch_ids": batch_ids})
-    for ind, (image_id, ann_json) in enumerate(zip(batch_ids, resp)):
-        ann = sly.Annotation.from_json(ann_json, model_meta)
-        img = api.image.download_np(image_id)
-        visualize(img, ann, f"05_prediction_batch_{ind:03d}_{image_id}.jpg")
+    # get predictions by image-id in Supervisely
+    predictions = api.task.send_request(task_id, "inference_image_id", data={
+        "image_id": 927270,
+        "topn": 2  # optional
+    })
+    print("Predictions for image by id")
+    print(json.dumps(predictions, indent=4))
 
 
 if __name__ == "__main__":
@@ -184,184 +123,60 @@ Information about deployed model:
 
 ```json
 {
-    "app": "YOLOv5 serve",
-    "weights": "https://github.com/ultralytics/yolov5/releases/download/v4.0/yolov5s.pt",
+    "app": "MM Classification Serve",
+    "weights": "/mmclassification/777_animals/checkpoints/best_accuracy_top-1_epoch_44.pth",
     "device": "cuda:0",
-    "half": "True",
-    "input_size": 640,
-    "session_id": "2723",
-    "classes_count": 80,
-    "tags_count": 1
+    "session_id": 6918,
+    "classes_count": 3
 }
 ```
 
-Model produces following classes and tags:
+Model produces following tags:
 ```
 ProjectMeta:
-Object Classes
-+----------------+-----------+----------------+--------+
-|      Name      |   Shape   |     Color      | Hotkey |
-+----------------+-----------+----------------+--------+
-|     person     | Rectangle | [36, 15, 138]  |        |
-|    bicycle     | Rectangle | [113, 138, 15] |        |
-|      car       | Rectangle | [138, 15, 53]  |        |
-|   motorcycle   | Rectangle | [15, 138, 101] |        |
-|    airplane    | Rectangle | [138, 75, 15]  |        |
-|      bus       | Rectangle | [20, 138, 15]  |        |
-|     train      | Rectangle | [125, 15, 138] |        |
-|     truck      | Rectangle | [15, 73, 138]  |        |
-|      boat      | Rectangle | [15, 127, 138] |        |
-| traffic light  | Rectangle | [138, 15, 102] |        |
-|  fire hydrant  | Rectangle | [15, 138, 55]  |        |
-|   stop sign    | Rectangle | [138, 24, 15]  |        |
-| parking meter  | Rectangle | [65, 138, 15]  |        |
-|     bench      | Rectangle | [79, 15, 138]  |        |
-|      bird      | Rectangle | [138, 116, 15] |        |
-|      cat       | Rectangle | [15, 37, 138]  |        |
-|      dog       | Rectangle | [15, 98, 138]  |        |
-|     horse      | Rectangle | [138, 48, 15]  |        |
-|     sheep      | Rectangle | [138, 15, 79]  |        |
-|      cow       | Rectangle | [138, 15, 127] |        |
-|    elephant    | Rectangle | [15, 138, 124] |        |
-|      bear      | Rectangle | [89, 138, 15]  |        |
-|     zebra      | Rectangle | [135, 138, 15] |        |
-|    giraffe     | Rectangle | [15, 138, 77]  |        |
-|    backpack    | Rectangle | [138, 15, 27]  |        |
-|    umbrella    | Rectangle | [101, 15, 138] |        |
-|    handbag     | Rectangle | [17, 15, 138]  |        |
-|      tie       | Rectangle | [15, 138, 33]  |        |
-|    suitcase    | Rectangle | [40, 138, 15]  |        |
-|    frisbee     | Rectangle | [138, 96, 15]  |        |
-|      skis      | Rectangle | [60, 15, 138]  |        |
-|   snowboard    | Rectangle | [15, 55, 138]  |        |
-|  sports ball   | Rectangle | [15, 114, 138] |        |
-|      kite      | Rectangle | [138, 15, 66]  |        |
-|  baseball bat  | Rectangle | [52, 138, 15]  |        |
-| baseball glove | Rectangle | [138, 129, 15] |        |
-|   skateboard   | Rectangle | [101, 138, 15] |        |
-|   surfboard    | Rectangle | [138, 36, 15]  |        |
-| tennis racket  | Rectangle | [138, 61, 15]  |        |
-|     bottle     | Rectangle | [15, 138, 89]  |        |
-|   wine glass   | Rectangle | [77, 138, 15]  |        |
-|      cup       | Rectangle | [138, 15, 115] |        |
-|      fork      | Rectangle | [15, 138, 21]  |        |
-|     knife      | Rectangle | [48, 15, 138]  |        |
-|     spoon      | Rectangle | [138, 15, 41]  |        |
-|      bowl      | Rectangle | [15, 25, 138]  |        |
-|     banana     | Rectangle | [138, 106, 15] |        |
-|     apple      | Rectangle | [137, 15, 138] |        |
-|    sandwich    | Rectangle | [15, 86, 138]  |        |
-|     orange     | Rectangle | [114, 15, 138] |        |
-|    broccoli    | Rectangle | [90, 15, 138]  |        |
-|     carrot     | Rectangle | [15, 138, 136] |        |
-|    hot dog     | Rectangle | [15, 138, 67]  |        |
-|     pizza      | Rectangle | [138, 85, 15]  |        |
-|     donut      | Rectangle | [138, 15, 17]  |        |
-|      cake      | Rectangle | [15, 46, 138]  |        |
-|     chair      | Rectangle | [124, 138, 15] |        |
-|     couch      | Rectangle | [138, 15, 88]  |        |
-|  potted plant  | Rectangle | [30, 138, 15]  |        |
-|      bed       | Rectangle | [15, 138, 44]  |        |
-|  dining table  | Rectangle | [69, 15, 138]  |        |
-|     toilet     | Rectangle | [15, 138, 114] |        |
-|       tv       | Rectangle | [27, 15, 138]  |        |
-|     laptop     | Rectangle | [138, 15, 72]  |        |
-|     mouse      | Rectangle | [15, 106, 138] |        |
-|     remote     | Rectangle | [15, 133, 138] |        |
-|    keyboard    | Rectangle | [15, 63, 138]  |        |
-|   cell phone   | Rectangle | [138, 68, 15]  |        |
-|   microwave    | Rectangle | [138, 15, 34]  |        |
-|      oven      | Rectangle | [95, 138, 15]  |        |
-|    toaster     | Rectangle | [15, 121, 138] |        |
-|      sink      | Rectangle | [15, 92, 138]  |        |
-|  refrigerator  | Rectangle | [58, 138, 15]  |        |
-|      book      | Rectangle | [138, 15, 95]  |        |
-|     clock      | Rectangle | [138, 55, 15]  |        |
-|      vase      | Rectangle | [15, 79, 138]  |        |
-|    scissors    | Rectangle | [15, 19, 138]  |        |
-|   teddy bear   | Rectangle | [138, 15, 47]  |        |
-|   hair drier   | Rectangle | [15, 138, 27]  |        |
-|   toothbrush   | Rectangle | [15, 138, 83]  |        |
-+----------------+-----------+----------------+--------+
+
 Tags
 +------------+------------+-----------------+--------+---------------+--------------------+
 |    Name    | Value type | Possible values | Hotkey | Applicable to | Applicable classes |
 +------------+------------+-----------------+--------+---------------+--------------------+
-| confidence | any_number |       None      |        |      all      |         []         |
+| cat        |    none    |       None      |        |      all      |         []         |
++------------+------------+-----------------+--------+---------------+--------------------+
+| dog        |    none    |       None      |        |      all      |         []         |
++------------+------------+-----------------+--------+---------------+--------------------+
+| fox        |    none    |       None      |        |      all      |         []         |
 +------------+------------+-----------------+--------+---------------+--------------------+
 ```
 
-Model inference settings:
+Image examples (urls) for predicted tags:
 ```json
 {
-    "conf_thres": 0.25,
-    "iou_thres": 0.45,
-    "augment": false,
-    "debug_visualization": false
+   "cat": [
+      "https://cfa.org/wp-content/uploads/2019/11/abtProfile.jpg",
+      "https://cfa.org/wp-content/uploads/2019/11/abyProfile.jpg"
+   ],
+   "dog": [
+      "https://i.imgur.com/R2bI8hi.jpg",
+      "https://s3.amazonaws.com/cdn-origin-etr.akc.org/wp-content/uploads/2017/11/26155623/Siberian-Husky-standing-outdoors-in-the-winter.jpg"
+   ],
+   "fox": [
+      "https://cdn.britannica.com/30/145630-050-D1B34751/Red-foxes-insects-rodents-fruit-grain-carrion.jpg",
+      "https://cdn.britannica.com/35/174035-050-E2AB419D/red-fox-hill.jpg"
+   ]
 }
 ```
 
-Prediction for image URL (full image):
-
-Image URL  |  `01_prediction_url.jpg`
-:-------------------------:|:-----------------------------------:
-<img src="https://i.imgur.com/tEkCb69.jpg" style="max-height: 300px; width: auto;"/>  |  <img src="https://i.imgur.com/9OOoXn3.jpg" style="max-height: 300px; width: auto;"/>
-
-Prediction for image URL (ROI - red rectangle):
-
-Image URL + ROI  |  `02_prediction_url_roi.jpg`
-:-------------------------:|:-----------------------------------:
-<img src="https://i.imgur.com/tEkCb69.jpg" style="max-height: 300px; width: auto;"/>  |  <img src="https://i.imgur.com/iSKS17L.jpg" style="max-height: 300px; width: auto;"/>
-
-
-Prediction for image id (full image):
-
-<table>
-  <tr>
-    <th>03_input_id.jpg</th>
-    <th>03_prediction_id.jpg</th>
-  </tr>
-  <tr>
-    <td><img src="https://i.imgur.com/RQDrH4B.jpg" height="300"/></td>
-    <td><img src="https://i.imgur.com/yYujbI0.jpg" height="300"/></td>
-  </tr>
-</table>
-
-
-Prediction for image id (ROI - red rectangle):
-
-<table>
-  <tr>
-    <th>04_input_id_roi.jpg</th>
-    <th>04_prediction_id_roi.jpg</th>
-  </tr>
-  <tr>
-    <td><img src="https://i.imgur.com/2XlEZQK.jpg" height="300"/></td>
-    <td><img src="https://i.imgur.com/1U7413M.jpg" height="300"/></td>
-  </tr>
-</table>
-
-Prediction for batch of images ids:
-
-<table>
-  <tr>
-    <th>Image ID</th>
-    <th>Prediction</th>
-  </tr>
-  <tr>
-    <td><img src="https://i.imgur.com/4Lh9tAm.jpg" height="300"/></td>
-    <td><img src="https://i.imgur.com/emsah1q.jpg" height="300"/></td>
-  </tr>
-  <tr>
-    <td><img src="https://i.imgur.com/UqiV5Ka.jpg" height="300"/></td>
-    <td><img src="https://i.imgur.com/GhoKKCl.jpg" height="300"/></td>
-  </tr>
-  <tr>
-    <td><img src="https://i.imgur.com/8GjoNDH.jpg"/></td>
-    <td><img src="https://i.imgur.com/yzinXD6.jpg"/></td>
-  </tr>
-  <tr>
-    <td><img src="https://i.imgur.com/xOydF3B.jpg" height="300"/></td>
-    <td><img src="https://i.imgur.com/YFNmIPY.jpg" height="300"/></td>
-  </tr>
-</table>
+Predictions example (predictions are sorted by score):
+```json
+[
+    {
+        "label": 1,
+        "score": 0.89,
+        "class": "dog"
+    },
+    {
+        "label": 0,
+        "score": 0.08,
+        "class": "cat"
+    }
+]
+```
