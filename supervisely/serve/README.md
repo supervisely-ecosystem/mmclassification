@@ -55,6 +55,10 @@ change what agent should be used for deploy.
 
 <img src="https://i.imgur.com/AAKToCb.png" width="800"/>
 
+6. All deployed models are listed in `Team Apps`. You can view logs and stop them from this page.
+
+<img src="https://i.imgur.com/7eVkiIm.png"/>
+
 
 # For Developers
 
