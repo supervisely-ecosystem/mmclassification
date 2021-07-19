@@ -1,7 +1,7 @@
 <div align="center" markdown>
 <img src="https://i.imgur.com/ufxMDIH.png"/>
 
-# Serve YOLOv5
+# Serve MMClassification
 
 <p align="center">
   <a href="#Overview">Overview</a> •
@@ -23,7 +23,7 @@
 App deploys MMClassification model trained in Supervisely as REST API service. Serve app is the simplest way how any model 
 can be integrated into Supervisely. Once model is deployed, user gets the following benefits:
 
-1. Use out of the box apps for inference - [AI assisted tagging](https://github.com)
+1. Use out of the box apps for inference - [AI assisted classification and tagging](https://ecosystem.supervise.ly/apps/ai-assisted-classification)
 2. Apps from Supervisely Ecosystem can use NN predictions: for visualization, for analysis, performance evaluation, etc ...
 3. Communicate with NN in custom python script (see section <a href="#For-developers">for developers</a>)
 4. App illustrates how to use NN weights. For example: you can train model in Supervisely, download its weights and use 
@@ -31,33 +31,29 @@ can be integrated into Supervisely. Once model is deployed, user gets the follow
 
 Watch usage demo:
 
-<a data-key="sly-embeded-video-link" href="https://youtu.be/cMBhn1Erluk" data-video-code="cMBhn1Erluk">
-    <img src="https://i.imgur.com/UlEMeem.png" alt="SLY_EMBEDED_VIDEO_LINK"  style="max-width:100%;">
+<a data-key="sly-embeded-video-link" href="https://youtu.be/HwIgu_f4duU" data-video-code="HwIgu_f4duU">
+    <img src="https://i.imgur.com/tohTu5R.png" alt="SLY_EMBEDED_VIDEO_LINK"  style="max-width:70%;">
 </a>
 
 
 # How To Run
 
-1. Training app saves artifacts to `Team Files`. Just copy path to weights `.pth` file. 
-   Training app saves results to the directory: `/yolov5_train/<training project name>/<session id>/weights`. 
-   For example: `/yolov5_train/lemons_annotated/2577/weights/best.pt`
+1. Go to the directory with weights in `Team Files`. Training app saves results to the 
+   directory: `/mmclassification/<session id>_<training project name>/checkpoints`. Then right click to weights `.pth` file,
+   for example: `/mmclassification/6181_synthetic products v2/checkpoints/latest.pth`
+   
+<img src="https://i.imgur.com/cmEzYGr.gif"/>
 
-<img src="https://i.imgur.com/VkSS58q.gif" width="800"/>
+2. Run `Serve MMClassification` app from context menu
 
-2. Paste path to modal window
-
-<img src="https://i.imgur.com/YbnwzI7.png" width="400"/>
-
-Then
-
-3. Choose device (optional): for GPU just provide device id (`0` or `1` or ...), or type `cpu`. Also in advanced section you can 
+3. Select device, both `gpu` and `cpu` are supported. Also in advanced section you can 
 change what agent should be used for deploy.
 
 4. Press `Run` button.
 
 5. Wait until you see following message in logs: `Model has been successfully deployed`
 
-<img src="https://i.imgur.com/wKs7zw0.png" width="800"/>
+<img src="https://i.imgur.com/AAKToCb.png" width="800"/>
 
 
 # For Developers
