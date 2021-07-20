@@ -1,0 +1,11 @@
+{
+  "name": "Classification collection",
+  "type": "collection",
+  "categories": [
+    "neural network",
+    "classification"
+  ],
+  "description": "All you need to work with classification models: training, inference, ai-assisted labeling and more",
+  "icon": "https://i.imgur.com/dncQdRn.png",
+  "icon_cover": true
+}
