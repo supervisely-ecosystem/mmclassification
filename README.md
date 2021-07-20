@@ -187,18 +187,10 @@ We completely integrated [MMClassification](https://github.com/open-mmlab/mmclas
 
 # For Developers
 - you can use sources of [Serve MMClassification app](https://github.com/supervisely-ecosystem/mmclassification/tree/master/supervisely/serve) as example of how to prepare weights, initialize model and apply it to an image and how to correctly interpret predictions
-- NN apps are based on the original MMClassification [release v5.0](https://github.com/ultralytics/yolov5/releases/tag/v5.0). Once a next official release is available, all apps will be synchronized with it and also released with the new versions. Before running any app you can choose what version to use. Also Supervisely Team will pull updates from original master branch from time to time.
+- NN apps are based on the original [MMClassification](https://github.com/open-mmlab/mmclassification). Official updates will be synchronized with from time to time or by request.
 
 # Contact & Questions & Suggestions
 
-- for technical support please leave issues, questions or suggestions to original [YOLOv5 repo](https://github.com/ultralytics/yolov5/issues) with the prefix `[Supervisely]`. Our team will try to help.
+- for technical support please leave issues, questions or suggestions in our [repo](https://github.com/supervisely-ecosystem/mmclassification). Our team will try to help.
 - also we can chat in slack channel [![](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://supervise.ly/slack) 
 - if you are interested in Supervisely Enterprise Edition (EE) please send us a [request](https://supervise.ly/enterprise/?demo) or email Yuri Borisov at [sales@supervise.ly](sales@supervise.ly)
-
-
-
-Auxiliary apps
-
-- tags cooccurance
-- tags to image urls
-- copy-image-tags-to-objects
