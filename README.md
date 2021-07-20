@@ -74,8 +74,8 @@ Collection consists of the following apps:
 
 ## Neural networks
 
-[OpenMMLab](https://openmmlab.com/) is building great deep leaning toolboxes for different kind of problems. 
-We completely integrated [MMClassification](https://github.com/open-mmlab/mmclassification) toolbox into Supervisely.
+[OpenMMLab](https://openmmlab.com/) is building great deep leaning toolboxes for different kind of tasks in computer vision. 
+In this collections we completely integrated [MMClassification](https://github.com/open-mmlab/mmclassification) toolbox into Supervisely.
 
 - [Train MMClassification](https://ecosystem.supervise.ly/apps/supervisely-ecosystem%252Fmmclassification%252Fsupervisely%252Ftrain) - 
   start training on your custom data. Just run app from the context menu of your project, 
