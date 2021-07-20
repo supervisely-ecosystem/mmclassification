@@ -2,7 +2,7 @@
   <img src="resources/mmcls-logo.png" width="600"/>
 </div>
 
-[English](/README.md) | 简体中文
+[English](/README_mmcls.md) | 简体中文
 
 [![Build Status](https://github.com/open-mmlab/mmclassification/workflows/build/badge.svg)](https://github.com/open-mmlab/mmclassification/actions)
 [![Documentation Status](https://readthedocs.org/projects/mmclassification/badge/?version=latest)](https://mmclassification.readthedocs.io/en/latest/?badge=latest)

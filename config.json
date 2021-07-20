@@ -1,0 +1,10 @@
+{
+  "name": "Classification collection",
+  "type": "collection",
+  "categories": [
+    "neural network"
+  ],
+  "description": "Training, inference, ai-assisted labeling, synthetic data and more",
+  "icon": "https://i.imgur.com/ps4q6WO.png",
+  "icon_cover": true
+}
