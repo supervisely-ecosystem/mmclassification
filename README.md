@@ -87,7 +87,7 @@ We completely integrated [MMClassification](https://github.com/open-mmlab/mmclas
   
     <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/mmclassification/supervisely/train" src="https://i.imgur.com/mXG6njU.png" width="350px"/>
     
-    The following models are available:
+  The following models are available:
 
 |         Model         | Params(M) | Flops(G) | Top-1 (%) | Top-5 (%) |
 |:---------------------:|:---------:|:--------:|:---------:|:---------:|
