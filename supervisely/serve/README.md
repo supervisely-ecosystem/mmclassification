@@ -120,7 +120,7 @@ def main():
     })
     print("Predictions for image ROI")
     print(json.dumps(predictions, indent=4))
-
+    
 
 if __name__ == "__main__":
     main()
