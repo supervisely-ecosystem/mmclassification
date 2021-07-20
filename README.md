@@ -1,8 +1,7 @@
 # Overview 
 🚀 This collection is designed to cover classification task in 
 [**Supervisely**](https://supervise.ly/). Before using these apps 
-we recommend to try end-to-end working demo (retail labeling use case) 
-- data and explanation are provided.
+we recommend to try end-to-end working demo (retail labeling use case) - data and explanations are provided.
 
 # Table of Contents
 
