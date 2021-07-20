@@ -111,6 +111,15 @@ def main():
     })
     print("Predictions for image by id")
     print(json.dumps(predictions, indent=4))
+    
+    # get predictions for image ROI
+    predictions = api.task.send_request(task_id, "inference_image_id", data={
+        "image_id": 927270,
+        "topn": 2,  # optional
+        "rectangle": [10, 20, 150, 80]  # top, left, bottom, right
+    })
+    print("Predictions for image ROI")
+    print(json.dumps(predictions, indent=4))
 
 
 if __name__ == "__main__":
