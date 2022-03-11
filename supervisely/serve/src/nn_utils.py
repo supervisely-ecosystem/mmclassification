@@ -1,6 +1,6 @@
 import os
 import torch
-import supervisely_lib as sly
+import supervisely as sly
 from mmcls.apis import init_model
 from mmcv.parallel import collate, scatter
 from mmcls.datasets.pipelines import Compose

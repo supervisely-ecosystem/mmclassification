@@ -4,7 +4,7 @@ from functools import lru_cache
 
 import globals as g
 import nn_utils
-import supervisely_lib as sly
+import supervisely as sly
 
 
 @lru_cache(maxsize=10)
@@ -23,6 +23,7 @@ def send_error_data(func):
             request_id = kwargs["context"]["request_id"]
             g.my_app.send_response(request_id, data={"error": repr(e)})
         return value
+
     return wrapper
 
 
@@ -57,7 +58,8 @@ def get_session_info(api: sly.Api, task_id, context, state, app_logger):
     g.my_app.send_response(request_id, data=info)
 
 
-def inference_image_path(image_path, context, state, app_logger):
+@sly.process_image_roi
+def inference_image_path(image_path, project_meta, context, state, app_logger):
     app_logger.debug("Input path", extra={"path": image_path})
     res_path = image_path
     if "rectangle" in state:
@@ -107,7 +109,8 @@ def inference_image_url(api: sly.Api, task_id, context, state, app_logger):
         ext = ".jpg"
     local_image_path = os.path.join(g.my_app.data_dir, sly.rand_str(15) + ext)
     sly.fs.download(image_url, local_image_path)
-    results = inference_image_path(local_image_path, context, state, app_logger)
+    results = inference_image_path(image_path=local_image_path, project_meta=g.meta,
+                                   context=context, state=state, app_logger=app_logger)
     sly.fs.silent_remove(local_image_path)
 
     request_id = context["request_id"]
@@ -126,7 +129,8 @@ def inference_image_id(api: sly.Api, task_id, context, state, app_logger):
     img = get_image_by_id(image_id)
     sly.image.write(image_path, img)
 
-    predictions = inference_image_path(image_path, context, state, app_logger)
+    predictions = inference_image_path(image_path=image_path, project_meta=g.meta,
+                                       context=context, state=state, app_logger=app_logger)
     sly.fs.silent_remove(image_path)
     request_id = context["request_id"]
     g.my_app.send_response(request_id, data=predictions)
@@ -162,6 +166,6 @@ def main():
     g.my_app.run()
 
 
-#@TODO: readme + gif - how to replace tag2urls file + release another app
+# @TODO: readme + gif - how to replace tag2urls file + release another app
 if __name__ == "__main__":
     sly.main_wrapper("main", main)
