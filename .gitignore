@@ -106,6 +106,7 @@ venv.bak/
 
 # custom
 data
+cache
 .vscode
 .idea
 *.pkl
