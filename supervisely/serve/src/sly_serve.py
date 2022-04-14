@@ -4,7 +4,7 @@ from functools import lru_cache
 
 import globals as g
 import nn_utils
-import supervisely_lib as sly
+import supervisely as sly
 
 
 @lru_cache(maxsize=10)
@@ -93,6 +93,7 @@ def inference_image_path(image_path, context, state, app_logger):
     res = nn_utils.inference_model(g.model, res_path, topn=state.get("topn", 5))
     if "rectangle" in state:
         sly.fs.silent_remove(res_path)
+    
     return res
 
 
