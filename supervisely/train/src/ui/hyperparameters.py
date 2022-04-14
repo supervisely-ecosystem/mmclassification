@@ -7,7 +7,7 @@ def init(data, state):
     state["epochs"] = 5
     state["gpusId"] = '0'
 
-    state["imgSize"] = 256
+    state["imgSize"] = 224
     state["batchSizePerGPU"] = 32
     state["workersPerGPU"] = 2  #@TODO: 0 - for debug
     state["valInterval"] = 1
@@ -17,6 +17,7 @@ def init(data, state):
     state["maxKeepCkpts"] = 3
     state["saveLast"] = True
     state["saveBest"] = True
+    state["disabledImgSize"] = False
 
     state["optimizer"] = "SGD"
     state["lr"] = 0.001
@@ -34,7 +35,7 @@ def init(data, state):
 
     state["collapsed7"] = True
     state["disabled7"] = True
-    state["done7"] = False
+    data["done7"] = False
 
 
 def restart(data, state):

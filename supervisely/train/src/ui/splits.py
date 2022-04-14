@@ -81,6 +81,10 @@ def verify_train_val_sets(train_set, val_set):
         raise ValueError("Val set is empty, check or change split configuration")
 
 
+def restart(data, state):
+    data["done2"] = False
+
+
 # def save_set_to_json(path, items):
 #     res = []
 #     for item in items:

@@ -23,10 +23,7 @@ def init(data, state):
 
     data["outputName"] = None
     data["outputUrl"] = None
-
-
-def restart(data, state):
-    data["done9"] = False
+    state["isValidation"] = False
 
 
 def init_chart(title, names, xs, ys, smoothing=None, yrange=None, decimals=None, xdecimals=None):
@@ -58,10 +55,9 @@ def init_charts(data, state):
     # demo_x = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]
     # demo_y = [[0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001]]
     data["chartLR"] = init_chart("LR", names=["LR"], xs = [[]], ys = [[]], smoothing=None,
-                                 yrange=[state["lr"] - state["lr"] / 2.0, state["lr"] + state["lr"] / 2.0],
                                  decimals=6, xdecimals=2)
-    data["chartTrainLoss"] = init_chart("Train Loss", names=["train"], xs=[[]], ys=[[]], smoothing=0.6, xdecimals=2)
-    data["chartValAccuracy"] = init_chart("Val Acc", names=["top-1", "top-5"], xs=[[], []], ys=[[], []], smoothing=0.6)
+    data["chartTrainLoss"] = init_chart("Train Loss", names=["train"], xs=[[]], ys=[[]], smoothing=0.6, decimals=6, xdecimals=2)
+    data["chartValAccuracy"] = init_chart("Val Acc", names=["top-1", "top-5"], xs=[[], []], ys=[[], []], decimals=6, smoothing=0.6)
 
     data["chartTime"] = init_chart("Time", names=["time"], xs=[[]], ys=[[]], xdecimals=2)
     data["chartDataTime"] = init_chart("Data Time", names=["data_time"], xs=[[]], ys=[[]], xdecimals=2)

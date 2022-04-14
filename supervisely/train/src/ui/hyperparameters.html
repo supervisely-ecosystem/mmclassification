@@ -8,11 +8,8 @@
     <sly-field title="GPU device id"
                description="Run nvidia-smi or check agent page to see how many devices your machine has or keep by default">
 <!--        <el-input v-model="state.gpusId" style="width:250px;"></el-input>-->
-        <el-select v-model="state.gpusId" :disabled="data.done7">
+        <el-select v-model="state.gpusId" :disabled="true">
             <el-option key="0" label="0" value="0"></el-option>
-            <el-option key="1" label="1" value="1"></el-option>
-            <el-option key="2" label="2" value="2"></el-option>
-            <el-option key="3" label="3" value="3"></el-option>
         </el-select>
     </sly-field>
     <sly-field title="Number of epochs">
@@ -20,11 +17,11 @@
     </sly-field>
     <sly-field title="Input image size (in pixels)"
                description="Model input resolution, image is resized to square">
-        <el-input-number v-model="state.imgSize" :min="64" :disabled="data.done7"></el-input-number>
+        <el-input-number v-model="state.imgSize" :min="64" :disabled="data.done7 || state.disabledImgSize"></el-input-number>
     </sly-field>
     <sly-field title="Batch size per GPU"
                description="number of samples for a single GPU">
-        <el-input-number v-model="state.batchSizePerGPU" :min="4" :disabled="data.done7"></el-input-number>
+        <el-input-number v-model="state.batchSizePerGPU" :min="2" :disabled="data.done7"></el-input-number>
     </sly-field>
     <sly-field title="Number of workers per GPU"
                description="Maximum number of dataloader workers, use 0 for debug">

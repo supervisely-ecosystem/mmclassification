@@ -446,4 +446,8 @@ def download_weights(api: sly.Api, task_id, context, state, app_logger):
         {"field": "state.disabled7", "payload": False},
         {"field": "state.activeStep", "payload": 7},
     ]
+    if state["selectedModel"].startswith("VGG"):
+        fields.append(
+            {"field": "state.disabledImgSize", "payload": True}
+        )
     g.api.app.set_fields(g.task_id, fields)
