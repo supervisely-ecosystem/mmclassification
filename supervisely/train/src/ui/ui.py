@@ -9,7 +9,6 @@ import architectures as model_architectures
 import hyperparameters as hyperparameters
 import hyperparameters_python as hyperparameters_python
 import monitoring as monitoring
-# import artifacts as artifacts
 
 
 @sly.timeit
@@ -25,7 +24,6 @@ def init(data, state):
     hyperparameters.init(data, state)
     hyperparameters_python.init(data, state)
     monitoring.init(data, state)
-    # artifacts.init(data)
 
 
 @g.my_app.callback("restart")
@@ -37,7 +35,10 @@ def restart(api: sly.Api, task_id, context, state, app_logger):
     state = {}
 
     if restart_from_step <= 2:
-        train_val_split.init(g.project_info, g.project_meta, data, state)
+        if restart_from_step == 2:
+            train_val_split.restart(data, state)
+        else:
+            train_val_split.init(g.project_info, g.project_meta, data, state)
     if restart_from_step <= 3:
         if restart_from_step == 3:
             tags.restart(data, state)
@@ -65,6 +66,8 @@ def restart(api: sly.Api, task_id, context, state, app_logger):
             hyperparameters_python.restart(data, state)
         else:
             hyperparameters_python.init(data, state)
+
+    monitoring.init(data, state)
 
     fields = [
         {"field": "data", "payload": data, "append": True, "recursive": False},

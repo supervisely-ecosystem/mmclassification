@@ -43,8 +43,11 @@
         <el-progress :percentage="data.progressPercentEpoch"></el-progress>
     </div>
     <div v-if="data.progressIter" class="mt10">
-        <div style="color: #20a0ff">
+        <div v-if="!state.isValidation" style="color: #20a0ff">
             {{data.progressIter}}: {{data.progressCurrentIter}} / {{data.progressTotalIter}}
+        </div>
+        <div v-else style="color: #20a0ff">
+            Validation...
         </div>
         <el-progress :percentage="data.progressPercentIter"></el-progress>
     </div>

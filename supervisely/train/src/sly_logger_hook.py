@@ -43,6 +43,8 @@ class SuperviselyLoggerHook(TextLoggerHook):
             self.progress_iter.set_current_value(log_dict['iter'])
             fields.append({"field": "data.eta", "payload": log_dict['sly_eta']})
 
+        fields.append({"field": "state.isValidation", "payload": log_dict['mode'] == 'val'})
+        
         add_progress_to_request(fields, "Epoch", self.progress_epoch)
         add_progress_to_request(fields, "Iter", self.progress_iter)
 
