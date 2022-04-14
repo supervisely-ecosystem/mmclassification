@@ -57,12 +57,43 @@ def get_session_info(api: sly.Api, task_id, context, state, app_logger):
     g.my_app.send_response(request_id, data=info)
 
 
-@sly.process_image_roi
-def inference_image_path(image_path, project_meta, context, state, app_logger):
+def inference_image_path(image_path, context, state, app_logger):
     app_logger.debug("Input path", extra={"path": image_path})
+    res_path = image_path
+    if "rectangle" in state:
+        image = sly.image.read(image_path)  # RGB image
 
-    res = nn_utils.inference_model(g.model, image_path, topn=state.get("topn", 5))
+        top, left, bottom, right = state["rectangle"]
+        height, width = image.shape[:2]
+        pad_percent = state.get("pad", 0)
+        if pad_percent > 0:
+            sly.logger.debug("before padding", extra={"top": top, "left": left, "right": right, "bottom": bottom})
+            pad_lr = int((right - left) / 100 * pad_percent)
+            pad_ud = int((bottom - top) / 100 * pad_percent)
+            top = max(0, top - pad_ud)
+            bottom = min(height - 1, bottom + pad_ud)
+            left = max(0, left - pad_lr)
+            right = min(width - 1, right + pad_lr)
+            sly.logger.debug("after padding", extra={"top": top, "left": left, "right": right, "bottom": bottom})
 
+        rect = sly.Rectangle(top, left, bottom, right)
+        canvas_rect = sly.Rectangle.from_size(image.shape[:2])
+        results = rect.crop(canvas_rect)
+        if len(results) != 1:
+            return {
+                "message": "roi rectangle out of image bounds",
+                "roi": state["rectangle"],
+                "img_size": {"height": image.shape[0], "width": image.shape[1]}
+            }
+        rect = results[0]
+        cropped_image = sly.image.crop(image, rect)
+        res_path = os.path.join(g.my_app.data_dir, sly.rand_str(10) + sly.fs.get_file_ext(image_path))
+        sly.image.write(res_path, cropped_image)
+
+    res = nn_utils.inference_model(g.model, res_path, topn=state.get("topn", 5))
+    if "rectangle" in state:
+        sly.fs.silent_remove(res_path)
+    
     return res
 
 
