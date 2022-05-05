@@ -24,6 +24,9 @@
     "deployed_nn_cls"
   ],
   "context_menu": {
-    "target": ["files_file"]
-  }
+    "target": [
+      "files_file"
+    ]
+  },
+  "poster": "https://i.imgur.com/ufxMDIH.png"
 }
