@@ -6,5 +6,6 @@
   ],
   "description": "Training, inference, ai-assisted labeling, synthetic data and more",
   "icon": "https://i.imgur.com/ps4q6WO.png",
-  "icon_cover": true
+  "icon_cover": true,
+  "poster": "https://i.imgur.com/X9NTc5X.png"
 }
