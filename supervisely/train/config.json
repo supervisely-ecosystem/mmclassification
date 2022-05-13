@@ -15,9 +15,12 @@
   "icon": "https://i.imgur.com/wc2STfP.png",
   "icon_cover": true,
   "context_menu": {
-    "target": ["images_project"],
+    "target": [
+      "images_project"
+    ],
     "context_root": "Neural Networks",
     "context_category": "MM Classification"
   },
-  "instance_version": "6.4.18"
+  "instance_version": "6.4.18",
+  "poster": "https://i.imgur.com/UvRU16x.png"
 }
