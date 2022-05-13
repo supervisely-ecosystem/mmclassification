@@ -98,7 +98,7 @@ def generate_dataset_config(state):
 def generate_schedule_config(state):
     optimizer = f"optimizer = dict(type='{state['optimizer']}', " \
                 f"lr={state['lr']}, " \
-                f"momentum={state['momentum']}, " \
+                f"{'momentum=True, ' if (state['momentum'] is True and state.optimizer == 'SGD') else ''}" \
                 f"weight_decay={state['weightDecay']}" \
                 f"{', nesterov=True' if (state['nesterov'] is True and state.optimizer == 'SGD') else ''})"
 
