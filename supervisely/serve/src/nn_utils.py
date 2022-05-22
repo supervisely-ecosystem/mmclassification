@@ -60,10 +60,55 @@ def construct_model_meta():
 def deploy_model():
     g.model = init_model(g.local_model_config_path, g.local_weights_path, device=g.device)
     g.model.CLASSES = sorted(g.gt_labels, key=g.gt_labels.get)
-    sly.logger.info("Model has been successfully deployed")
+    sly.logger.info("🟩 Model has been successfully deployed")
 
 
 def inference_model(model, img, topn=5):
+    """Inference image(s) with the classifier.
+
+    Args:
+        model (nn.Module): The loaded classifier.
+        img (str/ndarray): The image filename or loaded image.
+
+    Returns:
+        result (list of dict): The classification results that contains
+            `class_name`, `pred_label` and `pred_score`.
+    """
+    cfg = model.cfg
+    device = next(model.parameters()).device  # model device
+    # build the data pipeline
+    if isinstance(img, str):
+        if cfg.data.test.pipeline[0]['type'] != 'LoadImageFromFile':
+            cfg.data.test.pipeline.insert(0, dict(type='LoadImageFromFile'))
+        data = dict(img_info=dict(filename=img), img_prefix=None)
+    else:
+        if cfg.data.test.pipeline[0]['type'] == 'LoadImageFromFile':
+            cfg.data.test.pipeline.pop(0)
+        data = dict(img=img)
+    test_pipeline = Compose(cfg.data.test.pipeline)
+    data = test_pipeline(data)
+    data = collate([data], samples_per_gpu=1)
+    if next(model.parameters()).is_cuda:
+        # scatter to specified GPU
+        data = scatter(data, [device])[0]
+
+    # forward the model
+    with torch.no_grad():
+        scores = model(return_loss=False, **data)
+        model_out = scores[0]
+        top_scores = model_out[model_out.argsort()[-topn:]][::-1]
+        top_labels = model_out.argsort()[-topn:][::-1]
+        result = []
+        for label, score in zip(top_labels, top_scores):
+            result.append({
+                'label': int(label),
+                'score': float(score),
+                'class': model.CLASSES[label]
+            })
+    return result
+
+
+def inference_model_batch(model, images_nps, topn=5):
     """Inference image(s) with the classifier.
 
     Args:

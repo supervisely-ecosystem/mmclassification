@@ -2,9 +2,13 @@ import os
 import functools
 from functools import lru_cache
 
-import globals as g
-import nn_utils
+import numpy as np
 import supervisely as sly
+
+import nn_utils
+import globals as g
+import functions as f
+
 
 
 @lru_cache(maxsize=10)
@@ -120,6 +124,7 @@ def inference_image_url(api: sly.Api, task_id, context, state, app_logger):
 @send_error_data
 def inference_image_id(api: sly.Api, task_id, context, state, app_logger):
     app_logger.debug("Input data", extra={"state": state})
+    sly.logger.info("Input data", extra={"state": state})
     image_id = state["image_id"]
 
     image_info = api.image.get_info_by_id(image_id)
@@ -137,7 +142,18 @@ def inference_image_id(api: sly.Api, task_id, context, state, app_logger):
 @sly.timeit
 @send_error_data
 def inference_batch_ids(api: sly.Api, task_id, context, state, app_logger):
-    raise NotImplementedError("Please contact tech support")
+    images_nps: np.array = f.get_nps_images(images_ids=state["images_ids"])  # load images
+    images_to_process: np.array = f.crop_images(images_nps=images_nps, rectangles=state.get('rectangles'))  # crop images
+
+    images_indexes_to_process = np.where(images_to_process != None)[0].tolist()  # inference images
+    nn_utils.inference_model_batch(model=g.model, images_nps=images_to_process[images_indexes_to_process],
+                                   topn=state.get('topn', 5))
+
+
+    # inference images
+    # return output
+
+    return
 
 
 def debug_inference():
