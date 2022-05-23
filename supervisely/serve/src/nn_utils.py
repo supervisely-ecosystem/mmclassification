@@ -143,7 +143,7 @@ def inference_model_batch(model, images_nps, topn=5):
                 data = scatter(data, [device])[0]
 
             batch_scores = np.asarray(model(return_loss=False, **data))
-            batch_top_indexes = batch_scores.argsort(axis=1)[:, topn:][:, ::-1]
+            batch_top_indexes = batch_scores.argsort(axis=1)[:, -topn:][:, ::-1]
 
             for scores, top_indexes in zip(batch_scores, batch_top_indexes):
                 inference_results.append({
