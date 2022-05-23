@@ -1,4 +1,6 @@
 import os
+
+import numpy as np
 import torch
 import supervisely_lib as sly
 from mmcls.apis import init_model
@@ -122,32 +124,32 @@ def inference_model_batch(model, images_nps, topn=5):
     cfg = model.cfg
     device = next(model.parameters()).device  # model device
     # build the data pipeline
-    if isinstance(img, str):
-        if cfg.data.test.pipeline[0]['type'] != 'LoadImageFromFile':
-            cfg.data.test.pipeline.insert(0, dict(type='LoadImageFromFile'))
-        data = dict(img_info=dict(filename=img), img_prefix=None)
-    else:
-        if cfg.data.test.pipeline[0]['type'] == 'LoadImageFromFile':
-            cfg.data.test.pipeline.pop(0)
-        data = dict(img=img)
-    test_pipeline = Compose(cfg.data.test.pipeline)
-    data = test_pipeline(data)
-    data = collate([data], samples_per_gpu=1)
-    if next(model.parameters()).is_cuda:
-        # scatter to specified GPU
-        data = scatter(data, [device])[0]
+    if cfg.data.test.pipeline[0]['type'] == 'LoadImageFromFile':
+        cfg.data.test.pipeline.pop(0)
 
-    # forward the model
+    test_pipeline = Compose(cfg.data.test.pipeline)
+
     with torch.no_grad():
-        scores = model(return_loss=False, **data)
-        model_out = scores[0]
-        top_scores = model_out[model_out.argsort()[-topn:]][::-1]
-        top_labels = model_out.argsort()[-topn:][::-1]
-        result = []
-        for label, score in zip(top_labels, top_scores):
-            result.append({
-                'label': int(label),
-                'score': float(score),
-                'class': model.CLASSES[label]
-            })
-    return result
+
+        inference_results = []
+        for images_batch in sly.batched(images_nps, g.batch_size):
+            data = [dict(img=img) for img in images_batch]
+
+            data = [test_pipeline(row) for row in data]
+            data = collate(data, samples_per_gpu=1)
+
+            if next(model.parameters()).is_cuda:
+                # scatter to specified GPU
+                data = scatter(data, [device])[0]
+
+            batch_scores = np.asarray(model(return_loss=False, **data))
+            batch_top_indexes = batch_scores.argsort(axis=1)[:, -5:][:, ::-1]
+
+            for scores, top_indexes in zip(batch_scores, batch_top_indexes):
+                inference_results.append({
+                    'label': top_indexes.astype(int).tolist(),
+                    'score': scores[top_indexes].astype(float).tolist(),
+                    'class': np.asarray(model.CLASSES)[top_indexes].tolist()
+                })
+
+    return inference_results

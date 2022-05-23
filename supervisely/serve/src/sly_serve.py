@@ -10,7 +10,6 @@ import globals as g
 import functions as f
 
 
-
 @lru_cache(maxsize=10)
 def get_image_by_id(image_id):
     img = g.api.image.download_np(image_id)
@@ -27,6 +26,7 @@ def send_error_data(func):
             request_id = kwargs["context"]["request_id"]
             g.my_app.send_response(request_id, data={"error": repr(e)})
         return value
+
     return wrapper
 
 
@@ -97,7 +97,7 @@ def inference_image_path(image_path, context, state, app_logger):
     res = nn_utils.inference_model(g.model, res_path, topn=state.get("topn", 5))
     if "rectangle" in state:
         sly.fs.silent_remove(res_path)
-    
+
     return res
 
 
@@ -123,8 +123,8 @@ def inference_image_url(api: sly.Api, task_id, context, state, app_logger):
 @sly.timeit
 @send_error_data
 def inference_image_id(api: sly.Api, task_id, context, state, app_logger):
-    app_logger.debug("Input data", extra={"state": state})
-    sly.logger.info("Input data", extra={"state": state})
+    sly.logger.info("infer image id", extra={"state": state})
+
     image_id = state["image_id"]
 
     image_info = api.image.get_info_by_id(image_id)
@@ -142,27 +142,42 @@ def inference_image_id(api: sly.Api, task_id, context, state, app_logger):
 @sly.timeit
 @send_error_data
 def inference_batch_ids(api: sly.Api, task_id, context, state, app_logger):
+    sly.logger.info("inference batch ids called:", extra={"state": state})
     images_nps: np.array = f.get_nps_images(images_ids=state["images_ids"])  # load images
-    images_to_process: np.array = f.crop_images(images_nps=images_nps, rectangles=state.get('rectangles'))  # crop images
+    images_to_process: np.array = f.crop_images(images_nps=images_nps,
+                                                rectangles=state.get('rectangles'))  # crop images
 
-    images_indexes_to_process = np.where(images_to_process != None)[0].tolist()  # inference images
-    nn_utils.inference_model_batch(model=g.model, images_nps=images_to_process[images_indexes_to_process],
-                                   topn=state.get('topn', 5))
+    images_indexes_to_process = np.asarray([index for index, img_np in enumerate(images_to_process) if img_np is not None])
+    inference_results = nn_utils.inference_model_batch(model=g.model,
+                                                       images_nps=images_to_process[images_indexes_to_process],
+                                                       topn=state.get('topn', 5))
+
+    results = [None for _ in images_nps]  # return output
+    for index, row in enumerate(inference_results):
+        results[images_indexes_to_process[index]] = row
+
+    g.my_app.send_response(request_id=context["request_id"], data=results)
 
 
-    # inference images
-    # return output
-
-    return
-
-
-def debug_inference():
-    image_id = 903277
-    image_path = f"./data/images/{image_id}.jpg"
-    if not sly.fs.file_exists(image_path):
-        g.my_app.public_api.image.download_path(image_id, image_path)
-    res = nn_utils.inference_model(g.model, image_path, topn=5)
-
+# def debug_inference():
+#     image_id = 903277
+#     image_path = f"./data/images/{image_id}.jpg"
+#     if not sly.fs.file_exists(image_path):
+#         g.my_app.public_api.image.download_path(image_id, image_path)
+#     res = nn_utils.inference_model(g.model, image_path, topn=5)
+#
+#
+# def debug_inference2():
+#     image_id = 927270
+#     img_np = g.my_app.public_api.image.download_np(image_id)
+#     res = nn_utils.inference_model(g.model, img_np, topn=5)
+#
+#
+# def debug_inference3():
+#     image_id = 927270
+#     img_np = g.my_app.public_api.image.download_np(image_id)
+#     res = nn_utils.inference_model_batch(g.model, [img_np, img_np, img_np], topn=5)
+#
 
 def main():
     sly.logger.info("Script arguments", extra={
@@ -179,6 +194,6 @@ def main():
     g.my_app.run()
 
 
-#@TODO: readme + gif - how to replace tag2urls file + release another app
+# @TODO: readme + gif - how to replace tag2urls file + release another app
 if __name__ == "__main__":
     sly.main_wrapper("main", main)
