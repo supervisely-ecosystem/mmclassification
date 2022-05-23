@@ -22,6 +22,8 @@ def init(data, state):
     data["done1"] = False
     state["collapsed1"] = False
 
+    state["trainData"] = "images"  # "objects"
+
 
 @g.my_app.callback("download_project")
 @sly.timeit

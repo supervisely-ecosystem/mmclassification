@@ -3,7 +3,7 @@ from pathlib import Path
 import sys
 import supervisely_lib as sly
 from supervisely.app.v1.app_service import AppService
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 
 root_source_dir = str(Path(sys.argv[0]).parents[3])
 sly.logger.info(f"Root source directory: {root_source_dir}")
@@ -17,10 +17,10 @@ sys.path.append(ui_sources_dir)
 sly.logger.info(f"Added to sys.path: {ui_sources_dir}")
 
 # @TODO: for debug
-# debug_env_path = os.path.join(root_source_dir, "supervisely", "train", "debug.env")
-# secret_debug_env_path = os.path.join(root_source_dir, "supervisely", "train", "secret_debug.env")
-# load_dotenv(debug_env_path)
-# load_dotenv(secret_debug_env_path, override=True)
+debug_env_path = os.path.join(root_source_dir, "supervisely", "train", "debug.env")
+secret_debug_env_path = os.path.join(root_source_dir, "supervisely", "train", "secret_debug.env")
+load_dotenv(debug_env_path)
+load_dotenv(secret_debug_env_path, override=True)
 
 my_app = AppService()
 api = my_app.public_api
@@ -38,6 +38,14 @@ if project_info is None:  # for debug
 
 project_dir = os.path.join(my_app.data_dir, "sly_project")
 project_meta = sly.ProjectMeta.from_json(api.project.get_meta(project_id))
+project_meta_json = project_meta.to_json()
+
+image_ids = []
+for dataset in api.dataset.get_list(project_info.id):
+    image_infos = api.image.get_list(dataset.id)
+    image_ids.extend([info.id for info in image_infos])
+
+my_app.logger.info("Image ids are initialized", extra={"count": len(image_ids)})
 
 artifacts_dir = os.path.join(my_app.data_dir, "artifacts")
 sly.fs.mkdir(artifacts_dir)
@@ -45,5 +53,3 @@ info_dir = os.path.join(artifacts_dir, "info")
 sly.fs.mkdir(info_dir)
 checkpoints_dir = os.path.join(artifacts_dir, "checkpoints")
 sly.fs.mkdir(checkpoints_dir)
-
-

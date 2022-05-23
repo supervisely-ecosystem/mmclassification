@@ -1,0 +1,310 @@
+import os
+import random
+from collections import namedtuple
+import shelve
+import supervisely_lib as sly
+import sly_globals as g
+from sly_train_progress import get_progress_cb, reset_progress, init_progress
+from supervisely.io.fs import get_file_name, mkdir, dir_exists
+from supervisely.io.json import dump_json_file
+
+progress_index = 1
+_images_infos = None  # dataset_name -> image_name -> image_info
+_cache_base_filename = os.path.join(g.my_app.data_dir, "images_info")
+_cache_path = f'{_cache_base_filename}.db'
+project_fs: sly.Project = None
+_image_id_to_paths = {}
+CNT_GRID_COLUMNS = 3
+
+
+def prepare_ui_classes(project_meta):
+    ui_classes = []
+    classes_selected = []
+    for obj_class in project_meta.obj_classes:
+        if obj_class.geometry_type in [
+            sly.Point,
+            sly.PointLocation,
+            sly.Cuboid,
+        ]:
+            continue
+        obj_class: sly.ObjClass
+        ui_classes.append(obj_class.to_json())
+        classes_selected.append(True)
+    return ui_classes, classes_selected, [False] * len(classes_selected)
+
+
+ui_classes, classes_selected, classes_disabled = prepare_ui_classes(g.project_meta)
+
+
+def init(data, state):
+    data["projectId"] = g.project_info.id
+    data["projectName"] = g.project_info.name
+    data["projectImagesCount"] = g.project_info.items_count
+    data["projectPreviewUrl"] = g.api.image.preview_url(g.project_info.reference_image_url, 100, 100)
+    init_progress(progress_index, data)
+    data["done1"] = False
+    state["collapsed1"] = False
+
+    data["classes"] = ui_classes
+    state["classesSelected"] = classes_selected
+    state["classesDisabled"] = classes_disabled
+
+    state["trainData"] = "images"  # "objects"
+    state["cropPadding"] = 0
+    state["autoSize"] = True
+    state["inputWidth"] = 256
+    state["inputHeight"] = 256
+
+
+def get_selected_classes_from_ui(selected_classes):
+    ui_classes = g.api.task.get_field(g.task_id, "data.classes")
+    return [
+        obj_class["name"]
+        for obj_class, is_selected in zip(ui_classes, selected_classes)
+        if is_selected
+    ]
+
+
+def resize_crop(img, ann, out_size):
+    img = sly.image.resize(img, out_size)
+    ann = ann.resize(out_size)
+    return img, ann
+
+
+def unpack_single_crop(crop, image_name):
+    crop = crop[0][image_name]
+    flat_crops = []
+    for sublist in crop:
+        for crop in sublist:
+            flat_crops.append(crop)
+
+    return flat_crops
+
+
+def unpack_crops(crops, original_names):
+    img_nps = []
+    anns = []
+    img_names = []
+    name_idx = 0
+    for crop, original_name in zip(crops, original_names):
+        for label_crop in crop[original_name]:
+            for img_np, ann in label_crop:
+                img_nps.append(img_np)
+                anns.append(ann)
+                for label in ann.labels:
+                    name_idx += 1
+                    img_names.append(
+                        f"{get_file_name(original_name)}_{label.obj_class.name}_{name_idx}_{label.obj_class.sly_id}.png"
+                    )
+
+    return img_nps, anns, img_names
+
+
+def crop_and_resize_objects(img_nps, anns, app_state, selected_classes, original_names):
+    crops = []
+    crop_padding = {
+        "top": f'{app_state["cropPadding"]}%',
+        "left": f'{app_state["cropPadding"]}%',
+        "right": f'{app_state["cropPadding"]}%',
+        "bottom": f'{app_state["cropPadding"]}%',
+    }
+
+    for img_np, ann, original_name in zip(img_nps, anns, original_names):
+        img_dict = {original_name: []}
+        if len(ann.labels) == 0:
+            crops.append(img_dict)
+            continue
+
+        for class_name in selected_classes:
+            objects_crop = sly.aug.instance_crop(
+                img_np, ann, class_name, False, crop_padding
+            )
+            if app_state["autoSize"] is False:
+                resized_crop = []
+                for crop_img, crop_ann in objects_crop:
+                    crop_img, crop_ann = resize_crop(
+                        crop_img,
+                        crop_ann,
+                        (app_state["inputHeight"], app_state["inputWidth"]),
+                    )
+                    resized_crop.append((crop_img, crop_ann))
+                img_dict[original_name].append(resized_crop)
+            else:
+                img_dict[original_name].append(objects_crop)
+
+        crops.append(img_dict)
+    return crops
+
+
+def write_images(crop_nps, crop_names, img_dir):
+    for crop_np, crop_name in zip(crop_nps, crop_names):
+        img_path = os.path.join(img_dir, crop_name)
+        sly.image.write(img_path, crop_np)
+
+
+def dump_anns(crop_anns, crop_names, ann_dir):
+    for crop_ann, crop_name in zip(crop_anns, crop_names):
+        ann_path = f"{os.path.join(ann_dir, crop_name)}.json"
+        ann_json = crop_ann.to_json()
+        dump_json_file(ann_json, ann_path)
+
+
+@g.my_app.callback("download_project_objects")
+@sly.timeit
+@g.my_app.ignore_errors_and_show_dialog_window()
+def download_objects(api: sly.Api, task_id, context, state, app_logger):
+    try:
+        if not dir_exists(g.project_dir):
+            mkdir(g.project_dir)
+            project_meta_path = os.path.join(g.project_dir, "meta.json")
+            project_meta_json = g.project_meta.to_json()
+            dump_json_file(project_meta_json, project_meta_path)
+            datasets = api.dataset.get_list(g.project_id)
+            for dataset in datasets:
+                ds_dir = os.path.join(g.project_dir, dataset.name)
+                img_dir = os.path.join(ds_dir, "img")
+                ann_dir = os.path.join(ds_dir, "ann")
+
+                mkdir(ds_dir)
+                mkdir(img_dir)
+                mkdir(ann_dir)
+                images_infos = api.image.get_list(dataset.id)
+                for batch in sly.batched(images_infos):
+                    image_ids = [image_info.id for image_info in batch]
+                    image_names = [image_info.name for image_info in batch]
+                    ann_infos = api.annotation.download_batch(dataset.id, image_ids)
+
+                    image_nps = api.image.download_nps(dataset.id, image_ids)
+                    anns = [sly.Annotation.from_json(ann_info.annotation, g.project_meta) for ann_info in ann_infos]
+                    selected_classes = get_selected_classes_from_ui(state["classesSelected"])
+                    crops = crop_and_resize_objects(image_nps, anns, state, selected_classes, image_names)
+                    crop_nps, crop_anns, crop_names = unpack_crops(crops, image_names)
+                    write_images(crop_nps, crop_names, img_dir)
+                    dump_anns(crop_anns, crop_names, ann_dir)
+
+            reset_progress(progress_index)
+
+        global project_fs
+        project_fs = sly.Project(g.project_dir, sly.OpenMode.READ)
+    except Exception as e:
+        reset_progress(progress_index)
+        raise e
+
+    fields = [
+        {"field": "data.done1", "payload": True},
+        {"field": "state.collapsed2", "payload": False},
+        {"field": "state.disabled2", "payload": False},
+        {"field": "state.activeStep", "payload": 2},
+    ]
+    g.api.app.set_fields(g.task_id, fields)
+
+
+@sly.timeit
+def upload_preview(crops):
+    if len(crops) == 0:
+        g.api.task.set_fields(
+            g.task_id, [{"field": "data.showEmptyMessage", "payload": True}]
+        )
+        return
+
+    upload_src_paths = []
+    upload_dst_paths = []
+    for idx, (cur_img, cur_ann) in enumerate(crops):
+        img_name = "{:03d}.png".format(idx)
+        remote_path = "/temp/{}/{}".format(g.task_id, img_name)
+        if g.api.file.exists(g.team_id, remote_path):
+            g.api.file.remove(g.team_id, remote_path)
+        local_path = "{}/{}".format(g.my_app.data_dir, img_name)
+        sly.image.write(local_path, cur_img)
+        upload_src_paths.append(local_path)
+        upload_dst_paths.append(remote_path)
+
+    g.api.file.remove(g.team_id, "/temp/{}/".format(g.task_id))
+
+    def _progress_callback(monitor):
+        if hasattr(monitor, "last_percent") is False:
+            monitor.last_percent = 0
+        cur_percent = int(monitor.bytes_read * 100.0 / monitor.len)
+        if cur_percent - monitor.last_percent > 15 or cur_percent == 100:
+            g.api.task.set_fields(
+                g.task_id, [{"field": "data.previewProgress", "payload": cur_percent}]
+            )
+            monitor.last_percent = cur_percent
+
+    upload_results = g.api.file.upload_bulk(
+        g.team_id, upload_src_paths, upload_dst_paths, _progress_callback
+    )
+    # clean local data
+    for local_path in upload_src_paths:
+        sly.fs.silent_remove(local_path)
+    return upload_results
+
+
+@g.my_app.callback("preview")
+@sly.timeit
+def preview(api: sly.Api, task_id, context, state, app_logger):
+    api.task.set_fields(task_id, [{"field": "data.previewProgress", "payload": 0}])
+
+    image_id = random.choice(g.image_ids)
+    image_info = api.image.get_info_by_id(image_id)
+    image_name = image_info.name
+
+    img = api.image.download_np(image_info.id)
+    ann_json = api.annotation.download(image_id).annotation
+    ann = sly.Annotation.from_json(ann_json, g.project_meta)
+
+    selected_classes = get_selected_classes_from_ui(state["classesSelected"])
+    single_crop = crop_and_resize_objects(
+        [img], [ann], state, selected_classes, [image_name]
+    )
+    single_crop = unpack_single_crop(single_crop, image_name)
+    single_crop = [(img, ann)] + single_crop
+
+    grid_data = {}
+    grid_layout = [[] for _ in range(CNT_GRID_COLUMNS)]
+
+    upload_results = upload_preview(single_crop)
+    for idx, info in enumerate(upload_results):
+        if idx > 8:
+            break
+
+        if idx == 0:
+            grid_data[idx] = {
+                "url": info.full_storage_url,
+                "title": f"Original image ({image_name})",
+                "figures": [label.to_json() for label in single_crop[idx][1].labels],
+            }
+        else:
+            grid_data[idx] = {
+                "url": info.full_storage_url,
+                "title": f"Object_{idx}",
+                "figures": [label.to_json() for label in single_crop[idx][1].labels],
+            }
+        grid_layout[idx % CNT_GRID_COLUMNS].append(idx)
+
+    if grid_data:
+        content = {
+            "projectMeta": g.project_meta_json,
+            "annotations": grid_data,
+            "layout": grid_layout,
+        }
+        api.task.set_fields(
+            task_id, [{"field": "data.preview.content", "payload": content}]
+        )
+
+
+def get_image_info_from_cache(dataset_name, item_name):
+    dataset_fs = project_fs.datasets.get(dataset_name)
+    img_info_path = dataset_fs.get_img_info_path(item_name)
+    image_info_dict = sly.json.load_json_file(img_info_path)
+    ImageInfo = namedtuple('ImageInfo', image_info_dict)
+    info = ImageInfo(**image_info_dict)
+
+    # add additional info - helps to save split paths to txt files
+    _image_id_to_paths[info.id] = dataset_fs.get_item_paths(item_name)._asdict()
+
+    return info
+
+
+def get_paths_by_image_id(image_id):
+    return _image_id_to_paths[image_id]
