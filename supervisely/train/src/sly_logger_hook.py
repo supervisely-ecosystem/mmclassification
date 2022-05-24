@@ -50,6 +50,8 @@ class SuperviselyLoggerHook(TextLoggerHook):
 
         epoch_float = \
             float(self.progress_epoch.current) + float(self.progress_iter.current) / float(self.progress_iter.total)
+        
+        sly.logger.debug("Log dict", extra={"mm-train-logs": log_dict})
         if log_dict['mode'] == 'train':
             fields.extend([
                 {"field": "data.chartLR.series[0].data", "payload": [[epoch_float, round(log_dict["lr"], 6)]], "append": True},
