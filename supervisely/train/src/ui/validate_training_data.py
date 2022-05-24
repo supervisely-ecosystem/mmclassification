@@ -76,7 +76,7 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         "description": "Images that have one of the selected tags assigned (before validation)"
     })
 
-    collisions = defaultdict(defaultdict(int))
+    collisions = defaultdict(lambda: defaultdict(int))
     for tag_name in selected_tags:
         for split, infos in tags.tag2images[tag_name].items():
             for info in infos:
