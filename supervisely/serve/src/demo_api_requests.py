@@ -56,7 +56,7 @@ def main():
     predictions = api.task.send_request(task_id, "inference_batch_ids", data={
         "images_ids": [927270, 927270, 927270],
         "topn": 2,  # optional
-        "rectangles": [[10, 20, 150, 80], [10, 20, 150, 80], [10, 20, 150, 80]]  # top, left, bottom, right
+        # "rectangles": [[10, 20, 150, 80], [10, 20, 150, 80], [10, 20, 150, 80]]  # top, left, bottom, right
     })
     print("Predictions for images batch")
     print(json.dumps(predictions, indent=4))

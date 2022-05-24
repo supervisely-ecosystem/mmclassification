@@ -1,3 +1,4 @@
+import cv2
 import numpy as np
 import supervisely as sly
 
@@ -34,7 +35,7 @@ def get_nps_images(images_ids):
 
         for index, image_id in enumerate(ids_batch):
             for image_index in uniqueids2indexes[image_id]:
-                images_nps[image_index] = nps_for_ds[index]
+                images_nps[image_index] = cv2.cvtColor(nps_for_ds[index], cv2.COLOR_BGR2RGB)
 
     return np.asarray(images_nps)
 

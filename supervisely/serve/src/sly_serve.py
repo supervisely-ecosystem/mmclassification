@@ -2,6 +2,7 @@ import os
 import functools
 from functools import lru_cache
 
+import cv2
 import numpy as np
 import supervisely as sly
 
@@ -159,23 +160,23 @@ def inference_batch_ids(api: sly.Api, task_id, context, state, app_logger):
     g.my_app.send_response(request_id=context["request_id"], data=results)
 
 
-# def debug_inference():
-#     image_id = 903277
+# def debug_inference1():
+#     image_id = 927270
 #     image_path = f"./data/images/{image_id}.jpg"
 #     if not sly.fs.file_exists(image_path):
 #         g.my_app.public_api.image.download_path(image_id, image_path)
 #     res = nn_utils.inference_model(g.model, image_path, topn=5)
-#
-#
+# #
+# #
 # def debug_inference2():
 #     image_id = 927270
-#     img_np = g.my_app.public_api.image.download_np(image_id)
+#     img_np = cv2.cvtColor(g.my_app.public_api.image.download_np(image_id), cv2.COLOR_BGR2RGB)
 #     res = nn_utils.inference_model(g.model, img_np, topn=5)
-#
-#
+# #
+# #
 # def debug_inference3():
 #     image_id = 927270
-#     img_np = g.my_app.public_api.image.download_np(image_id)
+#     img_np = cv2.cvtColor(g.my_app.public_api.image.download_np(image_id), cv2.COLOR_BGR2RGB)
 #     res = nn_utils.inference_model_batch(g.model, [img_np, img_np, img_np], topn=5)
 #
 
@@ -190,6 +191,10 @@ def main():
     nn_utils.download_model_and_configs()
     nn_utils.construct_model_meta()
     nn_utils.deploy_model()
+
+    # debug_inference1()
+    # debug_inference2()
+    # debug_inference3()
 
     g.my_app.run()
 
