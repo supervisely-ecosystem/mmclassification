@@ -35,28 +35,31 @@ def main():
     # print("Predictions for url")
     # print(json.dumps(predictions, indent=4))
     #
-    # # get predictions by image-id in Supervisely
-    # predictions = api.task.send_request(task_id, "inference_image_id", data={
-    #     "image_id": 927270,
-    #     "topn": 2  # optional
-    # })
-    # print("Predictions for image by id")
-    # print(json.dumps(predictions, indent=4))
-    #
-    # # get predictions for image ROI
+    # get predictions by image-id in Supervisely
     # predictions = api.task.send_request(task_id, "inference_image_id", data={
     #     "image_id": 927270,
     #     "topn": 2,  # optional
-    #     "rectangle": [10, 20, 150, 80]  # top, left, bottom, right
+    #     "pad": 10
     # })
-    # print("Predictions for image ROI")
+    # print("Predictions for image by id")
     # print(json.dumps(predictions, indent=4))
+
+    # get predictions for image ROI
+    predictions = api.task.send_request(task_id, "inference_image_id", data={
+        "image_id": 927270,
+        "topn": 2,  # optional
+        "pad": 100,
+        "rectangle": [10, 20, 150, 80]  # top, left, bottom, right
+    })
+    print("Predictions for image ROI")
+    print(json.dumps(predictions, indent=4))
 
     # get predictions for images batch
     predictions = api.task.send_request(task_id, "inference_batch_ids", data={
         "images_ids": [927270, 927270, 927270],
         "topn": 2,  # optional
-        # "rectangles": [[10, 20, 150, 80], [10, 20, 150, 80], [10, 20, 150, 80]]  # top, left, bottom, right
+        "pad": 100,
+        "rectangles": [[10, 20, 150, 80], [10, 20, 150, 80], [10, 20, 150, 80]]  # top, left, bottom, right
     })
     print("Predictions for images batch")
     print(json.dumps(predictions, indent=4))

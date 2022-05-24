@@ -40,7 +40,7 @@ def get_nps_images(images_ids):
     return np.asarray(images_nps)
 
 
-def crop_images(images_nps, rectangles):
+def crop_images(images_nps, rectangles, padding=0):
     if rectangles is None:
         return images_nps
 
@@ -51,7 +51,9 @@ def crop_images(images_nps, rectangles):
     cropped_images = []
     for img_np, rectangle in zip(images_nps, rectangles):
         try:
-            top, left, bottom, right = rectangle
+            top, left, bottom, right = get_bbox_with_padding(rectangle=rectangle, pad_percent=padding,
+                                                             img_size=img_np.shape[:2])
+
             rect = sly.Rectangle(top, left, bottom, right)
             cropping_rect = rect.crop(sly.Rectangle.from_size(img_np.shape[:2]))[0]
             cropped_image = sly.image.crop(img_np, cropping_rect)
@@ -62,3 +64,19 @@ def crop_images(images_nps, rectangles):
 
     return np.asarray(cropped_images)
 
+
+def get_bbox_with_padding(rectangle, pad_percent, img_size):
+    top, left, bottom, right = rectangle
+    height, width = img_size
+
+    if pad_percent > 0:
+        sly.logger.debug("before padding", extra={"top": top, "left": left, "right": right, "bottom": bottom})
+        pad_lr = int((right - left) / 100 * pad_percent)
+        pad_ud = int((bottom - top) / 100 * pad_percent)
+        top = max(0, top - pad_ud)
+        bottom = min(height - 1, bottom + pad_ud)
+        left = max(0, left - pad_lr)
+        right = min(width - 1, right + pad_lr)
+        sly.logger.debug("after padding", extra={"top": top, "left": left, "right": right, "bottom": bottom})
+
+    return [top, left, bottom, right]

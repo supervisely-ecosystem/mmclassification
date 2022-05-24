@@ -67,19 +67,8 @@ def inference_image_path(image_path, context, state, app_logger):
     res_path = image_path
     if "rectangle" in state:
         image = sly.image.read(image_path)  # RGB image
-
-        top, left, bottom, right = state["rectangle"]
-        height, width = image.shape[:2]
-        pad_percent = state.get("pad", 0)
-        if pad_percent > 0:
-            sly.logger.debug("before padding", extra={"top": top, "left": left, "right": right, "bottom": bottom})
-            pad_lr = int((right - left) / 100 * pad_percent)
-            pad_ud = int((bottom - top) / 100 * pad_percent)
-            top = max(0, top - pad_ud)
-            bottom = min(height - 1, bottom + pad_ud)
-            left = max(0, left - pad_lr)
-            right = min(width - 1, right + pad_lr)
-            sly.logger.debug("after padding", extra={"top": top, "left": left, "right": right, "bottom": bottom})
+        top, left, bottom, right = f.get_bbox_with_padding(rectangle=state['rectangle'], pad_percent=state.get('pad', 0),
+                                                           img_size=image.shape[:2])  # img_size=(h,w)
 
         rect = sly.Rectangle(top, left, bottom, right)
         canvas_rect = sly.Rectangle.from_size(image.shape[:2])
@@ -144,16 +133,22 @@ def inference_image_id(api: sly.Api, task_id, context, state, app_logger):
 @send_error_data
 def inference_batch_ids(api: sly.Api, task_id, context, state, app_logger):
     sly.logger.info("inference batch ids called:", extra={"state": state})
-    images_nps: np.array = f.get_nps_images(images_ids=state["images_ids"])  # load images
-    images_to_process: np.array = f.crop_images(images_nps=images_nps,
-                                                rectangles=state.get('rectangles'))  # crop images
 
-    images_indexes_to_process = np.asarray([index for index, img_np in enumerate(images_to_process) if img_np is not None])
+    # load images
+    images_nps: np.array = f.get_nps_images(images_ids=state["images_ids"])
+    images_to_process: np.array = f.crop_images(images_nps=images_nps,
+                                                rectangles=state.get('rectangles'),
+                                                padding=state.get('pad', 0))
+
+    # inference images
+    images_indexes_to_process = np.asarray([index for index, img_np in enumerate(images_to_process)
+                                            if img_np is not None])
     inference_results = nn_utils.inference_model_batch(model=g.model,
                                                        images_nps=images_to_process[images_indexes_to_process],
                                                        topn=state.get('topn', 5))
 
-    results = [None for _ in images_nps]  # return output
+    # return output
+    results = [None for _ in images_nps]
     for index, row in enumerate(inference_results):
         results[images_indexes_to_process[index]] = row
 
