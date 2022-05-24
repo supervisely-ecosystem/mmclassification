@@ -196,6 +196,7 @@ def main():
     # debug_inference2()
     # debug_inference3()
 
+    sly.logger.info("nps will be converted to RGB")
     g.my_app.run()
 
 
