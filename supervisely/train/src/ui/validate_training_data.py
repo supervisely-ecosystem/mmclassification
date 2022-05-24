@@ -76,15 +76,16 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         "description": "Images that have one of the selected tags assigned (before validation)"
     })
 
-    collisions = defaultdict(int)
+    collisions = defaultdict(defaultdict(int))
     for tag_name in selected_tags:
         for split, infos in tags.tag2images[tag_name].items():
             for info in infos:
-                collisions[info.id] += 1
+                collisions[split][info.id] += 1
     num_collision_images = 0
-    for image_id, counter in collisions.items():
-        if counter > 1:
-            num_collision_images += 1
+    for split, split_collisions in collisions.items():
+        for image_id, counter in split_collisions.items():
+            if counter > 1:
+                num_collision_images += 1
     report.append({
         "title": "Images with tags collisions",
         "count": num_collision_images,
@@ -100,7 +101,7 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         for split, infos in tags.tag2images[tag_name].items():
             _final_infos = []
             for info in infos:
-                if collisions[info.id] == 1:
+                if collisions[split][info.id] == 1:
                     _final_infos.append(info)
                     final_images_count += 1
                     if split == "train":
