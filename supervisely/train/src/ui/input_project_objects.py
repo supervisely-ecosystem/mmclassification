@@ -55,6 +55,19 @@ def init(data, state):
     state["inputWidth"] = 256
     state["inputHeight"] = 256
 
+    # preview
+    data["progress"] = 0
+    data["started"] = False
+    data["previewProgress"] = 0
+    data["showEmptyMessage"] = False
+    data["finished"] = False
+    data["preview"] = {"content": {}, "options": {
+        "opacity": 0.5,
+        "fillRectangle": False,
+        "enableZoom": False,
+        "syncViews": False,
+    }}
+
 
 def get_selected_classes_from_ui(selected_classes):
     ui_classes = g.api.task.get_field(g.task_id, "data.classes")
@@ -240,9 +253,9 @@ def upload_preview(crops):
     return upload_results
 
 
-@g.my_app.callback("preview")
+@g.my_app.callback("preview_objects")
 @sly.timeit
-def preview(api: sly.Api, task_id, context, state, app_logger):
+def preview_objects(api: sly.Api, task_id, context, state, app_logger):
     api.task.set_fields(task_id, [{"field": "data.previewProgress", "payload": 0}])
 
     image_id = random.choice(g.image_ids)
