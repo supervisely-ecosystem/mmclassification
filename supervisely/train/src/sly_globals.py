@@ -30,11 +30,14 @@ team_id = int(os.environ['context.teamId'])
 workspace_id = int(os.environ['context.workspaceId'])
 project_id = int(os.environ['modal.state.slyProjectId'])
 
+project_stats = api.project.get_stats(project_id)
 project_info = api.project.get_info_by_id(project_id)
 if project_info is None:  # for debug
     raise ValueError(f"Project with id={project_id} not found")
 
 # sly.fs.clean_dir(my_app.data_dir)  # @TODO: for debug
+
+
 
 project_dir = os.path.join(my_app.data_dir, "sly_project")
 project_meta = sly.ProjectMeta.from_json(api.project.get_meta(project_id))

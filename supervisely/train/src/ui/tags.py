@@ -3,6 +3,7 @@ from collections import defaultdict
 import supervisely_lib as sly
 
 import input_project
+import input_project_objects
 import splits
 import sly_globals as g
 from sly_train_progress import get_progress_cb, reset_progress, init_progress
@@ -50,14 +51,16 @@ def restart(data, state):
     data["done3"] = False
 
 
-def init_cache(split_items, split_name, progress_cb):
+def init_cache(state, split_items, split_name, progress_cb):
     global tag2images, tag2urls, images_without_tags
     for item in split_items:
         name = item.name
         dataset_name = item.dataset_name
         ann_path = item.ann_path
-        img_info = input_project.get_image_info_from_cache(dataset_name, name)
-
+        if state["trainData"] == "images":
+            img_info = input_project.get_image_info_from_cache(dataset_name, name)
+        else:
+            img_info = input_project_objects.get_image_info_from_cache(dataset_name, name)
         ann = sly.Annotation.load_json_file(ann_path, g.project_meta)
         if len(ann.img_tags) == 0:
             images_without_tags.append(img_info)
@@ -81,8 +84,8 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
     tag2urls = defaultdict(list)
 
     progress = get_progress_cb(progress_index, "Calculate stats", g.project_info.items_count)
-    init_cache(splits.train_set, "train", progress)
-    init_cache(splits.val_set, "val", progress)
+    init_cache(state, splits.train_set, "train", progress)
+    init_cache(state, splits.val_set, "val", progress)
 
     segments = [
         {"name": "train", "key": "train", "color": "#13ce66"},

@@ -79,8 +79,8 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
     collisions = defaultdict(int)
     for tag_name in selected_tags:
         for split, infos in tags.tag2images[tag_name].items():
-            for info in infos:
-                collisions[info.id] += 1
+            for idx, info in enumerate(infos):
+                collisions[idx] += 1
     num_collision_images = 0
     for image_id, counter in collisions.items():
         if counter > 1:

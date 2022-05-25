@@ -1,12 +1,13 @@
 import os
+from datetime import datetime, timezone
 import random
 from collections import namedtuple
 import shelve
 import supervisely_lib as sly
 import sly_globals as g
 from sly_train_progress import get_progress_cb, reset_progress, init_progress
-from supervisely.io.fs import get_file_name, mkdir, dir_exists
-from supervisely.io.json import dump_json_file
+from supervisely.io.fs import get_file_name, mkdir, dir_exists, get_file_ext
+from supervisely.io.json import dump_json_file, load_json_file
 
 progress_index = 1
 _images_infos = None  # dataset_name -> image_name -> image_info
@@ -37,19 +38,19 @@ ui_classes, classes_selected, classes_disabled = prepare_ui_classes(g.project_me
 
 
 def init(data, state):
-    data["projectId"] = g.project_info.id
-    data["projectName"] = g.project_info.name
-    data["projectImagesCount"] = g.project_info.items_count
-    data["projectPreviewUrl"] = g.api.image.preview_url(g.project_info.reference_image_url, 100, 100)
-    init_progress(progress_index, data)
-    data["done1"] = False
-    state["collapsed1"] = False
+    # data["projectId"] = g.project_info.id
+    # data["projectName"] = g.project_info.name
+    # data["projectImagesCount"] = g.project_info.items_count
+    # data["projectPreviewUrl"] = g.api.image.preview_url(g.project_info.reference_image_url, 100, 100)
+    # init_progress(progress_index, data)
+    # data["done1"] = False
+    # state["collapsed1"] = False
+    # state["trainData"] = "images"  # "objects"
 
     data["classes"] = ui_classes
     state["classesSelected"] = classes_selected
     state["classesDisabled"] = classes_disabled
 
-    state["trainData"] = "images"  # "objects"
     state["cropPadding"] = 0
     state["autoSize"] = True
     state["inputWidth"] = 256
@@ -162,14 +163,97 @@ def dump_anns(crop_anns, crop_names, ann_dir):
         dump_json_file(ann_json, ann_path)
 
 
+def create_img_infos(project_fs):
+    tag_id_map = {
+        tag["name"]: tag["id"] for tag in project_fs.meta.tag_metas.to_json()
+    }
+
+    for dataset_fs in project_fs:
+        img_info_dir = os.path.join(dataset_fs.directory, "img_info")
+        mkdir(img_info_dir)
+        for item_name in os.listdir(dataset_fs.item_dir):
+            item_ext = get_file_ext(item_name).lstrip(".")
+            item_path = os.path.join(dataset_fs.item_dir, item_name)
+            item = sly.image.read(item_path)
+            h, w = item.shape[:2]
+            item_size = os.path.getsize(item_path)
+            created_at = datetime.fromtimestamp(os.stat(item_path).st_ctime, tz=timezone.utc).strftime(
+                "%d-%m-%Y %H:%M:%S")
+            modified_at = datetime.fromtimestamp(os.stat(item_path).st_mtime, tz=timezone.utc).strftime(
+                "%d-%m-%Y %H:%M:%S")
+
+            item_ann_path = os.path.join(dataset_fs.ann_dir, f"{item_name}.json")
+            ann_json = load_json_file(item_ann_path)
+            ann = sly.Annotation.from_json(ann_json, project_fs.meta)
+            tags = ann.img_tags
+            tags_json = tags.to_json()
+            labels_count = len(ann.labels)
+
+            tags_img_info = []
+            for tag in tags_json:
+                tag_info = {
+                    "entityId": None,
+                    "tagId": tag_id_map[tag["name"]],
+                    "id": None,
+                    "labelerLogin": "cxnt",
+                    "createdAt": tag["createdAt"],
+                    "updatedAt": tag["updatedAt"],
+                    "name": tag["name"]
+                }
+                tags_img_info.append(tag_info)
+
+            item_img_info = {
+                "id": None,
+                "name": item_name,
+                "link": "",
+                "hash": "",
+                "mime": f"image/{item_ext}",
+                "ext": item_ext,
+                "size": item_size,
+                "width": w,
+                "height": h,
+                "labels_count": labels_count,
+                "dataset_id": None,
+                "created_at": created_at,
+                "updated_at": modified_at,
+                "meta": {},
+                "path_original": "",
+                "full_storage_url": "",
+                "tags": tags_img_info
+            }
+            save_path = os.path.join(img_info_dir, f"{item_name}.json")
+            dump_json_file(item_img_info, save_path)
+
+
+def convert_object_tags(project_meta):
+    for tag_meta in project_meta.tag_metas:
+        if tag_meta.applicable_to == sly.TagApplicableTo.OBJECTS_ONLY:
+            new_tag_meta = tag_meta.clone(applicable_to=sly.TagApplicableTo.ALL)
+            project_meta = project_meta.delete_tag_meta(tag_meta.name)
+            project_meta = project_meta.add_tag_meta(new_tag_meta)
+
+    return project_meta
+
+
+def copy_tags(crop_anns):
+    new_anns = []
+    for ann in crop_anns:
+        for label in ann.labels:
+            label_tags = label.tags
+            new_ann = ann.add_tags(label_tags)
+            new_anns.append(new_ann)
+    return new_anns
+
+
 @g.my_app.callback("download_project_objects")
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
-def download_objects(api: sly.Api, task_id, context, state, app_logger):
+def download_project_objects(api: sly.Api, task_id, context, state, app_logger):
     try:
         if not dir_exists(g.project_dir):
             mkdir(g.project_dir)
             project_meta_path = os.path.join(g.project_dir, "meta.json")
+            g.project_meta = convert_object_tags(g.project_meta)
             project_meta_json = g.project_meta.to_json()
             dump_json_file(project_meta_json, project_meta_path)
             datasets = api.dataset.get_list(g.project_id)
@@ -192,6 +276,7 @@ def download_objects(api: sly.Api, task_id, context, state, app_logger):
                     selected_classes = get_selected_classes_from_ui(state["classesSelected"])
                     crops = crop_and_resize_objects(image_nps, anns, state, selected_classes, image_names)
                     crop_nps, crop_anns, crop_names = unpack_crops(crops, image_names)
+                    crop_anns = copy_tags(crop_anns)
                     write_images(crop_nps, crop_names, img_dir)
                     dump_anns(crop_anns, crop_names, ann_dir)
 
@@ -199,6 +284,7 @@ def download_objects(api: sly.Api, task_id, context, state, app_logger):
 
         global project_fs
         project_fs = sly.Project(g.project_dir, sly.OpenMode.READ)
+        create_img_infos(project_fs)
     except Exception as e:
         reset_progress(progress_index)
         raise e

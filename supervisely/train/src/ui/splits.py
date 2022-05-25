@@ -12,6 +12,12 @@ def init(project_info, project_meta: sly.ProjectMeta, data, state):
         {"name": "val", "type": "primary"},
         {"name": "total", "type": "gray"},
     ]
+
+    # if state["trainData"] == "images":
+    #     items_count = project_info.items_count
+    # else:
+    #     items_count = g.project_stats["objects"]["total"]["objectsInDataset"]
+
     data["totalImagesCount"] = project_info.items_count
 
     train_percent = 80
