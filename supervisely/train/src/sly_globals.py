@@ -48,6 +48,7 @@ for dataset in api.dataset.get_list(project_info.id):
     image_infos = api.image.get_list(dataset.id)
     image_ids.extend([info.id for info in image_infos])
 
+images_infos = None
 my_app.logger.info("Image ids are initialized", extra={"count": len(image_ids)})
 
 artifacts_dir = os.path.join(my_app.data_dir, "artifacts")

@@ -167,11 +167,11 @@ def create_img_infos(project_fs):
     tag_id_map = {
         tag["name"]: tag["id"] for tag in project_fs.meta.tag_metas.to_json()
     }
-
+    images_infos = []
     for dataset_fs in project_fs:
         img_info_dir = os.path.join(dataset_fs.directory, "img_info")
         mkdir(img_info_dir)
-        for item_name in os.listdir(dataset_fs.item_dir):
+        for idx, item_name in enumerate(os.listdir(dataset_fs.item_dir)):
             item_ext = get_file_ext(item_name).lstrip(".")
             item_path = os.path.join(dataset_fs.item_dir, item_name)
             item = sly.image.read(item_path)
@@ -195,7 +195,7 @@ def create_img_infos(project_fs):
                     "entityId": None,
                     "tagId": tag_id_map[tag["name"]],
                     "id": None,
-                    "labelerLogin": "cxnt",
+                    "labelerLogin": tag["labelerLogin"],
                     "createdAt": tag["createdAt"],
                     "updatedAt": tag["updatedAt"],
                     "name": tag["name"]
@@ -203,7 +203,7 @@ def create_img_infos(project_fs):
                 tags_img_info.append(tag_info)
 
             item_img_info = {
-                "id": None,
+                "id": idx,
                 "name": item_name,
                 "link": "",
                 "hash": "",
@@ -223,6 +223,8 @@ def create_img_infos(project_fs):
             }
             save_path = os.path.join(img_info_dir, f"{item_name}.json")
             dump_json_file(item_img_info, save_path)
+            images_infos.append(item_img_info)
+    return images_infos
 
 
 def convert_object_tags(project_meta):
@@ -284,16 +286,36 @@ def download_project_objects(api: sly.Api, task_id, context, state, app_logger):
 
         global project_fs
         project_fs = sly.Project(g.project_dir, sly.OpenMode.READ)
-        create_img_infos(project_fs)
+        g.images_infos = create_img_infos(project_fs)
     except Exception as e:
         reset_progress(progress_index)
         raise e
+
+    items_count = g.project_stats["objects"]["total"]["objectsInDataset"]
+    train_percent = 80
+    train_count = int(items_count / 100 * train_percent)
+    random_split = {
+        "count": {
+            "total": items_count,
+            "train": train_count,
+            "val": items_count - train_count
+        },
+        "percent": {
+            "total": 100,
+            "train": train_percent,
+            "val": 100 - train_percent
+        },
+        "shareImagesBetweenSplits": False,
+        "sliderDisabled": False,
+    }
 
     fields = [
         {"field": "data.done1", "payload": True},
         {"field": "state.collapsed2", "payload": False},
         {"field": "state.disabled2", "payload": False},
         {"field": "state.activeStep", "payload": 2},
+        {"field": "data.totalImagesCount", "payload": items_count},
+        {"field": "state.randomSplit", "payload": random_split},
     ]
     g.api.app.set_fields(g.task_id, fields)
 

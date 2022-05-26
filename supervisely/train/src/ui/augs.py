@@ -1,10 +1,12 @@
 import os
+from random import choice
 import supervisely_lib as sly
 import sly_globals as g
-#from tags import get_random_image
+# from tags import get_random_image
+from supervisely.io.json import load_json_file
+from supervisely.io.fs import get_file_name_with_ext
 from supervisely.app.v1.widgets.compare_gallery import CompareGallery
 import validate_training_data as td
-
 
 _templates = [
     {
@@ -124,7 +126,6 @@ def load_existing_pipeline(api: sly.Api, task_id, context, state, app_logger):
 @g.my_app.ignore_errors_and_show_dialog_window()
 def preview_augs(api: sly.Api, task_id, context, state, app_logger):
     global gallery1, gallery2
-    image_info = td.get_random_image()
     if state["augsType"] == "template":
         gallery = gallery1
         augs_ppl, _, _ = get_template_by_name(state["augsTemplateName"])
@@ -132,9 +133,14 @@ def preview_augs(api: sly.Api, task_id, context, state, app_logger):
         gallery = gallery2
         augs_ppl = custom_pipeline
 
-    img = api.image.download_np(image_info.id)
-    ann_json = api.annotation.download(image_info.id).annotation
-    ann = sly.Annotation.from_json(ann_json, g.project_meta)
+    if state["trainData"] == "images":
+        image_info = td.get_random_image()
+        img = api.image.download_np(image_info.id)
+        ann_json = api.annotation.download(image_info.id).annotation
+        ann = sly.Annotation.from_json(ann_json, g.project_meta)
+    else:
+        image_info, img, ann = process_random_object_image(api)
+
     gallery.set_left("before", image_info.full_storage_url, ann)
     _, res_img, res_ann = sly.imgaug_utils.apply(augs_ppl, g.project_meta, img, ann)
     local_image_path = os.path.join(g.my_app.data_dir, "preview_augs.jpg")
@@ -172,3 +178,23 @@ def use_augs(api: sly.Api, task_id, context, state, app_logger):
         {"field": "state.activeStep", "payload": 6},
     ]
     g.api.app.set_fields(g.task_id, fields)
+
+
+def process_random_object_image(api):
+    project_fs = sly.Project(g.project_dir, sly.OpenMode.READ)
+    datasets = [dataset for dataset in project_fs.datasets]
+    dataset = choice(datasets)
+    # for dataset in datasets:
+    #     ds_dir = os.path.join(g.project_dir, dataset.name)
+
+    img_dir = os.path.join(dataset.directory, "img")
+    ann_dir = os.path.join(dataset.directory, "ann")
+    image_path = choice([os.path.join(img_dir, img_name) for img_name in os.listdir(img_dir)])
+    ann_path = os.path.join(ann_dir, f"{get_file_name_with_ext(image_path)}.json")
+    ann_json = load_json_file(ann_path)
+
+    img = sly.image.read(image_path)
+    ann = sly.Annotation.from_json(ann_json, g.project_meta)
+
+    img_file_info = api.file.upload(g.team_id, image_path, remote_preview_path)
+    return img_file_info, img, ann

@@ -3,9 +3,9 @@ import os
 import supervisely_lib as sly
 import sly_globals as g
 import input_project
+import input_project_objects
 import random
 import tags
-
 
 report = []
 final_tags = []
@@ -76,15 +76,16 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         "description": "Images that have one of the selected tags assigned (before validation)"
     })
 
-    collisions = defaultdict(int)
+    collisions = defaultdict(lambda: defaultdict(int))
     for tag_name in selected_tags:
         for split, infos in tags.tag2images[tag_name].items():
-            for idx, info in enumerate(infos):
-                collisions[idx] += 1
+            for info in infos:
+                collisions[split][info.id] += 1
     num_collision_images = 0
-    for image_id, counter in collisions.items():
-        if counter > 1:
-            num_collision_images += 1
+    for split, split_collisions in collisions.items():
+        for image_id, counter in split_collisions.items():
+            if counter > 1:
+                num_collision_images += 1
     report.append({
         "title": "Images with tags collisions",
         "count": num_collision_images,
@@ -100,7 +101,7 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         for split, infos in tags.tag2images[tag_name].items():
             _final_infos = []
             for info in infos:
-                if collisions[info.id] == 1:
+                if collisions[split][info.id] == 1:
                     _final_infos.append(info)
                     final_images_count += 1
                     if split == "train":
@@ -115,6 +116,10 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
     tags_examples = defaultdict(list)
     for tag_name, infos in final_tags2images.items():
         for info in (infos['train'] + infos['val'])[:tags._max_examples_count]:
+
+            if state["trainData"] == "objects":
+                pass # add upload images
+
             tags_examples[tag_name].append(
                 g.api.image.preview_url(info.full_storage_url, height=tags._preview_height)
             )
@@ -175,12 +180,15 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         sly.json.dump_json_file(gt_labels, os.path.join(g.info_dir, "gt_labels.json"))
 
         # save splits
-        #final_tags2images[tag_name][split].extend(_final_infos)
+        # final_tags2images[tag_name][split].extend(_final_infos)
         split_paths = defaultdict(list)
         _splits_to_dump = defaultdict(lambda: defaultdict(list))
         for tag_name, splits in final_tags2images.items():
             for split_name, infos in splits.items():
-                paths = [input_project.get_paths_by_image_id(info.id) for info in infos]
+                if state["trainData"] == "images":
+                    paths = [input_project.get_paths_by_image_id(info.id) for info in infos]
+                else:
+                    paths = [input_project_objects.get_paths_by_image_id(info.id) for info in infos]
                 split_paths[split_name].extend(paths)
         sly.json.dump_json_file(split_paths, os.path.join(g.project_dir, "splits.json"))
 
@@ -195,6 +203,6 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
 def get_random_image():
     rand_key = random.choice(list(final_tags2images.keys()))
     info = random.choice(final_tags2images[rand_key]['train'])
-    #ImageInfo = namedtuple('ImageInfo', image_info_dict)
-    #info = ImageInfo(**image_info_dict)
+    # ImageInfo = namedtuple('ImageInfo', image_info_dict)
+    # info = ImageInfo(**image_info_dict)
     return info
