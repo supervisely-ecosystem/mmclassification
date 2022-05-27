@@ -1,6 +1,8 @@
+import shutil
 from collections import defaultdict
 import os
-import supervisely_lib as sly
+import supervisely as sly
+from supervisely.io.fs import get_file_name_with_ext, mkdir
 import sly_globals as g
 import input_project
 import input_project_objects
@@ -10,6 +12,9 @@ import tags
 report = []
 final_tags = []
 final_tags2images = defaultdict(lambda: defaultdict(list))
+
+remote_images_dir = os.path.join("temp", str(g.task_id))
+artifacts_example_img_dir = os.path.join(g.my_app.data_dir, "artifacts", "example_images")
 
 
 def init(data, state):
@@ -21,14 +26,20 @@ def init(data, state):
     data["cntWarnings"] = 0
     data["report"] = None
 
+    state["isValidating"] = False
+
 
 @g.my_app.callback("validate_data")
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def validate_data(api: sly.Api, task_id, context, state, app_logger):
+    # g.api.app.set_field(g.task_id, "state.isValidating", True)
     report.clear()
     final_tags.clear()
     final_tags2images.clear()
+
+    if state["trainData"] == "objects":
+        mkdir(artifacts_example_img_dir, True)
 
     report.append({
         "type": "info",
@@ -118,7 +129,7 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         for info in (infos['train'] + infos['val'])[:tags._max_examples_count]:
 
             if state["trainData"] == "objects":
-                pass # add upload images
+                info = upload_img_example_to_files(api, info)
 
             tags_examples[tag_name].append(
                 g.api.image.preview_url(info.full_storage_url, height=tags._preview_height)
@@ -196,6 +207,7 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
             {"field": "state.collapsed5", "payload": False},
             {"field": "state.disabled5", "payload": False},
             {"field": "state.activeStep", "payload": 5},
+            {"field": "state.isValidating", "payload": False},
         ])
     g.api.app.set_fields(g.task_id, fields)
 
@@ -206,3 +218,17 @@ def get_random_image():
     # ImageInfo = namedtuple('ImageInfo', image_info_dict)
     # info = ImageInfo(**image_info_dict)
     return info
+
+
+def upload_img_example_to_files(api, info):
+    img_path = os.path.join(g.project_dir, info.dataset_id, "img", info.name)
+    move_img_to_artifacts(img_path)
+    remote_image_path = os.path.join(remote_images_dir, info.name)
+    info = api.file.upload(g.team_id, img_path, remote_image_path)
+    return info
+
+
+def move_img_to_artifacts(img_path):
+    img_name = get_file_name_with_ext(img_path)
+    dst_path = os.path.join(artifacts_example_img_dir, img_name)
+    shutil.copyfile(img_path, dst_path, follow_symlinks=False)

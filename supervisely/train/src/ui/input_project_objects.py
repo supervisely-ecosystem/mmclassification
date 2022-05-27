@@ -38,15 +38,6 @@ ui_classes, classes_selected, classes_disabled = prepare_ui_classes(g.project_me
 
 
 def init(data, state):
-    # data["projectId"] = g.project_info.id
-    # data["projectName"] = g.project_info.name
-    # data["projectImagesCount"] = g.project_info.items_count
-    # data["projectPreviewUrl"] = g.api.image.preview_url(g.project_info.reference_image_url, 100, 100)
-    # init_progress(progress_index, data)
-    # data["done1"] = False
-    # state["collapsed1"] = False
-    # state["trainData"] = "images"  # "objects"
-
     data["classes"] = ui_classes
     state["classesSelected"] = classes_selected
     state["classesDisabled"] = classes_disabled
@@ -213,7 +204,7 @@ def create_img_infos(project_fs):
                 "width": w,
                 "height": h,
                 "labels_count": labels_count,
-                "dataset_id": None,
+                "dataset_id": dataset_fs.name,
                 "created_at": created_at,
                 "updated_at": modified_at,
                 "meta": {},

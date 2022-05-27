@@ -83,7 +83,12 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
     tag2images = defaultdict(lambda: defaultdict(list))
     tag2urls = defaultdict(list)
 
-    progress = get_progress_cb(progress_index, "Calculate stats", g.project_info.items_count)
+    if state["trainData"] == "images":
+        items_count = g.project_info.items_count
+    else:
+        items_count = g.project_stats["objects"]["total"]["objectsInDataset"]
+
+    progress = get_progress_cb(progress_index, "Calculate stats", items_count)
     init_cache(state, splits.train_set, "train", progress)
     init_cache(state, splits.val_set, "val", progress)
 
