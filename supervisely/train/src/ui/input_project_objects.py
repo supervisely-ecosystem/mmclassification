@@ -259,12 +259,13 @@ def download_project_objects(api: sly.Api, task_id, context, state, app_logger):
                 mkdir(img_dir)
                 mkdir(ann_dir)
                 images_infos = api.image.get_list(dataset.id)
+                download_progress = get_progress_cb(progress_index, "Download project", g.project_info.items_count * 2)
                 for batch in sly.batched(images_infos):
                     image_ids = [image_info.id for image_info in batch]
                     image_names = [image_info.name for image_info in batch]
-                    ann_infos = api.annotation.download_batch(dataset.id, image_ids)
+                    ann_infos = api.annotation.download_batch(dataset.id, image_ids, progress_cb=download_progress)
 
-                    image_nps = api.image.download_nps(dataset.id, image_ids)
+                    image_nps = api.image.download_nps(dataset.id, image_ids, progress_cb=download_progress)
                     anns = [sly.Annotation.from_json(ann_info.annotation, g.project_meta) for ann_info in ann_infos]
                     selected_classes = get_selected_classes_from_ui(state["classesSelected"])
                     crops = crop_and_resize_objects(image_nps, anns, state, selected_classes, image_names)
