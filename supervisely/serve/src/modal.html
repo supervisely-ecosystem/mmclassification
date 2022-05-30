@@ -11,5 +11,9 @@
                 <el-option key="cpu" label="cpu" value="cpu"/>
             </el-option-group>
         </el-select>
+
+    </sly-field>
+    <sly-field title="Batch Size" description="Adjust batch processing size">
+        <el-input-number v-model="state.batch_size" :min="1" :max="2048" :step="10"></el-input-number>
     </sly-field>
 </div>

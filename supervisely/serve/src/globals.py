@@ -26,6 +26,7 @@ team_id = int(os.environ['context.teamId'])
 workspace_id = int(os.environ['context.workspaceId'])
 remote_weights_path = os.environ['modal.state.slyFile']
 device = os.environ['modal.state.device']
+batch_size = int(os.getenv('modal.state.batch_size', 256))
 
 remote_exp_dir = str(pathlib.Path(remote_weights_path).parents[1])
 remote_configs_dir = os.path.join(remote_exp_dir, "configs")
@@ -46,4 +47,4 @@ meta: sly.ProjectMeta = None
 gt_labels = None  # name -> index
 labels_urls = None
 
-batch_size = 256  # @TODO: from modal window
+
