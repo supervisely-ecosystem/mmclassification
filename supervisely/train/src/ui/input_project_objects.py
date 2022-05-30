@@ -2,7 +2,6 @@ import os
 from datetime import datetime, timezone
 import random
 from collections import namedtuple
-import shelve
 import supervisely_lib as sly
 import sly_globals as g
 from sly_train_progress import get_progress_cb, reset_progress, init_progress
@@ -388,10 +387,12 @@ def preview_objects(api: sly.Api, task_id, context, state, app_logger):
                 "figures": [label.to_json() for label in single_crop[idx][1].labels],
             }
         else:
+            object_tags_names = [tag['name'] for tag in single_crop[idx][1].labels[0].tags.to_json()]
+            obj_tags = ", ".join(object_tags_names)
             grid_data[idx] = {
                 "url": info.full_storage_url,
-                "title": f"Object_{idx}",
-                "figures": [label.to_json() for label in single_crop[idx][1].labels],
+                "title": f"Object tags: {obj_tags}",
+                "figures": [],
             }
         grid_layout[idx % CNT_GRID_COLUMNS].append(idx)
 

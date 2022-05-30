@@ -1,24 +1,20 @@
-<div>
-    <sly-card
-            title="Input Project"
-            subtitle="Download images and annotations from server to local app directory"
-            :options="{collapsable: true}"
-            :collapsed.sync="state.collapsed1"
-            ref="step1"
-    >
-        <sly-field title="" description="Project">
-            <a slot="title" target="_blank"
-               :href="`/projects/${data.projectId}/datasets`">{{data.projectName}} ({{data.projectImagesCount}}
-                images)</a>
-            <sly-icon slot="icon" :options="{ imageUrl: `${data.projectPreviewUrl}` }"/>
-        </sly-field>
-    </sly-card>
-</div>
-
-<div v-if="!state.collapsed1">
+<div style="height: fit-content; width: 100%; align-items: stretch">
     <el-row :gutter="10" type="flex">
-        <el-col :span="8">
-            <sly-card class="mt10">
+        <el-col :span="8"
+                id="left-visual-container"
+                style="width: 100%">
+            <sly-card title="Input Project"
+                      subtitle="Download images and annotations from server to local app directory"
+                      :options="{collapsable: true}"
+                      :collapsed.sync="state.collapsed1"
+                      ref="step1"
+                      style="width: 100%; height: 100%;">
+                <sly-field title="" description="Project">
+                    <a slot="title" target="_blank"
+                       :href="`/projects/${data.projectId}/datasets`">{{data.projectName}} ({{data.projectImagesCount}}
+                        images)</a>
+                    <sly-icon slot="icon" :options="{ imageUrl: `${data.projectPreviewUrl}` }"/>
+                </sly-field>
                 <div>
                     <div>
                         <sly-field title="Training data"
@@ -29,13 +25,35 @@
                             </el-select>
                             <div class="mt5" v-if="state.trainData === 'images'" style="color: #13ce66">
                                 <i class="zmdi zmdi-lamp"></i>
-                                <span>Original images from project will be used for training</span>
+                                <span>Model will be trained on tagged images</span>
                             </div>
                             <div class="mt5" v-if="state.trainData === 'objects'" style="color: #13ce66">
                                 <i class="zmdi zmdi-lamp"></i>
-                                <span>Original images will be cropped to objects, objects tags will be copied to image crops.</span>
+                                <span>Model will be trained on tagged objects</span>
                             </div>
                         </sly-field>
+                        <div style="border-bottom: 1px solid #e3e6ec; margin: 10px 0"></div>
+                        <div v-if="state.trainData === 'images' && !state.collapsed1">
+                            <div v-if="data.progress1" class="mt5">
+                                <div style="color: #20a0ff">{{data.progress1}}: {{data.progressCurrent1}} /
+                                    {{data.progressTotal1}}
+                                </div>
+                                <el-progress :percentage="data.progressPercent1"></el-progress>
+                            </div>
+                            <div v-if="data.done1">
+                                <i class="zmdi zmdi-check-circle mr5" style="color: #13ce66"></i>
+                                <span style="color: #5a6772;">Project has been successfully downloaded</span>
+                            </div>
+
+                            <el-button
+                                    type="primary"
+                                    class="regular mt10"
+                                    :loading="data.progress1"
+                                    @click="command('download_project')"
+                                    v-if="!data.done1 && state.trainData === 'images'">
+                                Download images
+                            </el-button>
+                        </div>
                     </div>
 
                     <div v-if="state.trainData === 'objects'">
@@ -92,37 +110,41 @@
                         </sly-field>
                     </div>
                 </div>
-            </sly-card>
-            <div class="mt10" v-if="state.trainData === 'objects'">
-                <div v-if="data.progress1" class="mt10">
-                    <div style="color: #20a0ff">{{data.progress1}}: {{data.progressCurrent1}} /
-                        {{data.progressTotal1}}
+                <div class="mt5" v-if="state.trainData === 'objects'">
+                    <div v-if="data.progress1" class="mt10">
+                        <div style="color: #20a0ff">{{data.progress1}}: {{data.progressCurrent1}} /
+                            {{data.progressTotal1}}
+                        </div>
+                        <el-progress :percentage="data.progressPercent1"></el-progress>
                     </div>
-                    <el-progress :percentage="data.progressPercent1"></el-progress>
+                    <div v-if="data.done1">
+                        <i class="zmdi zmdi-check-circle mr5" style="color: #13ce66"></i>
+                        <span style="color: #5a6772;">Project has been successfully downloaded</span>
+                    </div>
+                    <el-button
+                            type="primary"
+                            class="regular"
+                            :loading="data.progress1"
+                            @click="command('download_project_objects')"
+                            v-if="!data.done1 && state.trainData === 'objects'">
+                        Download objects
+                    </el-button>
                 </div>
-                <div v-if="data.done1">
-                    <i class="zmdi zmdi-check-circle mr5" style="color: #13ce66"></i>
-                    <span style="color: #5a6772;">Project has been successfully downloaded</span>
-                </div>
-                <el-button
-                        type="primary"
-                        class="regular"
-                        :loading="data.progress1"
-                        @click="command('download_project_objects')"
-                        v-if="!data.done1 && state.trainData === 'objects'">
-                    Download as objects
-                </el-button>
-            </div>
+            </sly-card>
         </el-col>
 
 
-        <el-col :span="8" style="flex: 1" v-if="state.trainData === 'objects'">
+        <el-col :span="8"
+                style="width: 100%; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start;"
+                id="right-visual-container"
+                v-if="state.trainData === 'objects' && !state.collapsed1">
             <sly-card :disabled="data.finished === true" title="Preview training data on random image"
-                      subtitle="Preview cropped objects from random original image from project"
-                      class="mt10">
+                      style="width: 100%; height: 100%;"
+                      subtitle="Preview cropped objects from random original image from project">
                 <div slot="header">
                     <el-button :disabled="data.finished === true"
-                               type="primary" @click="command('preview_objects'); state.showEmptyMessage=false; state.showPreviewProgess=true" >
+                               type="primary"
+                               @click="command('preview_objects'); state.showEmptyMessage=false; state.showPreviewProgress=true">
                         <i class="zmdi zmdi-grid" style="margin-right: 5px"></i> Preview
                     </el-button>
                 </div>
@@ -132,30 +154,10 @@
                         <h3>{{annotation.title}}</h3>
                     </template>
                 </sly-grid-gallery>
-                <p v-if="!state.showPreviewProgess">Press the button to preview training data</p>
-                <el-progress v-if="data.previewProgress !== 100 && state.showPreviewProgess" :percentage="data.previewProgress"></el-progress>
+                <p v-if="!state.showPreviewProgress">Press the button to preview training data</p>
+                <el-progress v-if="data.previewProgress !== 100 && state.showPreviewProgress"
+                             :percentage="data.previewProgress"></el-progress>
             </sly-card>
         </el-col>
     </el-row>
-</div>
-
-
-<div v-if="state.trainData === 'images' && !state.collapsed1">
-    <div v-if="data.progress1" class="mt10">
-        <div style="color: #20a0ff">{{data.progress1}}: {{data.progressCurrent1}} / {{data.progressTotal1}}</div>
-        <el-progress :percentage="data.progressPercent1"></el-progress>
-    </div>
-    <div v-if="data.done1">
-        <i class="zmdi zmdi-check-circle mr5" style="color: #13ce66"></i>
-        <span style="color: #5a6772;">Project has been successfully downloaded</span>
-    </div>
-
-    <el-button
-            type="primary"
-            class="regular mt10"
-            :loading="data.progress1"
-            @click="command('download_project')"
-            v-if="!data.done1 && state.trainData === 'images'">
-        Download as images
-    </el-button>
 </div>
