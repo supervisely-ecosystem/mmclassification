@@ -2,9 +2,13 @@ import os
 import functools
 from functools import lru_cache
 
-import globals as g
-import nn_utils
+import cv2
+import numpy as np
 import supervisely as sly
+
+import nn_utils
+import globals as g
+import functions as f
 
 
 @lru_cache(maxsize=10)
@@ -23,6 +27,7 @@ def send_error_data(func):
             request_id = kwargs["context"]["request_id"]
             g.my_app.send_response(request_id, data={"error": repr(e)})
         return value
+
     return wrapper
 
 
@@ -62,19 +67,8 @@ def inference_image_path(image_path, context, state, app_logger):
     res_path = image_path
     if "rectangle" in state:
         image = sly.image.read(image_path)  # RGB image
-
-        top, left, bottom, right = state["rectangle"]
-        height, width = image.shape[:2]
-        pad_percent = state.get("pad", 0)
-        if pad_percent > 0:
-            sly.logger.debug("before padding", extra={"top": top, "left": left, "right": right, "bottom": bottom})
-            pad_lr = int((right - left) / 100 * pad_percent)
-            pad_ud = int((bottom - top) / 100 * pad_percent)
-            top = max(0, top - pad_ud)
-            bottom = min(height - 1, bottom + pad_ud)
-            left = max(0, left - pad_lr)
-            right = min(width - 1, right + pad_lr)
-            sly.logger.debug("after padding", extra={"top": top, "left": left, "right": right, "bottom": bottom})
+        top, left, bottom, right = f.get_bbox_with_padding(rectangle=state['rectangle'], pad_percent=state.get('pad', 0),
+                                                           img_size=image.shape[:2])  # img_size=(h,w)
 
         rect = sly.Rectangle(top, left, bottom, right)
         canvas_rect = sly.Rectangle.from_size(image.shape[:2])
@@ -93,7 +87,7 @@ def inference_image_path(image_path, context, state, app_logger):
     res = nn_utils.inference_model(g.model, res_path, topn=state.get("topn", 5))
     if "rectangle" in state:
         sly.fs.silent_remove(res_path)
-    
+
     return res
 
 
@@ -119,7 +113,8 @@ def inference_image_url(api: sly.Api, task_id, context, state, app_logger):
 @sly.timeit
 @send_error_data
 def inference_image_id(api: sly.Api, task_id, context, state, app_logger):
-    app_logger.debug("Input data", extra={"state": state})
+    sly.logger.info("infer image id", extra={"state": state})
+
     image_id = state["image_id"]
 
     image_info = api.image.get_info_by_id(image_id)
@@ -137,16 +132,48 @@ def inference_image_id(api: sly.Api, task_id, context, state, app_logger):
 @sly.timeit
 @send_error_data
 def inference_batch_ids(api: sly.Api, task_id, context, state, app_logger):
-    raise NotImplementedError("Please contact tech support")
+    sly.logger.info("inference batch ids called:", extra={"state": state})
+
+    # load images
+    images_nps: np.array = f.get_nps_images(images_ids=state["images_ids"])
+    images_to_process: np.array = f.crop_images(images_nps=images_nps,
+                                                rectangles=state.get('rectangles'),
+                                                padding=state.get('pad', 0))
+
+    # inference images
+    images_indexes_to_process = np.asarray([index for index, img_np in enumerate(images_to_process)
+                                            if img_np is not None])
+    inference_results = nn_utils.inference_model_batch(model=g.model,
+                                                       images_nps=images_to_process[images_indexes_to_process],
+                                                       topn=state.get('topn', 5))
+
+    # return output
+    results = [None for _ in images_nps]
+    for index, row in enumerate(inference_results):
+        results[images_indexes_to_process[index]] = row
+
+    g.my_app.send_response(request_id=context["request_id"], data=results)
 
 
-def debug_inference():
-    image_id = 903277
-    image_path = f"./data/images/{image_id}.jpg"
-    if not sly.fs.file_exists(image_path):
-        g.my_app.public_api.image.download_path(image_id, image_path)
-    res = nn_utils.inference_model(g.model, image_path, topn=5)
-
+# def debug_inference1():
+#     image_id = 927270
+#     image_path = f"./data/images/{image_id}.jpg"
+#     if not sly.fs.file_exists(image_path):
+#         g.my_app.public_api.image.download_path(image_id, image_path)
+#     res = nn_utils.inference_model(g.model, image_path, topn=5)
+# #
+# #
+# def debug_inference2():
+#     image_id = 927270
+#     img_np = cv2.cvtColor(g.my_app.public_api.image.download_np(image_id), cv2.COLOR_BGR2RGB)
+#     res = nn_utils.inference_model(g.model, img_np, topn=5)
+# #
+# #
+# def debug_inference3():
+#     image_id = 927270
+#     img_np = cv2.cvtColor(g.my_app.public_api.image.download_np(image_id), cv2.COLOR_BGR2RGB)
+#     res = nn_utils.inference_model_batch(g.model, [img_np, img_np, img_np], topn=5)
+#
 
 def main():
     sly.logger.info("Script arguments", extra={
@@ -160,9 +187,14 @@ def main():
     nn_utils.construct_model_meta()
     nn_utils.deploy_model()
 
+    # debug_inference1()
+    # debug_inference2()
+    # debug_inference3()
+
+    sly.logger.info("nps will be converted to RGB")
     g.my_app.run()
 
 
-#@TODO: readme + gif - how to replace tag2urls file + release another app
+# @TODO: readme + gif - how to replace tag2urls file + release another app
 if __name__ == "__main__":
     sly.main_wrapper("main", main)

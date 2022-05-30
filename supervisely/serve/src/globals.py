@@ -45,3 +45,5 @@ model = None
 meta: sly.ProjectMeta = None
 gt_labels = None  # name -> index
 labels_urls = None
+
+batch_size = 256  # @TODO: from modal window
