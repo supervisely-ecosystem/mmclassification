@@ -8,7 +8,7 @@ from .mnist import MNIST, FashionMNIST
 from .multi_label import MultiLabelDataset
 from .samplers import DistributedSampler
 from .voc import VOC
-from sly_dataset import Supervisely
+# from sly_dataset import Supervisely
 
 __all__ = [
     'BaseDataset', 'Supervisely', 'ImageNet', 'CIFAR10', 'CIFAR100', 'MNIST', 'FashionMNIST',

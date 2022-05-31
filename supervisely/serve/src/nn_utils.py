@@ -1,4 +1,6 @@
 import os
+
+import numpy as np
 import torch
 import supervisely_lib as sly
 from mmcls.apis import init_model
@@ -60,7 +62,7 @@ def construct_model_meta():
 def deploy_model():
     g.model = init_model(g.local_model_config_path, g.local_weights_path, device=g.device)
     g.model.CLASSES = sorted(g.gt_labels, key=g.gt_labels.get)
-    sly.logger.info("Model has been successfully deployed")
+    sly.logger.info("🟩 Model has been successfully deployed")
 
 
 def inference_model(model, img, topn=5):
@@ -106,3 +108,48 @@ def inference_model(model, img, topn=5):
                 'class': model.CLASSES[label]
             })
     return result
+
+
+def inference_model_batch(model, images_nps, topn=5):
+    """Inference image(s) with the classifier.
+
+    Args:
+        model (nn.Module): The loaded classifier.
+        img (str/ndarray): The image filename or loaded image.
+
+    Returns:
+        result (list of dict): The classification results that contains
+            `class_name`, `pred_label` and `pred_score`.
+    """
+    cfg = model.cfg
+    device = next(model.parameters()).device  # model device
+    # build the data pipeline
+    if cfg.data.test.pipeline[0]['type'] == 'LoadImageFromFile':
+        cfg.data.test.pipeline.pop(0)
+
+    test_pipeline = Compose(cfg.data.test.pipeline)
+
+    with torch.no_grad():
+
+        inference_results = []
+        for images_batch in sly.batched(images_nps, g.batch_size):
+            data = [dict(img=img) for img in images_batch]
+
+            data = [test_pipeline(row) for row in data]
+            data = collate(data, samples_per_gpu=1)
+
+            if next(model.parameters()).is_cuda:
+                # scatter to specified GPU
+                data = scatter(data, [device])[0]
+
+            batch_scores = np.asarray(model(return_loss=False, **data))
+            batch_top_indexes = batch_scores.argsort(axis=1)[:, -topn:][:, ::-1]
+
+            for scores, top_indexes in zip(batch_scores, batch_top_indexes):
+                inference_results.append({
+                    'label': top_indexes.astype(int).tolist(),
+                    'score': scores[top_indexes].astype(float).tolist(),
+                    'class': np.asarray(model.CLASSES)[top_indexes].tolist()
+                })
+
+    return inference_results

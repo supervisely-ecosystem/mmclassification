@@ -11,7 +11,8 @@
   "main_script": "supervisely/serve/src/sly_serve.py",
   "modal_template": "supervisely/serve/src/modal.html",
   "modal_template_state": {
-    "device": "cuda:0"
+    "device": "cuda:0",
+    "batch_size": 256
   },
   "task_location": "application_sessions",
   "icon": "https://i.imgur.com/ylYHWiY.png",
