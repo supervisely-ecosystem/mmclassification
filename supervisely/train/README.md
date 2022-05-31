@@ -62,7 +62,21 @@ Watch [how-to video](https://youtu.be/R9sbH3biCmQ) for more details:
 
 * UI update: training data selector with crops preview
 
-<img src="https://i.imgur.com/sNdE95t.png">
+<div>
+  <table>
+    <tr style="width: 100%">
+      <td>
+        <b>Images</b>
+        <img src="https://i.imgur.com/5A5mQKj.png" style="width:150%;"/>
+      </td>
+      <td>
+        <b>Objects</b>
+        <img src="https://i.imgur.com/BXXWYvu.png" style="width:150%;"/>
+      </td>
+    </tr>
+  </table>
+</div>
+
   
 * Example images will be uploaded into the resulting directory for use with [Serve MMClassification](https://app.supervise.ly/ecosystem/apps/supervisely-ecosystem%252Fmmclassification%252Fsupervisely%252Fserve) app
 
