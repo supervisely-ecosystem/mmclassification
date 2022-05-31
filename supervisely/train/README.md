@@ -5,6 +5,7 @@
 
 <p align="center">
   <a href="#Overview">Overview</a> •
+  <a href="#Updates">Updates</a> •
   <a href="#How-To-Run">How To Run</a> •
   <a href="#How-To-Use">How To Use</a>
 </p>
@@ -34,6 +35,36 @@ Watch [how-to video](https://youtu.be/R9sbH3biCmQ) for more details:
     <img src="https://i.imgur.com/O47n1S1.png" alt="SLY_EMBEDED_VIDEO_LINK"  style="max-width:100%;">
 </a>
 
+# Updates
+###v1.2.0
+* Implement [crop objects on images](https://ecosystem.supervise.ly/apps/crop-objects-on-images) app
+
+<img src="https://camo.githubusercontent.com/f35b94303160d07151a8f182c4f69358f84c30f2e843c39c7acdb9817732c932/68747470733a2f2f692e696d6775722e636f6d2f775a694d55576e2e706e67">
+
+* Object tags will be copied to image crops automatically
+
+<div>
+  <table>
+    <tr style="width: 100%">
+      <td>
+        <b>Full image</b>
+        <img src="https://i.imgur.com/1fqd0OZ.png" style="width:150%;"/>
+      </td>
+      <td>
+        <b>Object crop</b>
+        <img src="https://i.imgur.com/sFJWuAp.png" style="width:150%;"/>
+      </td>
+    </tr>
+  </table>
+</div>
+
+* UI update: training data selector with crops preview
+
+<img src="https://i.imgur.com/sNdE95t.png">
+  
+* Example images will be uploaded into the resulting directory for use with [Serve MMClassification](https://app.supervise.ly/ecosystem/apps/supervisely-ecosystem%252Fmmclassification%252Fsupervisely%252Fserve) app
+
+<img src="https://i.imgur.com/WEyerpQ.png">
 
 # How to Run
 1. Add app to your team from Ecosystem
