@@ -222,13 +222,7 @@ def get_random_image():
 
 def upload_img_example_to_files(api, info):
     img_path = os.path.join(g.project_dir, info.dataset_id, "img", info.name)
-    move_img_to_artifacts(img_path)
-    remote_image_path = os.path.join(remote_images_dir, info.name)
+    remote_image_path = os.path.join("mmclassification", f"{g.task_id}_{g.project_info.name}",
+                                     "artifacts", "example_images", info.name)
     info = api.file.upload(g.team_id, img_path, remote_image_path)
     return info
-
-
-def move_img_to_artifacts(img_path):
-    img_name = get_file_name_with_ext(img_path)
-    dst_path = os.path.join(artifacts_example_img_dir, img_name)
-    shutil.copyfile(img_path, dst_path, follow_symlinks=False)

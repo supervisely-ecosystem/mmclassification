@@ -3,7 +3,7 @@ from pathlib import Path
 import sys
 import supervisely_lib as sly
 from supervisely.app.v1.app_service import AppService
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 
 root_source_dir = str(Path(sys.argv[0]).parents[3])
 sly.logger.info(f"Root source directory: {root_source_dir}")
@@ -17,10 +17,10 @@ sys.path.append(ui_sources_dir)
 sly.logger.info(f"Added to sys.path: {ui_sources_dir}")
 
 # @TODO: for debug
-# debug_env_path = os.path.join(root_source_dir, "supervisely", "train", "debug.env")
-# secret_debug_env_path = os.path.join(root_source_dir, "supervisely", "train", "secret_debug.env")
-# load_dotenv(debug_env_path)
-# load_dotenv(secret_debug_env_path, override=True)
+debug_env_path = os.path.join(root_source_dir, "supervisely", "train", "debug.env")
+secret_debug_env_path = os.path.join(root_source_dir, "supervisely", "train", "secret_debug.env")
+load_dotenv(debug_env_path)
+load_dotenv(secret_debug_env_path, override=True)
 
 my_app = AppService()
 api = my_app.public_api
