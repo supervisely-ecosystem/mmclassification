@@ -36,7 +36,9 @@ Watch [how-to video](https://youtu.be/R9sbH3biCmQ) for more details:
 </a>
 
 # Updates
+
 ### v1.2.0
+
 * Implement [crop objects on images](https://ecosystem.supervise.ly/apps/crop-objects-on-images) app
 
 <img src="https://camo.githubusercontent.com/f35b94303160d07151a8f182c4f69358f84c30f2e843c39c7acdb9817732c932/68747470733a2f2f692e696d6775722e636f6d2f775a694d55576e2e706e67">
