@@ -383,15 +383,16 @@ def preview_objects(api: sly.Api, task_id, context, state, app_logger):
         if idx == 0:
             grid_data[idx] = {
                 "url": info.full_storage_url,
-                "title": f"Original image ({image_name})",
+                "image_name": f"Original image ({image_name})",
                 "figures": [label.to_json() for label in single_crop[idx][1].labels],
             }
         else:
             object_tags_names = [tag['name'] for tag in single_crop[idx][1].labels[0].tags.to_json()]
-            obj_tags = ", ".join(object_tags_names)
+            # obj_tags = ", ".join(object_tags_names)
             grid_data[idx] = {
                 "url": info.full_storage_url,
-                "title": f"Object tags: {obj_tags}",
+                # "title": object_tags_names,
+                "tag_names": object_tags_names,
                 "figures": [],
             }
         grid_layout[idx % CNT_GRID_COLUMNS].append(idx)

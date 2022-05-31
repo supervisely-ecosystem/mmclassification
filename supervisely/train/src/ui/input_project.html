@@ -72,9 +72,10 @@
                                 </div>
                             </sly-field>
                         </div>
+                        <div style="border-bottom: 1px solid #e3e6ec; margin: 10px 0"></div>
 
-                        <sly-field :disabled="data.done1 === true" title="Settings" style="margin-top: 10px">
-                            <sly-field title="Padding for objects crop"
+                        <div :disabled="data.done1 === true" style="margin-top: 10px">
+                            <sly-field title="Padding for object crop"
                                        description="Padding is measured in percent of corresponding side
                                         (width of height of bounding box)">
                                 <div class="fflex">
@@ -107,7 +108,7 @@
                                 </div>
                             </sly-field>
                             <div style="border-bottom: 1px solid #e3e6ec; margin: 10px 0"></div>
-                        </sly-field>
+                        </div>
                     </div>
                 </div>
                 <div class="mt5" v-if="state.trainData === 'objects'">
@@ -148,12 +149,21 @@
                         <i class="zmdi zmdi-grid" style="margin-right: 5px"></i> Preview
                     </el-button>
                 </div>
+
                 <sly-grid-gallery v-if="data.previewProgress === 100" :content="data.preview.content"
                                   :options="data.preview.options">
                     <template v-slot:card-footer="{ annotation }">
-                        <h3>{{annotation.title}}</h3>
+                        <div>
+                            <ul v-if="annotation.tag_names" style="margin: 0px; list-style: none; padding: 0; text-align: center">
+                                <li v-for="(val,index) of annotation.tag_names" :key="val" class="mt5">
+                                    <el-tag type="primary">{{ val }}</el-tag>
+                                </li>
+                            </ul>
+                            <h3 v-else-if="annotation.image_name">{{annotation.image_name}}</h3>
+                        </div>
                     </template>
                 </sly-grid-gallery>
+
                 <p v-if="!state.showPreviewProgress">Press the button to preview training data</p>
                 <el-progress v-if="data.previewProgress !== 100 && state.showPreviewProgress"
                              :percentage="data.previewProgress"></el-progress>
