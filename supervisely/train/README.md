@@ -60,7 +60,7 @@ Watch [how-to video](https://youtu.be/R9sbH3biCmQ) for more details:
   </table>
 </div>
 
-* UI update: training data selector with crops preview
+* UI update: training data selector with objects crops preview
 
 <img src="https://i.imgur.com/BXXWYvu.png" style="width:150%;"/>
 
