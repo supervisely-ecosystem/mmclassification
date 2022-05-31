@@ -3,6 +3,8 @@ import supervisely_lib as sly
 from sly_train_progress import init_progress
 import sly_globals as g
 from tools.train import main as mm_train
+from supervisely.io.fs import list_files_recursively
+
 
 _open_lnk_name = "open_app.lnk"
 
@@ -92,8 +94,12 @@ def upload_artifacts_and_log_progress():
     progress_cb = partial(upload_monitor, api=g.api, task_id=g.task_id, progress=progress)
 
     remote_dir = f"/mmclassification/{g.task_id}_{g.project_info.name}"
-    res_dir = g.api.file.upload_directory(g.team_id, g.artifacts_dir, remote_dir, progress_size_cb=progress_cb)
-    return res_dir
+
+    local_files = list_files_recursively(g.artifacts_dir)
+    remote_files = [file.replace(g.artifacts_dir, remote_dir) for file in local_files]
+
+    g.api.file.upload_bulk(g.team_id, local_files, remote_files, progress_cb=progress_cb)
+    return remote_dir
 
 
 @g.my_app.callback("train")

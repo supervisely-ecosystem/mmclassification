@@ -156,7 +156,7 @@
                         <div>
                             <ul v-if="annotation.tag_names" style="margin: 0px; list-style: none; padding: 0; text-align: center">
                                 <li v-for="(val,index) of annotation.tag_names" :key="val" class="mt5">
-                                    <el-tag type="primary">{{ val }}</el-tag>
+                                    <el-tag type="primary"><i class="zmdi zmdi-label mr5"></i> {{ val }}</el-tag>
                                 </li>
                             </ul>
                             <h3 v-else-if="annotation.image_name">{{annotation.image_name}}</h3>

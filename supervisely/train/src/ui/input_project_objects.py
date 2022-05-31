@@ -387,11 +387,15 @@ def preview_objects(api: sly.Api, task_id, context, state, app_logger):
                 "figures": [label.to_json() for label in single_crop[idx][1].labels],
             }
         else:
-            object_tags_names = [tag['name'] for tag in single_crop[idx][1].labels[0].tags.to_json()]
-            # obj_tags = ", ".join(object_tags_names)
+            object_tags_names = []
+            for tag in single_crop[idx][1].labels[0].tags.to_json():
+                if tag.get("value") is None:
+                    object_tags_names.append(tag.get('name'))
+                else:
+                    object_tags_names.append(f"{tag.get('name')}: {tag.get('value')}")
+
             grid_data[idx] = {
                 "url": info.full_storage_url,
-                # "title": object_tags_names,
                 "tag_names": object_tags_names,
                 "figures": [],
             }
