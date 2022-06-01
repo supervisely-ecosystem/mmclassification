@@ -39,34 +39,13 @@ Watch [how-to video](https://youtu.be/R9sbH3biCmQ) for more details:
 
 ### v1.2.0
 
-* Implement [Crop objects on images](https://ecosystem.supervise.ly/apps/crop-objects-on-image) app
+By default, classification model trains on the tagged images. There are cases, when user need to use tagged objects as training examples. To cover this scenario, we added additional mode to training dashboard. Now user can run training on images or objects crops. If user selects `training on objects` mode, then the additional settings with preview will be available. It means that user dont't need to run [Crop objects on images](https://ecosystem.supervise.ly/apps/crop-objects-on-images) app before training and prepare temporary project with objects crops, now it will be done automatically in training dashboard. 
 
-<img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/crop-objects-on-image" src="https://i.imgur.com/wZiMUWn.png" width="450px" style='padding-bottom: 20px'/>  
-
-* Object tags will be copied to image crops automatically
-
-<div>
-  <table>
-    <tr style="width: 100%">
-      <td>
-        <b>Full image</b>
-        <img src="https://i.imgur.com/1fqd0OZ.png" style="width:150%;"/>
-      </td>
-      <td>
-        <b>Object crop</b>
-        <img src="https://i.imgur.com/sFJWuAp.png" style="width:150%;"/>
-      </td>
-    </tr>
-  </table>
-</div>
-
-* UI update: training data selector with objects crops preview
+Here is the UI screenshot with settings and preview if `training on objects` mode is selected:
 
 <img src="https://i.imgur.com/BXXWYvu.png" style="width:150%;"/>
 
-
-  
-* Example images will be uploaded into the resulting directory for use with [Serve MMClassification](https://app.supervise.ly/ecosystem/apps/supervisely-ecosystem%252Fmmclassification%252Fsupervisely%252Fserve) app
+Other features, like saving image examples for every class for trained classification model also supports new mode, technically it is achieved by saving images with other training artifacts (like checkpoints and metrics) in resulting directory in `Team Files`. [Serve MMClassification](https://app.supervise.ly/ecosystem/apps/supervisely-ecosystem%252Fmmclassification%252Fsupervisely%252Fserve) app can correctly use them with other inference applications from ecosystem: 
 
 <img src="https://i.imgur.com/WEyerpQ.png">
 
