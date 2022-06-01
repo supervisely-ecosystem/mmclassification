@@ -1,12 +1,11 @@
 import os
 from collections import namedtuple
-import shelve
 import supervisely_lib as sly
 import sly_globals as g
 from sly_train_progress import get_progress_cb, reset_progress, init_progress
 
 progress_index = 1
-_images_infos = None # dataset_name -> image_name -> image_info
+_images_infos = None  # dataset_name -> image_name -> image_info
 _cache_base_filename = os.path.join(g.my_app.data_dir, "images_info")
 _cache_path = _cache_base_filename + ".db"
 project_fs: sly.Project = None
@@ -21,6 +20,8 @@ def init(data, state):
     init_progress(progress_index, data)
     data["done1"] = False
     state["collapsed1"] = False
+
+    state["trainData"] = "images"  # "objects"
 
 
 @g.my_app.callback("download_project")

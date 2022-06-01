@@ -12,6 +12,7 @@ def init(project_info, project_meta: sly.ProjectMeta, data, state):
         {"name": "val", "type": "primary"},
         {"name": "total", "type": "gray"},
     ]
+
     data["totalImagesCount"] = project_info.items_count
 
     train_percent = 80

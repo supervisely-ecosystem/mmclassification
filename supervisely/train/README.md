@@ -5,6 +5,7 @@
 
 <p align="center">
   <a href="#Overview">Overview</a> •
+  <a href="#Updates">Updates</a> •
   <a href="#How-To-Run">How To Run</a> •
   <a href="#How-To-Use">How To Use</a>
 </p>
@@ -34,6 +35,19 @@ Watch [how-to video](https://youtu.be/R9sbH3biCmQ) for more details:
     <img src="https://i.imgur.com/O47n1S1.png" alt="SLY_EMBEDED_VIDEO_LINK"  style="max-width:100%;">
 </a>
 
+# Updates
+
+### v1.2.0
+
+By default, classification model trains on the tagged images. There are cases, when user need to use tagged objects as training examples. To cover this scenario, we added additional mode to training dashboard. Now user can run training on images or objects crops. If user selects `training on objects` mode, then the additional settings with preview will be available. It means that user dont't need to run [Crop objects on images](https://ecosystem.supervise.ly/apps/crop-objects-on-images) app before training and prepare temporary project with objects crops, now it will be done automatically in training dashboard. 
+
+Here is the UI screenshot with settings and preview if `training on objects` mode is selected:
+
+<img src="https://i.imgur.com/BXXWYvu.png" style="width:150%;"/>
+
+Other features, like saving image examples for every class for trained classification model also supports new mode, technically it is achieved by saving images with other training artifacts (like checkpoints and metrics) in resulting directory in `Team Files`. [Serve MMClassification](https://app.supervise.ly/ecosystem/apps/supervisely-ecosystem%252Fmmclassification%252Fsupervisely%252Fserve) app can correctly use them with other inference applications from ecosystem: 
+
+<img src="https://i.imgur.com/WEyerpQ.png">
 
 # How to Run
 1. Add app to your team from Ecosystem

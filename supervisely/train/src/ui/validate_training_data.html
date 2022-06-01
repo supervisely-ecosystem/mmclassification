@@ -38,7 +38,8 @@
     </table>
     <el-button type="primary" class="regular mt10"
                v-if="!data.done4"
-               @click="command('validate_data')">
+               :loading="state.isValidating"
+               @click="state.isValidating = true; command('validate_data')">
         Validate
     </el-button>
     <div v-if="data.done4" class="mt10">

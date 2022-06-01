@@ -30,14 +30,26 @@ team_id = int(os.environ['context.teamId'])
 workspace_id = int(os.environ['context.workspaceId'])
 project_id = int(os.environ['modal.state.slyProjectId'])
 
+project_stats = api.project.get_stats(project_id)
 project_info = api.project.get_info_by_id(project_id)
 if project_info is None:  # for debug
     raise ValueError(f"Project with id={project_id} not found")
 
 # sly.fs.clean_dir(my_app.data_dir)  # @TODO: for debug
 
+
+
 project_dir = os.path.join(my_app.data_dir, "sly_project")
 project_meta = sly.ProjectMeta.from_json(api.project.get_meta(project_id))
+project_meta_json = project_meta.to_json()
+
+image_ids = []
+for dataset in api.dataset.get_list(project_info.id):
+    image_infos = api.image.get_list(dataset.id)
+    image_ids.extend([info.id for info in image_infos])
+
+images_infos = None
+my_app.logger.info("Image ids are initialized", extra={"count": len(image_ids)})
 
 artifacts_dir = os.path.join(my_app.data_dir, "artifacts")
 sly.fs.mkdir(artifacts_dir)
@@ -45,5 +57,3 @@ info_dir = os.path.join(artifacts_dir, "info")
 sly.fs.mkdir(info_dir)
 checkpoints_dir = os.path.join(artifacts_dir, "checkpoints")
 sly.fs.mkdir(checkpoints_dir)
-
-

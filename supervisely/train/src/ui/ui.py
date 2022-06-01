@@ -1,6 +1,7 @@
 import supervisely_lib as sly
 import sly_globals as g
 import input_project as input_project
+import input_project_objects
 import tags
 import splits as train_val_split
 import validate_training_data
@@ -16,6 +17,9 @@ def init(data, state):
     state["activeStep"] = 1
     state["restartFrom"] = None
     input_project.init(data, state)
+
+    input_project_objects.init(data, state)
+
     train_val_split.init(g.project_info, g.project_meta, data, state)
     tags.init(data, state)
     validate_training_data.init(data, state)

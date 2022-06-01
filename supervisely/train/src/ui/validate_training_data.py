@@ -1,15 +1,19 @@
 from collections import defaultdict
 import os
-import supervisely_lib as sly
+import supervisely as sly
+from supervisely.io.fs import mkdir
 import sly_globals as g
 import input_project
+import input_project_objects
 import random
 import tags
-
 
 report = []
 final_tags = []
 final_tags2images = defaultdict(lambda: defaultdict(list))
+
+remote_images_dir = os.path.join("temp", str(g.task_id))
+artifacts_example_img_dir = os.path.join(g.my_app.data_dir, "artifacts", "example_images")
 
 
 def init(data, state):
@@ -21,14 +25,20 @@ def init(data, state):
     data["cntWarnings"] = 0
     data["report"] = None
 
+    state["isValidating"] = False
+
 
 @g.my_app.callback("validate_data")
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def validate_data(api: sly.Api, task_id, context, state, app_logger):
+    # g.api.app.set_field(g.task_id, "state.isValidating", True)
     report.clear()
     final_tags.clear()
     final_tags2images.clear()
+
+    if state["trainData"] == "objects":
+        mkdir(artifacts_example_img_dir, True)
 
     report.append({
         "type": "info",
@@ -116,6 +126,10 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
     tags_examples = defaultdict(list)
     for tag_name, infos in final_tags2images.items():
         for info in (infos['train'] + infos['val'])[:tags._max_examples_count]:
+
+            if state["trainData"] == "objects":
+                info = upload_img_example_to_files(api, info)
+
             tags_examples[tag_name].append(
                 g.api.image.preview_url(info.full_storage_url, height=tags._preview_height)
             )
@@ -176,12 +190,15 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         sly.json.dump_json_file(gt_labels, os.path.join(g.info_dir, "gt_labels.json"))
 
         # save splits
-        #final_tags2images[tag_name][split].extend(_final_infos)
+        # final_tags2images[tag_name][split].extend(_final_infos)
         split_paths = defaultdict(list)
         _splits_to_dump = defaultdict(lambda: defaultdict(list))
         for tag_name, splits in final_tags2images.items():
             for split_name, infos in splits.items():
-                paths = [input_project.get_paths_by_image_id(info.id) for info in infos]
+                if state["trainData"] == "images":
+                    paths = [input_project.get_paths_by_image_id(info.id) for info in infos]
+                else:
+                    paths = [input_project_objects.get_paths_by_image_id(info.id) for info in infos]
                 split_paths[split_name].extend(paths)
         sly.json.dump_json_file(split_paths, os.path.join(g.project_dir, "splits.json"))
 
@@ -189,6 +206,7 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
             {"field": "state.collapsed5", "payload": False},
             {"field": "state.disabled5", "payload": False},
             {"field": "state.activeStep", "payload": 5},
+            {"field": "state.isValidating", "payload": False},
         ])
     g.api.app.set_fields(g.task_id, fields)
 
@@ -196,6 +214,13 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
 def get_random_image():
     rand_key = random.choice(list(final_tags2images.keys()))
     info = random.choice(final_tags2images[rand_key]['train'])
-    #ImageInfo = namedtuple('ImageInfo', image_info_dict)
-    #info = ImageInfo(**image_info_dict)
+    # ImageInfo = namedtuple('ImageInfo', image_info_dict)
+    # info = ImageInfo(**image_info_dict)
+    return info
+
+
+def upload_img_example_to_files(api, info):
+    img_path = os.path.join(g.project_dir, info.dataset_id, "img", info.name)
+    remote_image_path = os.path.join("mmclassification", f"{g.task_id}_{g.project_info.name}", "example_images", info.name)
+    info = api.file.upload(g.team_id, img_path, remote_image_path)
     return info
