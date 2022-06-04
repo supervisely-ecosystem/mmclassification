@@ -2,9 +2,10 @@
   "name": "Train MMClassification",
   "type": "app",
   "categories": [
-    "open-mmlab",
     "neural network",
-    "classification"
+    "images",
+    "classification",
+    "train"
   ],
   "description": "Dashboard to configure, start and monitor training",
   "docker_image": "supervisely/base-pytorch:6.0.22",
