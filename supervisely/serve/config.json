@@ -2,9 +2,10 @@
   "name": "Serve MMClassification",
   "type": "app",
   "categories": [
-    "open-mmlab",
     "neural network",
-    "classification"
+    "images",
+    "classification",
+    "serve"
   ],
   "description": "Deploy model as REST API service",
   "docker_image": "supervisely/base-pytorch:6.0.22",
