@@ -68,8 +68,8 @@ def init_cache(state, split_items, split_name, progress_cb):
             for tag in ann.img_tags:
                 tag2images[tag.name][split_name].append(img_info)
                 tag2urls[tag.name].append({
-                    "moreExamples": [img_info.full_storage_url],
-                    "preview": g.api.image.preview_url(img_info.full_storage_url, height=_preview_height)
+                    "moreExamples": [img_info.path_original],
+                    "preview": g.api.image.preview_url(img_info.path_original, height=_preview_height)
                 })
         progress_cb(1)
 

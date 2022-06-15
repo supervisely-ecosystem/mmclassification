@@ -382,7 +382,7 @@ def preview_objects(api: sly.Api, task_id, context, state, app_logger):
 
         if idx == 0:
             grid_data[idx] = {
-                "url": info.full_storage_url,
+                "url": info.storage_path,
                 "image_name": f"Original image ({image_name})",
                 "figures": [label.to_json() for label in single_crop[idx][1].labels],
             }
@@ -395,7 +395,7 @@ def preview_objects(api: sly.Api, task_id, context, state, app_logger):
                     object_tags_names.append(f"{tag.get('name')}: {tag.get('value')}")
 
             grid_data[idx] = {
-                "url": info.full_storage_url,
+                "url": info.storage_path,
                 "tag_names": object_tags_names,
                 "figures": [],
             }
