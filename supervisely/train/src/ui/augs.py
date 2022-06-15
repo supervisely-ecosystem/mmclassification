@@ -141,9 +141,11 @@ def preview_augs(api: sly.Api, task_id, context, state, app_logger):
     else:
         image_info, img, ann = process_random_object_image(api)
 
-    # if state["trainData"] == "images": path_original
-    # else storage_path
-    gallery.set_left("before", image_info.path_original, ann)
+    if state["trainData"] == "images":
+        gallery.set_left("before", image_info.path_original, ann)
+    else:
+        gallery.set_left("before", image_info.storage_path, ann)
+
     _, res_img, res_ann = sly.imgaug_utils.apply(augs_ppl, g.project_meta, img, ann)
     local_image_path = os.path.join(g.my_app.data_dir, "preview_augs.jpg")
     sly.image.write(local_image_path, res_img)

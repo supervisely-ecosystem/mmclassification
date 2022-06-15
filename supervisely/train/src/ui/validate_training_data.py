@@ -126,13 +126,15 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
     tags_examples = defaultdict(list)
     for tag_name, infos in final_tags2images.items():
         for info in (infos['train'] + infos['val'])[:tags._max_examples_count]:
-
             if state["trainData"] == "objects":
                 info = upload_img_example_to_files(api, info)
-
-            tags_examples[tag_name].append(
-                g.api.image.preview_url(info.full_storage_url, height=tags._preview_height)
-            )
+                tags_examples[tag_name].append(
+                    g.api.image.preview_url(info.storage_path, height=tags._preview_height)
+                )
+            else:
+                tags_examples[tag_name].append(
+                    g.api.image.preview_url(info.path_original, height=tags._preview_height)
+                )
     sly.json.dump_json_file(tags_examples, os.path.join(g.info_dir, "tag2urls.json"))
 
     report.append({
