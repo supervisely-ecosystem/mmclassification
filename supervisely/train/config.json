@@ -23,5 +23,6 @@
     "context_root": "Neural Networks",
     "context_category": "MM Classification"
   },
-  "poster": "https://i.imgur.com/UvRU16x.png"
+  "poster": "https://i.imgur.com/UvRU16x.png",
+  "community_agent": false
 }
