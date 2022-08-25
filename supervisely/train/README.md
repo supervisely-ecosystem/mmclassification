@@ -1,5 +1,6 @@
 <div align="center" markdown>
-<img src="https://i.imgur.com/UvRU16x.png"/>
+<img src="https://user-images.githubusercontent.com/106374579/186635069-20af9595-af3d-4765-9517-c2df3c29fc1a.png"/>
+
 
 # Train MMClassification
 
