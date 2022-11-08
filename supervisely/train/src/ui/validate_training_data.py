@@ -91,19 +91,21 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         for split, infos in tags.tag2images[tag_name].items():
             for info in infos:
                 collisions[split][info.id] += 1
-    num_collision_images = 0
-    for split, split_collisions in collisions.items():
-        for image_id, counter in split_collisions.items():
-            if counter > 1:
-                num_collision_images += 1
-    report.append({
-        "title": "Images with tags collisions",
-        "count": num_collision_images,
-        "type": "warning" if num_collision_images > 0 else "pass",
-        "description": "Images with more than one training tags assigned, they will be removed from train/val sets. Use app 'Tags Co-Occurrence Matrix' to discover such images"
-    })
+    
+    if state["cls_mode"] == "one_label":
+        num_collision_images = 0
+        for split, split_collisions in collisions.items():
+            for image_id, counter in split_collisions.items():
+                if counter > 1:
+                    num_collision_images += 1
+        report.append({
+            "title": "Images with tags collisions",
+            "count": num_collision_images,
+            "type": "warning" if num_collision_images > 0 else "pass",
+            "description": "Images with more than one training tags assigned, they will be removed from train/val sets. Use app 'Tags Co-Occurrence Matrix' to discover such images"
+        })
 
-    # remove collision images from sets
+    # remove collision images from sets if cls_mode == 'one_label'
     final_images_count = 0
     final_train_size = 0
     final_val_size = 0
@@ -111,13 +113,14 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         for split, infos in tags.tag2images[tag_name].items():
             _final_infos = []
             for info in infos:
-                if collisions[split][info.id] == 1:
-                    _final_infos.append(info)
-                    final_images_count += 1
-                    if split == "train":
-                        final_train_size += 1
-                    else:
-                        final_val_size += 1
+                if collisions[split][info.id] != 1 and state["cls_mode"] == "one_label":
+                    continue
+                _final_infos.append(info)
+                final_images_count += 1
+                if split == "train":
+                    final_train_size += 1
+                else:
+                    final_val_size += 1
             if len(_final_infos) > 0:
                 final_tags2images[tag_name][split].extend(_final_infos)
         if tag_name in final_tags2images and len(final_tags2images[tag_name]["train"]) > 0:

@@ -37,6 +37,14 @@
             </table>
         </sly-field>
     </div>
+    <div v-if="data.tagsBalance">
+        <hr style="border: 0; border-top: 1px solid rgba(0,0,0,.12); margin-bottom: 15px;"/>
+        <sly-field title="Classification task mode">
+            <div><el-radio v-model="state.cls_mode" :disabled="data.done3" label="one_label">Classic classification task (one label)</el-radio></div>
+            <div><el-radio v-model="state.cls_mode" :disabled="data.done3" label="multi_label">Multi-label classification</el-radio></div>
+        </sly-field>
+    </div>
+    
     <div class="mt10">
         <el-button type="primary" class="regular mr10"
                    :loading="state.tagsInProgress"

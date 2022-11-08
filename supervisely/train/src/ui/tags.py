@@ -40,6 +40,7 @@ def init(data, state):
         "maxHeight": "400px"
     }
     data["imageSliderOptions"] = image_slider_options
+    state["cls_mode"] = "one_label"
     data["done3"] = False
     data["skippedTags"] = []
     state["collapsed3"] = True
