@@ -113,6 +113,11 @@ def generate_dataset_config(state):
                            lambda m: _replace_function("dataset_type", ds_name, "{} = '{}'", m),
                            py_config, 0, re.MULTILINE)
 
+        multi_label_metrics = ['mAP', 'CP', 'OP', 'CR', 'OR', 'CF1', 'OF1']
+        py_config = re.sub(r"metric=('\w+')",
+                        lambda m: _replace_function("metric", str(multi_label_metrics), "{}={}", m),
+                        py_config, 0, re.MULTILINE)
+
     with open(dataset_config_path, 'w') as f:
         f.write(py_config)
     return dataset_config_path, py_config

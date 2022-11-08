@@ -85,12 +85,39 @@
                         :content="data.chartTrainLoss.series">
                 </sly-line-chart>
                 <sly-line-chart
+                        v-if="state.cls_mode == 'one_label'"
                         style="width: 33%;"
                         :options.sync="data.chartValAccuracy.options"
                         :content="data.chartValAccuracy.series">
                 </sly-line-chart>
+                <sly-line-chart
+                        v-if="state.cls_mode == 'multi_label'"
+                        style="width: 33%;"
+                        :options.sync="data.chartMAP.options"
+                        :content="data.chartMAP.series">
+                </sly-line-chart>
             </div>
         </sly-field>
+
+        <sly-field 
+            v-if="state.cls_mode == 'multi_label'"
+            title="Multi-label metrics" 
+            description="Precision, Recall and F1 per-class and overall"
+        >
+            <div class="fflex">
+                <sly-line-chart
+                        style="width: 40%;"
+                        :options.sync="data.chartC.options"
+                        :content="data.chartC.series">
+                </sly-line-chart>
+                <sly-line-chart
+                        style="width: 40%;"
+                        :options.sync="data.chartO.options"
+                        :content="data.chartO.series">
+                </sly-line-chart>
+            </div>
+        </sly-field>
+
 
         <sly-field title="System metrics" description="Time and memory">
             <div class="fflex">
