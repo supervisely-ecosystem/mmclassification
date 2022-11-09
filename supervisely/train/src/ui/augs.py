@@ -1,6 +1,6 @@
 import os
 from random import choice
-import supervisely_lib as sly
+import supervisely as sly
 import sly_globals as g
 # from tags import get_random_image
 from supervisely.io.json import load_json_file

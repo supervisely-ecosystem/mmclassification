@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 import torch
-import supervisely_lib as sly
+import supervisely as sly
 import mmcv
 from mmcls.apis import init_model
 from mmcv.parallel import collate, scatter

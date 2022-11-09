@@ -1,5 +1,5 @@
 import os
-import supervisely_lib as sly
+import supervisely as sly
 from sly_train_progress import init_progress
 import sly_globals as g
 from tools.train import main as mm_train
