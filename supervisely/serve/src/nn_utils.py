@@ -3,6 +3,7 @@ import os
 import numpy as np
 import torch
 import supervisely_lib as sly
+import mmcv
 from mmcls.apis import init_model
 from mmcv.parallel import collate, scatter
 from mmcls.datasets.pipelines import Compose
@@ -60,7 +61,11 @@ def construct_model_meta():
 
 @sly.timeit
 def deploy_model():
-    g.model = init_model(g.local_model_config_path, g.local_weights_path, device=g.device)
+    cfg = mmcv.Config.fromfile(g.local_model_config_path)
+    if hasattr(cfg, "classification_mode"):
+        g.cls_mode = cfg.classification_mode
+    g.model = init_model(cfg, g.local_weights_path, device=g.device)
+    
     g.model.CLASSES = sorted(g.gt_labels, key=g.gt_labels.get)
     sly.logger.info("🟩 Model has been successfully deployed")
 
@@ -98,9 +103,15 @@ def inference_model(model, img, topn=5):
     with torch.no_grad():
         scores = model(return_loss=False, **data)
         model_out = scores[0]
-        top_scores = model_out[model_out.argsort()[-topn:]][::-1]
-        top_labels = model_out.argsort()[-topn:][::-1]
         result = []
+        if topn is None: # multi-label
+            top_labels = model_out.argsort() #[::-1]
+            top_labels = top_labels[model_out[top_labels] > 0.5][::-1]
+            top_scores = model_out[top_labels]
+        else: # one-label with top-n
+            top_scores = model_out[model_out.argsort()[-topn:]][::-1]
+            top_labels = model_out.argsort()[-topn:][::-1]
+        
         for label, score in zip(top_labels, top_scores):
             result.append({
                 'label': int(label),
@@ -143,13 +154,24 @@ def inference_model_batch(model, images_nps, topn=5):
                 data = scatter(data, [device])[0]
 
             batch_scores = np.asarray(model(return_loss=False, **data))
-            batch_top_indexes = batch_scores.argsort(axis=1)[:, -topn:][:, ::-1]
+            if topn is not None: # one-label with top-n
+                batch_top_indexes = batch_scores.argsort(axis=1)[:, -topn:][:, ::-1]
+                for scores, top_indexes in zip(batch_scores, batch_top_indexes):
+                    inference_results.append({
+                        'label': top_indexes.astype(int).tolist(),
+                        'score': scores[top_indexes].astype(float).tolist(),
+                        'class': np.asarray(model.CLASSES)[top_indexes].tolist()
+                    })
+            else: # multi-label
+                batch_top_indexes = batch_scores.argsort(axis=1)
 
-            for scores, top_indexes in zip(batch_scores, batch_top_indexes):
-                inference_results.append({
-                    'label': top_indexes.astype(int).tolist(),
-                    'score': scores[top_indexes].astype(float).tolist(),
-                    'class': np.asarray(model.CLASSES)[top_indexes].tolist()
-                })
+                batch_top_indexes = [sample_inds[batch_scores[i][sample_inds] > 0.5][::-1] for i, sample_inds in enumerate(batch_top_indexes)]
+                for scores, top_indexes in zip(batch_scores, batch_top_indexes):
+                    inference_results.append({
+                        'label': top_indexes.astype(int).tolist(),
+                        'score': scores[top_indexes].astype(float).tolist(),
+                        'class': np.asarray(model.CLASSES)[top_indexes].tolist()
+                    })
+            
 
     return inference_results
