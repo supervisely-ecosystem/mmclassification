@@ -194,6 +194,10 @@ def generate_runtime_config(state):
                        lambda m: _replace_function("load_from", architectures.local_weights_path, "{} = '{}'", m),
                        py_config, 0, re.MULTILINE)
 
+    py_config = re.sub(r"classification_mode\s*=\s*('\w*')",
+                           lambda m: _replace_function("dataset_type", state['cls_mode'], "{} = '{}'", m),
+                           py_config, 0, re.MULTILINE)
+
     with open(runtime_config_path, 'w') as f:
         f.write(py_config)
 
