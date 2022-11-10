@@ -195,7 +195,7 @@ def generate_runtime_config(state):
                        py_config, 0, re.MULTILINE)
 
     py_config = re.sub(r"classification_mode\s*=\s*('\w*')",
-                           lambda m: _replace_function("dataset_type", state['cls_mode'], "{} = '{}'", m),
+                           lambda m: _replace_function("classification_mode", state['cls_mode'], "{} = '{}'", m),
                            py_config, 0, re.MULTILINE)
 
     with open(runtime_config_path, 'w') as f:
