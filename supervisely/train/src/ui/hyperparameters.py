@@ -1,6 +1,7 @@
 import os
 import supervisely as sly
 import sly_globals as g
+import splits
 
 
 def init(data, state):
@@ -46,8 +47,12 @@ def restart(data, state):
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
 def use_hyp(api: sly.Api, task_id, context, state, app_logger):
+    metric_period = state["metricsPeriod"]
+    if state["batchSizePerGPU"] * state["metricsPeriod"] > state["final_train_size"]:
+        metric_period = 1
     fields = [
         {"field": "data.done7", "payload": True},
+        {"field": "state.metricsPeriod", "payload": metric_period},
         {"field": "state.collapsed8", "payload": False},
         {"field": "state.disabled8", "payload": False},
         {"field": "state.activeStep", "payload": 8},
