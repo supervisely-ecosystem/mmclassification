@@ -130,11 +130,11 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
             if state["trainData"] == "objects":
                 info = upload_img_example_to_files(api, info)
                 tags_examples[tag_name].append(
-                    g.api.image.preview_url(info.storage_path, height=tags._preview_height)
+                    info.full_storage_url
                 )
             else:
                 tags_examples[tag_name].append(
-                    g.api.image.preview_url(info.path_original, height=tags._preview_height)
+                    info.full_storage_url
                 )
     sly.json.dump_json_file(tags_examples, os.path.join(g.info_dir, "tag2urls.json"))
 

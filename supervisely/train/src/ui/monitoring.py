@@ -62,7 +62,7 @@ def init_charts(data, state):
 
     data["chartValAccuracy"] = init_chart("Val Accuracy", names=["top-1", "top-5"], xs=[[], []], ys=[[], []], decimals=6, smoothing=0.6)
     data["chartMAP"] = init_chart("mAP score", names=["val"], xs=[[]], ys=[[]], decimals=6, smoothing=0.6)
-    data["chartC"] = init_chart("Per-class val metrics", names=["precision", "recall", "F1"], xs=[[], [], []], ys=[[], [], []], decimals=6, smoothing=0.6)
+    data["chartC"] = init_chart("Per-class average val metrics", names=["precision", "recall", "F1"], xs=[[], [], []], ys=[[], [], []], decimals=6, smoothing=0.6)
     data["chartO"] = init_chart("Overall val metrics", names=["precision", "recall", "F1"], xs=[[], [], []], ys=[[], [], []], decimals=6, smoothing=0.6)
 
     data["chartTime"] = init_chart("Time", names=["time"], xs=[[]], ys=[[]], xdecimals=2)

@@ -45,12 +45,14 @@ def generate_model_config(state):
         py_config = f.read()
     if state["cls_mode"] == "multi_label":
         # two cases: with linear and without
+        head_name = cfg.model.head.type
         if cfg.model.head.type == "ClsHead":
             head_name = "MultiLabelClsHead"
         elif cfg.model.head.type == "LinearClsHead":
             head_name = "MultiLabelLinearClsHead"
-        else:
+        elif cfg.model.head.type != "VisionTransformerClsHead":
             raise ValueError(f"Model head {cfg.model.head.type} is not supported.")
+        
         
         py_config = re.sub(r"(head=dict\(\n\s*type)=('\w*')",
                            lambda m: _replace_function("head=dict(type", head_name, "{}='{}'", m),
