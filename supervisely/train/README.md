@@ -38,12 +38,13 @@ Watch [how-to video](https://youtu.be/R9sbH3biCmQ) for more details:
 
 # Updates
 
-### v ???
+### v1.3.0
 📊 Application supports Multi-label classification. Trained multi-label model will predict some of labels for every image with confidence score > 0.5. You can choose multi-label mode at the end of step 3:
 
-<img src="" />
+<img src="https://user-images.githubusercontent.com/97401023/201331590-a5b6c7b3-5ea2-493d-a47b-d50075c3379d.png" />
 
 You can try training multi-label classification model on project from:
+
 - [Movie genre from its poster](https://ecosystem.supervise.ly/apps/import-movie-genre-from-its-poster)
 
     <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/import-movie-genre-from-its-poster" src="" width="400px"/>
