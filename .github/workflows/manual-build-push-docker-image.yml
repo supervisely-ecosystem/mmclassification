@@ -29,5 +29,5 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          file: Dockerfile
-          tags: supervisely/base-pytorch:${{ github.event.inputs.tag_version }}
+          file: supervisely/docker/Dockerfile
+          tags: supervisely/mmcls:${{ github.event.inputs.tag_version }}
