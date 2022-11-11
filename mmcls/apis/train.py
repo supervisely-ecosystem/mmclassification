@@ -136,9 +136,12 @@ def train_model(model,
     # register eval hooks
     if validate:
         val_dataset = build_dataset(cfg.data.val, dict(test_mode=True))
+        val_batch_size = cfg.data.samples_per_gpu
+        if len(val_dataset) < cfg.data.samples_per_gpu:
+            val_batch_size = len(val_dataset)
         val_dataloader = build_dataloader(
             val_dataset,
-            samples_per_gpu=cfg.data.samples_per_gpu,
+            samples_per_gpu=val_batch_size,
             workers_per_gpu=cfg.data.workers_per_gpu,
             dist=distributed,
             shuffle=False,

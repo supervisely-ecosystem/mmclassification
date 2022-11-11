@@ -4,12 +4,6 @@ import pathlib
 import supervisely as sly
 from supervisely.app.v1.app_service import AppService
 
-my_app = AppService()
-api = my_app.public_api
-task_id = my_app.task_id
-
-# sly.fs.clean_dir(my_app.data_dir)  # @TODO: for debug
-
 root_source_path = str(pathlib.Path(sys.argv[0]).parents[3])
 sly.logger.info(f"Root source directory: {root_source_path}")
 sys.path.append(root_source_path)
@@ -21,6 +15,16 @@ sys.path.append(train_source_path)
 serve_source_path = os.path.join(root_source_path, "supervisely/serve/src")
 sly.logger.info(f"Serve source directory: {serve_source_path}")
 sys.path.append(serve_source_path)
+
+# from dotenv import load_dotenv
+# debug_env_path = os.path.join(root_source_path, "supervisely", "serve", "debug.env")
+# load_dotenv(debug_env_path)
+
+my_app = AppService()
+api = my_app.public_api
+task_id = my_app.task_id
+
+# sly.fs.clean_dir(my_app.data_dir)  # @TODO: for debug
 
 team_id = int(os.environ['context.teamId'])
 workspace_id = int(os.environ['context.workspaceId'])
@@ -46,5 +50,6 @@ model = None
 meta: sly.ProjectMeta = None
 gt_labels = None  # name -> index
 labels_urls = None
+cls_mode = "one_label"
 
 

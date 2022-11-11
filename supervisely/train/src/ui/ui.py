@@ -1,4 +1,4 @@
-import supervisely_lib as sly
+import supervisely as sly
 import sly_globals as g
 import input_project as input_project
 import input_project_objects

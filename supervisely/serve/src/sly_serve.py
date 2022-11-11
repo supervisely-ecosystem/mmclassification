@@ -6,9 +6,9 @@ import cv2
 import numpy as np
 import supervisely as sly
 
-import nn_utils
 import globals as g
 import functions as f
+import nn_utils
 
 
 @lru_cache(maxsize=10)
@@ -57,6 +57,7 @@ def get_session_info(api: sly.Api, task_id, context, state, app_logger):
         "device": g.device,
         "session_id": task_id,
         "classes_count": len(g.meta.tag_metas),
+        "classification_mode": g.cls_mode
     }
     request_id = context["request_id"]
     g.my_app.send_response(request_id, data=info)

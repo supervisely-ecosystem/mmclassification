@@ -2,7 +2,7 @@ import os
 from datetime import datetime, timezone
 import random
 from collections import namedtuple
-import supervisely_lib as sly
+import supervisely as sly
 import sly_globals as g
 from sly_train_progress import get_progress_cb, reset_progress, init_progress
 from supervisely.io.fs import get_file_name, mkdir, dir_exists, get_file_ext

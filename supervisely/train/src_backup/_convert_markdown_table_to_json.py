@@ -1,5 +1,5 @@
 import json
-import supervisely_lib as sly
+import supervisely as sly
 
 my_str='''|         Model         | Params(M) | Flops(G) | Top-1 (%) | Top-5 (%) | Config | Download |
 |:---------------------:|:---------:|:--------:|:---------:|:---------:|:---------:|:--------:|

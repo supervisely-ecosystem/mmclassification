@@ -69,7 +69,7 @@ app as an example - how to use downloaded NN weights outside Supervisely.
 ## Python Example: how to communicate with deployed model 
 ```python
 import json
-import supervisely_lib as sly
+import supervisely as sly
 
 
 def main():

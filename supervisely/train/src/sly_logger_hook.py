@@ -1,7 +1,7 @@
 import datetime
 from mmcv.runner.hooks import HOOKS
 from mmcv.runner.hooks.logger.text import TextLoggerHook
-import supervisely_lib as sly
+import supervisely as sly
 from sly_train_progress import get_progress_cb, set_progress, add_progress_to_request
 import sly_globals as g
 
@@ -77,11 +77,33 @@ class SuperviselyLoggerHook(TextLoggerHook):
                      "append": True},
                 ])
         if log_dict['mode'] == 'val':
-            fields.extend([
-                {"field": "data.chartValAccuracy.series[0].data",
-                 "payload": [[log_dict["epoch"], log_dict["accuracy_top-1"]]], "append": True},
-                {"field": "data.chartValAccuracy.series[1].data",
-                 "payload": [[log_dict["epoch"], log_dict["accuracy_top-5"]]], "append": True},
-            ])
+            multi_label = True
+            for key in log_dict.keys():
+                if key.startswith("accuracy"):
+                    multi_label = False
+            if multi_label:
+                fields.extend([
+                    {"field": "data.chartC.series[0].data",
+                    "payload": [[log_dict["epoch"], log_dict["CP"]]], "append": True},
+                    {"field": "data.chartC.series[1].data",
+                    "payload": [[log_dict["epoch"], log_dict["CR"]]], "append": True},
+                    {"field": "data.chartC.series[2].data",
+                    "payload": [[log_dict["epoch"], log_dict["CF1"]]], "append": True},
+                    {"field": "data.chartO.series[0].data",
+                    "payload": [[log_dict["epoch"], log_dict["OP"]]], "append": True},
+                    {"field": "data.chartO.series[1].data",
+                    "payload": [[log_dict["epoch"], log_dict["OR"]]], "append": True},
+                    {"field": "data.chartO.series[2].data",
+                    "payload": [[log_dict["epoch"], log_dict["OF1"]]], "append": True},
+                    {"field": "data.chartMAP.series[0].data",
+                    "payload": [[log_dict["epoch"], log_dict["mAP"]]], "append": True},
+                ])
+            else:
+                fields.extend([
+                    {"field": "data.chartValAccuracy.series[0].data",
+                    "payload": [[log_dict["epoch"], log_dict["accuracy_top-1"]]], "append": True},
+                    {"field": "data.chartValAccuracy.series[1].data",
+                    "payload": [[log_dict["epoch"], log_dict["accuracy_top-5"]]], "append": True},
+                ])
 
         g.api.app.set_fields(g.task_id, fields)

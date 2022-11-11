@@ -21,7 +21,9 @@ def get_nps_images(images_ids):
 
     unique_images_ids = list(uniqueids2indexes.keys())
 
-    images_infos = g.api.image.get_info_by_id_batch(unique_images_ids)
+    images_infos = []
+    for image_id in unique_images_ids:
+        images_infos.append(g.api.image.get_info_by_id(image_id))
     images_ids = np.asarray(images_ids)
 
     dataset2ids = {}

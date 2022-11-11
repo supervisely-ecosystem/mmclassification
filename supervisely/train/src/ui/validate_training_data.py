@@ -24,6 +24,7 @@ def init(data, state):
     data["cntErrors"] = 0
     data["cntWarnings"] = 0
     data["report"] = None
+    state["final_train_size"] = 0
 
     state["isValidating"] = False
 
@@ -50,7 +51,7 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
     report.append({
         "title": "Tags unavailable for training",
         "count": len(tags.disabled_tags),
-        "type": "warning",
+        "type": "info",
         "description": "See previous step for more info"
     })
 
@@ -75,10 +76,14 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         "description": "Such images don't have any tags so they will ignored and will not be used for training. "
     })
 
+    images_before_validation = []
     num_images_before_validation = 0
     for tag_name in selected_tags:
         for split, infos in tags.tag2images[tag_name].items():
-            num_images_before_validation += len(infos)
+            for info in infos:
+                if info.id not in images_before_validation:
+                    images_before_validation.append(info.id)
+    num_images_before_validation = len(images_before_validation)
     report.append({
         "title": "Images with training tags",
         "count": num_images_before_validation,
@@ -106,9 +111,6 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         })
 
     # remove collision images from sets if cls_mode == 'one_label'
-    final_images_count = 0
-    final_train_size = 0
-    final_val_size = 0
     for tag_name in selected_tags:
         for split, infos in tags.tag2images[tag_name].items():
             _final_infos = []
@@ -116,13 +118,9 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
                 if collisions[split][info.id] != 1 and state["cls_mode"] == "one_label":
                     continue
                 _final_infos.append(info)
-                final_images_count += 1
-                if split == "train":
-                    final_train_size += 1
-                else:
-                    final_val_size += 1
             if len(_final_infos) > 0:
                 final_tags2images[tag_name][split].extend(_final_infos)
+    for tag_name in selected_tags:
         if tag_name in final_tags2images and len(final_tags2images[tag_name]["train"]) > 0:
             final_tags.append(tag_name)
 
@@ -132,13 +130,39 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
             if state["trainData"] == "objects":
                 info = upload_img_example_to_files(api, info)
                 tags_examples[tag_name].append(
-                    g.api.image.preview_url(info.storage_path, height=tags._preview_height)
+                    info.full_storage_url
                 )
             else:
                 tags_examples[tag_name].append(
-                    g.api.image.preview_url(info.path_original, height=tags._preview_height)
+                    info.full_storage_url
                 )
     sly.json.dump_json_file(tags_examples, os.path.join(g.info_dir, "tag2urls.json"))
+
+    # save splits
+    split_paths = {}
+    final_images_count = 0
+    final_train_size = 0
+    final_val_size = 0
+    for tag_name, splits in final_tags2images.items():
+        for split_name, infos in splits.items():
+            if split_name not in split_paths.keys():
+                split_paths[split_name] = {}
+            for info in infos:
+                if state["trainData"] == "images":
+                    paths = input_project.get_paths_by_image_id(info.id)
+                else:
+                    paths = input_project_objects.get_paths_by_image_id(info.id)
+                if info.id not in split_paths[split_name].keys(): # without duplicates
+                    split_paths[split_name][info.id] = paths
+    final_split_paths = {}
+    for split_name, split in split_paths.items():
+        items_to_add = list(split.values())
+        final_split_paths[split_name] = items_to_add
+        if split_name == "train":
+            final_train_size += len(items_to_add)
+        elif split_name == "val":
+            final_val_size += len(items_to_add)
+    final_images_count = final_train_size + final_val_size
 
     report.append({
         "title": "Final images count",
@@ -187,25 +211,14 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
         {"field": "data.done4", "payload": True},
         {"field": "data.cntErrors", "payload": cnt_errors},
         {"field": "data.cntWarnings", "payload": cnt_warnings},
+        {"field": "state.final_train_size", "payload": final_train_size}
     ]
     if cnt_errors == 0:
         # save selected tags
         gt_labels = {tag_name: idx for idx, tag_name in enumerate(final_tags)}
         sly.json.dump_json_file(gt_labels, os.path.join(g.project_dir, "gt_labels.json"))
         sly.json.dump_json_file(gt_labels, os.path.join(g.info_dir, "gt_labels.json"))
-
-        # save splits
-        # final_tags2images[tag_name][split].extend(_final_infos)
-        split_paths = defaultdict(list)
-        _splits_to_dump = defaultdict(lambda: defaultdict(list))
-        for tag_name, splits in final_tags2images.items():
-            for split_name, infos in splits.items():
-                if state["trainData"] == "images":
-                    paths = [input_project.get_paths_by_image_id(info.id) for info in infos]
-                else:
-                    paths = [input_project_objects.get_paths_by_image_id(info.id) for info in infos]
-                split_paths[split_name].extend(paths)
-        sly.json.dump_json_file(split_paths, os.path.join(g.project_dir, "splits.json"))
+        sly.json.dump_json_file(final_split_paths, os.path.join(g.project_dir, "splits.json"))
 
         fields.extend([
             {"field": "state.collapsed5", "payload": False},
@@ -213,6 +226,8 @@ def validate_data(api: sly.Api, task_id, context, state, app_logger):
             {"field": "state.activeStep", "payload": 5},
             {"field": "state.isValidating", "payload": False},
         ])
+
+    
     g.api.app.set_fields(g.task_id, fields)
 
 

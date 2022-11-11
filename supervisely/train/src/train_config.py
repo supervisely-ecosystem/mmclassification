@@ -1,10 +1,11 @@
 import os
 import re
-import supervisely_lib as sly
+import supervisely as sly
 
 import sly_globals as g
 import architectures
 import augs
+from mmcv import Config
 
 model_config_name = "model_config.py"
 dataset_config_name = "dataset_config.py"
@@ -39,27 +40,31 @@ def generate_model_config(state):
     model_name = state["selectedModel"]
     model_info = architectures.get_model_info_by_name(model_name)
     lib_model_config_path = os.path.join(g.root_source_dir, model_info["modelConfig"])
+    cfg = Config.fromfile(lib_model_config_path)
     with open(lib_model_config_path) as f:
         py_config = f.read()
     if state["cls_mode"] == "multi_label":
-        head_name = "MultiLabelClsHead"
+        # two cases: with linear and without
+        head_name = cfg.model.head.type
+        if cfg.model.head.type == "ClsHead":
+            head_name = "MultiLabelClsHead"
+        elif cfg.model.head.type == "LinearClsHead":
+            head_name = "MultiLabelLinearClsHead"
+        elif cfg.model.head.type != "VisionTransformerClsHead":
+            raise ValueError(f"Model head {cfg.model.head.type} is not supported.")
+        
+        
         py_config = re.sub(r"(head=dict\(\n\s*type)=('\w*')",
                            lambda m: _replace_function("head=dict(type", head_name, "{}='{}'", m),
                            py_config, 0, re.MULTILINE)
-        py_config = re.sub(r"num_classes=\d+,\n\s*",
+        py_config = re.sub(r"topk=\(\d+,\s*\d*\),\n\s*",
                         "",
                         py_config, 0, re.MULTILINE)
-        py_config = re.sub(r"in_channels=\d+,\n\s*",
-                        "",
-                        py_config, 0, re.MULTILINE)
-        py_config = re.sub(r"topk=\(\d+,\s+\d+\),\n\s*",
-                        "",
-                        py_config, 0, re.MULTILINE)
-    else:
-        num_tags = len(state["selectedTags"])
-        py_config = re.sub(r"num_classes*=(\d+)",
-                        lambda m: _replace_function("num_classes", num_tags, "{}={}", m),
-                        py_config, 0, re.MULTILINE)
+    
+    num_tags = len(state["selectedTags"])
+    py_config = re.sub(r"num_classes*=(\d+)",
+                    lambda m: _replace_function("num_classes", num_tags, "{}={}", m),
+                    py_config, 0, re.MULTILINE)
 
     with open(model_config_path, 'w') as f:
         f.write(py_config)
@@ -103,6 +108,17 @@ def generate_dataset_config(state):
     py_config = re.sub(r"project_dir\s*=\s*(None)",
                        lambda m: _replace_function("project_dir", g.project_dir, "{} = '{}'", m),
                        py_config, 0, re.MULTILINE)
+
+    if state["cls_mode"] == "multi_label":
+        ds_name = "SuperviselyMultiLabel"
+        py_config = re.sub(r"dataset_type\s*=\s*('\w*')",
+                           lambda m: _replace_function("dataset_type", ds_name, "{} = '{}'", m),
+                           py_config, 0, re.MULTILINE)
+
+        multi_label_metrics = ['mAP', 'CP', 'OP', 'CR', 'OR', 'CF1', 'OF1']
+        py_config = re.sub(r"metric=('\w+')",
+                        lambda m: _replace_function("metric", str(multi_label_metrics), "{}={}", m),
+                        py_config, 0, re.MULTILINE)
 
     with open(dataset_config_path, 'w') as f:
         f.write(py_config)
@@ -179,6 +195,10 @@ def generate_runtime_config(state):
     py_config = re.sub(r"load_from\s*=\s*(None)",
                        lambda m: _replace_function("load_from", architectures.local_weights_path, "{} = '{}'", m),
                        py_config, 0, re.MULTILINE)
+
+    py_config = re.sub(r"classification_mode\s*=\s*('\w*')",
+                           lambda m: _replace_function("classification_mode", state['cls_mode'], "{} = '{}'", m),
+                           py_config, 0, re.MULTILINE)
 
     with open(runtime_config_path, 'w') as f:
         f.write(py_config)
