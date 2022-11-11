@@ -47,7 +47,7 @@ You can try training multi-label classification model on project from:
 
 - [Movie genre from its poster](https://ecosystem.supervise.ly/apps/import-movie-genre-from-its-poster)
 
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/import-movie-genre-from-its-poster" src="" width="400px"/>
+    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/import-movie-genre-from-its-poster" src="https://user-images.githubusercontent.com/97401023/201332341-77a66ccf-f3dd-4a44-abe5-d4358a943ecd.png" width="500px"/>
 
 ### v1.2.0
 
