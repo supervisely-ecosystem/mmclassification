@@ -45,7 +45,7 @@ Watch [how-to video](https://youtu.be/R9sbH3biCmQ) for more details:
 
 You can try training multi-label classification model on project from:
 
-- [Movie genre from its poster](https://ecosystem.supervise.ly/apps/import-movie-genre-from-its-poster)
+- [Movie genre from its poster](https://ecosystem.supervise.ly/apps/import-movie-genre-from-its-poster) - Application imports kaggle dataset to supervisely. The movie posters are obtained from IMDB website. Every image in the dataset labeled with multiple tags.
 
     <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/import-movie-genre-from-its-poster" src="https://user-images.githubusercontent.com/97401023/201332341-77a66ccf-f3dd-4a44-abe5-d4358a943ecd.png" width="500px"/>
 
