@@ -39,7 +39,7 @@ Watch [how-to video](https://youtu.be/R9sbH3biCmQ) for more details:
 # Updates
 
 ### v ???
-:гистограмма: Application supports Multi-label classification. Trained multi-label model will predict some of labels for every image with confidence score > 0.5. You can choose multi-label mode at the end of step 3:
+📊 Application supports Multi-label classification. Trained multi-label model will predict some of labels for every image with confidence score > 0.5. You can choose multi-label mode at the end of step 3:
 
 <img src="" />
 
