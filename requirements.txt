@@ -1,4 +1,1 @@
-#-r requirements/optional.txt
-#-r requirements/runtime.txt
-#-r requirements/tests.txt
-supervisely==6.36.0
+supervisely==6.68.17
