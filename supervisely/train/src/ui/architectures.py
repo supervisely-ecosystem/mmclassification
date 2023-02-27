@@ -181,72 +181,72 @@ def get_models_list():
         {
             "modelConfig": "configs/_base_/models/resnetv1d50.py",
             "config": "configs/resnet/resnetv1d50_b32x8_imagenet.py",
-            "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnet/resnetv1d50_batch256_imagenet_20200708-1ad0ce94.pth",
+            "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnet/resnetv1d50_b32x8_imagenet_20210531-db14775a.pth",
             "model": "ResNetV1D-50",
             "params": "25.58",
             "flops": "4.36",
-            "top1": "77.4",
-            "top5": "93.66"
+            "top1": "77.54",
+            "top5": "93.57"
         },
         {
             "modelConfig": "configs/_base_/models/resnetv1d101.py",
             "config": "configs/resnet/resnetv1d101_b32x8_imagenet.py",
-            "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnet/resnetv1d101_batch256_imagenet_20200708-9cb302ef.pth",
+            "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnet/resnetv1d101_b32x8_imagenet_20210531-6e13bcd3.pth",
             "model": "ResNetV1D-101",
             "params": "44.57",
             "flops": "8.09",
-            "top1": "78.85",
-            "top5": "94.38"
+            "top1": "78.93",
+            "top5": "94.48"
         },
         {
             "modelConfig": "configs/_base_/models/resnetv1d152.py",
             "config": "configs/resnet/resnetv1d152_b32x8_imagenet.py",
-            "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnet/resnetv1d152_batch256_imagenet_20200708-e79cb6a2.pth",
+            "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnet/resnetv1d152_b32x8_imagenet_20210531-278cf22a.pth",
             "model": "ResNetV1D-152",
             "params": "60.21",
             "flops": "11.82",
-            "top1": "79.35",
-            "top5": "94.61"
+            "top1": "79.41",
+            "top5": "94.7"
         },
         {
             "modelConfig": "configs/_base_/models/resnext50_32x4d.py",
             "config": "configs/resnext/resnext50_32x4d_b32x8_imagenet.py",
-            "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnext/resnext50_32x4d_batch256_imagenet_20200708-c07adbb7.pth",
+            "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnext/resnext50_32x4d_b32x8_imagenet_20210429-56066e27.pth",
             "model": "ResNeXt-32x4d-50",
             "params": "25.03",
             "flops": "4.27",
-            "top1": "77.92",
-            "top5": "93.74"
+            "top1": "77.90",
+            "top5": "93.66"
         },
         {
             "modelConfig": "configs/_base_/models/resnext101_32x4d.py",
             "config": "configs/resnext/resnext101_32x4d_b32x8_imagenet.py",
-            "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnext/resnext101_32x4d_batch256_imagenet_20200708-87f2d1c9.pth",
+            "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnext/resnext101_32x4d_b32x8_imagenet_20210506-e0fa3dd5.pth",
             "model": "ResNeXt-32x4d-101",
             "params": "44.18",
             "flops": "8.03",
-            "top1": "78.7",
-            "top5": "94.34"
+            "top1": "78.71",
+            "top5": "94.12"
         },
         {
             "modelConfig": "configs/_base_/models/resnext101_32x8d.py",
             "config": "configs/resnext/resnext101_32x8d_b32x8_imagenet.py",
-            "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnext/resnext101_32x8d_batch256_imagenet_20200708-1ec34aa7.pth",
+            "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnext/resnext101_32x8d_b32x8_imagenet_20210506-23a247d5.pth",
             "model": "ResNeXt-32x8d-101",
             "params": "88.79",
             "flops": "16.5",
-            "top1": "79.22",
-            "top5": "94.52"
+            "top1": "79.23",
+            "top5": "94.58"
         },
         {
             "modelConfig": "configs/_base_/models/resnext152_32x4d.py",
             "config": "configs/resnext/resnext152_32x4d_b32x8_imagenet.py",
-            "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnext/resnext152_32x4d_batch256_imagenet_20200708-aab5034c.pth",
+            "weightsUrl": "https://download.openmmlab.com/mmclassification/v0/resnext/resnext152_32x4d_b32x8_imagenet_20210524-927787be.pth",
             "model": "ResNeXt-32x4d-152",
             "params": "59.95",
             "flops": "11.8",
-            "top1": "79.06",
-            "top5": "94.47"
+            "top1": "78.93",
+            "top5": "94.41"
         },
         {
             "modelConfig": "configs/_base_/models/seresnet50.py",
