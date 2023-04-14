@@ -16,6 +16,9 @@
   "need_gpu": true,
   "icon": "https://i.imgur.com/wc2STfP.png",
   "icon_cover": true,
+  "integrated_into": [
+    "panel"
+  ],
   "context_menu": {
     "target": [
       "images_project"
