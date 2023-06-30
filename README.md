@@ -43,7 +43,7 @@ You should connect computer with GPU to your Supervisely account. If you already
 Once your computer is ready just add agent to your team and execute automatically generated running command in terminal. Watch how-to video:
 
 <a data-key="sly-embeded-video-link" href="https://youtu.be/aDqQiYycqyk" data-video-code="aDqQiYycqyk">
-    <img src="https://i.imgur.com/X9NTc5X.png" alt="SLY_EMBEDED_VIDEO_LINK"  style="width:50%;">
+    <img src="media/connect.png" alt="SLY_EMBEDED_VIDEO_LINK"  style="width:50%;">
 </a>
 
 
@@ -51,7 +51,7 @@ Once your computer is ready just add agent to your team and execute automaticall
 
 To learn more about how to use every app, please go to app's readme page (links are provided). Just add the apps to your team to start using them.
 
-<img src="https://i.imgur.com/xc8Q2dt.png"/>
+<img src="media/a1.png"/>
 
 Collection consists of the following apps: 
 
@@ -60,17 +60,17 @@ Collection consists of the following apps:
   snack items. All products are labeled and tagged. Will be used to generate synthetic training 
   dataset for object classification model  
 
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/snacks-catalog" src="https://i.imgur.com/Jc6wZSJ.png" width="350px"/>
+    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/snacks-catalog" src="media/d1.png" width="350px"/>
 
 - [Grocery store shelves](https://ecosystem.supervise.ly/projects/grocery-store-shelves) - images 
   with products on shelves, will be used to test classification model on real data
 
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/grocery-store-shelves" src="https://i.imgur.com/Mqqqs4c.png" width="350px"/>
+    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/grocery-store-shelves" src="media/d2.png" width="350px"/>
 
 - [Synthetic retail products](https://ecosystem.supervise.ly/apps/supervisely-ecosystem%252Fyolov5%252Fsupervisely%252Ftrain) - 
   app generates synthetic images for product classification from only a few labeled examples 
 
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/synthetic-retail-products" src="https://i.imgur.com/vkPOCER.png" width="350px"/>
+    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/synthetic-retail-products" src="media/d2.png" width="350px"/>
 
 ## Neural networks
 
@@ -85,7 +85,7 @@ In this collections we completely integrated [MMClassification](https://github.c
   model weights will be saved to Team Files and can be easily downloaded. Conigs for 
   MMClassification also saved and can be used to train models outside Supervisely (advanced usage) 
   
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/mmclassification/supervisely/train" src="https://i.imgur.com/mXG6njU.png" width="350px"/>
+    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/mmclassification/supervisely/train" src="media/nn1.png" width="350px"/>
     
   The following models are available:
 
@@ -134,7 +134,7 @@ In this collections we completely integrated [MMClassification](https://github.c
    can send inference requiests in a few lines of python code or use source code as an example 
    how to load model and apply it to image and how to interpret model predictions. 
    
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/mmclassification/supervisely/serve" src="https://i.imgur.com/CU8XHdQ.png" width="350px"/>
+    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/mmclassification/supervisely/serve" src="media/nn2.png" width="350px"/>
 
 ## Integration into labeling tool
 
@@ -144,7 +144,7 @@ In this collections we completely integrated [MMClassification](https://github.c
   review attached tags to perform quality assurance. It significantly speeds up labeling time especially
   when labelers wotk with large number of classes and can be also used for pre labeling.
    
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/ai-assisted-classification" src="https://i.imgur.com/bKqVnZQ.png" width="350px"/>
+    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/ai-assisted-classification" src="media/i1.png" width="350px"/>
 
 ## Auxiliary apps
 
@@ -152,27 +152,27 @@ In this collections we completely integrated [MMClassification](https://github.c
   helps to explore tags on images and find some collisions in data before you train image 
   classification model  
 
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/tags-co-occurrence-matrix" src="https://i.imgur.com/YAWNGSt.png" width="350px"/>
+    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/tags-co-occurrence-matrix" src="media/au1.png" width="350px"/>
 
 - [Unpack key-value tags](https://ecosystem.supervise.ly/apps/unpack-key-value-tags) - 
   if you label images with key-value tag (single tag with multiple possible values) you can convert this tags to tags 
   without value (for example, `fruit`:`lemon` to a unique tag `fruit_lemon` and then use created project to train 
   classification model)  
 
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/unpack-key-value-tags" src="https://i.imgur.com/OB90OrK.png" width="350px"/>
+    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/unpack-key-value-tags" src="media/au2.png" width="350px"/>
 
 - [Copy image tags to objects](https://ecosystem.supervise.ly/apps/copy-image-tags-to-objects) - 
   may be helpful when you tagged images and then labeled 
   objects on them and would like to assign to image tag to all objects on image 
   (for example, for generating synthetic data for retail) 
 
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/tags-co-occurrence-matrix" src="https://i.imgur.com/MBuF2sm.png" width="350px"/>
+    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/tags-co-occurrence-matrix" src="media/au3.png" width="350px"/>
 
 - [Visual tagging](https://ecosystem.supervise.ly/apps/visual-tagging) - manually assign tags 
   using image examples for visual matching, app helps labelers to 
   navigate in large and/or complex classes to avoid mistakes when classes are similar    
 
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/visual-tagging" src="https://i.imgur.com/HnQVi32.png" width="350px"/>
+    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/visual-tagging" src="media/au4.png" width="350px"/>
 
 - [Tags to image URLs](https://ecosystem.supervise.ly/apps/tags-to-image-urls) - creates mapping 
   between tag name and all images with this tags and saves results to a `json` file. If you 
@@ -182,7 +182,7 @@ In this collections we completely integrated [MMClassification](https://github.c
   model predictions with images / objects by using nice-looking images instead of 
   synthetically generated.   
 
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/tags-to-image-urls" src="https://i.imgur.com/30GDLMh.png" width="350px"/>
+    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/tags-to-image-urls" src="media/au5.png" width="350px"/>
 
 # For Developers
 - you can use sources of [Serve MMClassification app](https://github.com/supervisely-ecosystem/mmclassification/tree/master/supervisely/serve) as example of how to prepare weights, initialize model and apply it to an image and how to correctly interpret predictions
