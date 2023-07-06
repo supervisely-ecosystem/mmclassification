@@ -17,7 +17,7 @@
     "batch_size": 256
   },
   "task_location": "application_sessions",
-  "icon": "media/serveicon.png",
+  "icon": "https://github.com/supervisely-ecosystem/mmclassification/blob/42e67be0a7c2496de702663a599ff9cee2357706/media/serveicon.png",
   "icon_cover": true,
   "isolate": true,
   "need_gpu": true,
