@@ -31,7 +31,7 @@ can be integrated into Supervisely. Once model is deployed, user gets the follow
 Watch usage demo:
 
 <a data-key="sly-embeded-video-link" href="https://youtu.be/HwIgu_f4duU" data-video-code="HwIgu_f4duU">
-    <img src="https://i.imgur.com/tohTu5R.png" alt="SLY_EMBEDED_VIDEO_LINK"  style="max-width:70%;">
+    <img src="https://github.com/supervisely-ecosystem/mmclassification/blob/5803c5abeb5247805e9f00f829c90361e039d00b/media/servedemo.png" alt="SLY_EMBEDED_VIDEO_LINK"  style="max-width:70%;">
 </a>
 
 
@@ -41,7 +41,7 @@ Watch usage demo:
    directory: `/mmclassification/<session id>_<training project name>/checkpoints`. Then right click to weights `.pth` file,
    for example: `/mmclassification/6181_synthetic products v2/checkpoints/latest.pth`
    
-<img src="https://i.imgur.com/cmEzYGr.gif"/>
+<img src="https://github.com/supervisely-ecosystem/mmclassification/blob/5803c5abeb5247805e9f00f829c90361e039d00b/media/shtr1.gif"/>
 
 2. Run `Serve MMClassification` app from context menu
 
@@ -52,11 +52,11 @@ change what agent should be used for deploy.
 
 5. Wait until you see following message in logs: `Model has been successfully deployed`
 
-<img src="https://i.imgur.com/AAKToCb.png" width="800"/>
+<img src="https://github.com/supervisely-ecosystem/mmclassification/blob/5803c5abeb5247805e9f00f829c90361e039d00b/media/shtr5.png" width="800"/>
 
 6. All deployed models are listed in `Team Apps`. You can view logs and stop them from this page.
 
-<img src="https://i.imgur.com/7eVkiIm.png"/>
+<img src="https://github.com/supervisely-ecosystem/mmclassification/blob/5803c5abeb5247805e9f00f829c90361e039d00b/media/shtr6.png"/>
 
 
 # For Developers
