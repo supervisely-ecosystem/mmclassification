@@ -20,7 +20,7 @@
   "icon": "https://i.imgur.com/ylYHWiY.png",
   "icon_cover": true,
   "isolate": true,
-  "need_gpu": true,
+  "need_gpu": false,
   "gpu": "preferred",
   "headless": true,
   "session_tags": [
