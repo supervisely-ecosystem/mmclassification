@@ -14,6 +14,7 @@
   "gui_template": "supervisely/train/src/gui.html",
   "task_location": "workspace_tasks",
   "need_gpu": true,
+  "gpu": "preferred",
   "icon": "https://i.imgur.com/wc2STfP.png",
   "icon_cover": true,
   "integrated_into": [
