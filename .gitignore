@@ -118,3 +118,4 @@ work_dirs/
 *.pth
 
 supervisely_lib
+/my_model

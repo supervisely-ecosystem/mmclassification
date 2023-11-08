@@ -6,6 +6,7 @@
 <p align="center">
   <a href="#Overview">Overview</a> •
   <a href="#How-To-Use">How To Use</a> •
+  <a href="#How-To-Use-Your-Trained-Model-Outside-Supervisely">How To Use Your Trained Model Outside Supervisely</a> •
   <a href="#For-Developers">For Developers</a>
 </p>
 
@@ -57,6 +58,11 @@ change what agent should be used for deploy.
 6. All deployed models are listed in `Team Apps`. You can view logs and stop them from this page.
 
 <img src="https://i.imgur.com/7eVkiIm.png"/>
+
+
+# How To Use Your Trained Model Outside Supervisely
+
+You can use your trained models outside Supervisely platform without any dependencies on Supervisely SDK. You just need to download config files and model weights (.pth) from Team Files, and then you can build and use the model as a normal model in mmcls/mmpretrain. See this [Jupyter Notebook](https://github.com/supervisely-ecosystem/mmclassification/blob/main/inference_outside_supervisely.ipynb) for details.
 
 
 # For Developers
