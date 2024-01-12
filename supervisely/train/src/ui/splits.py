@@ -77,9 +77,12 @@ def get_train_val_sets(project_dir, state):
 
 def verify_train_val_sets(train_set, val_set):
     if len(train_set) == 0:
-        raise ValueError("Train set is empty, check or change split configuration")
+        g.my_app.show_modal_window("Train set is empty, check or change split configuration", level="warning")
+        return False
     if len(val_set) == 0:
-        raise ValueError("Val set is empty, check or change split configuration")
+        g.my_app.show_modal_window("Val set is empty, check or change split configuration", level="warning")
+        return False
+    return True
 
 
 def restart(data, state):
@@ -107,7 +110,10 @@ def create_splits(api: sly.Api, task_id, context, state, app_logger):
         train_set, val_set = get_train_val_sets(g.project_dir, state)
         sly.logger.info(f"Train set: {len(train_set)} images")
         sly.logger.info(f"Val set: {len(val_set)} images")
-        verify_train_val_sets(train_set, val_set)
+        success = verify_train_val_sets(train_set, val_set)
+        if not success:
+            api.task.set_field(task_id, "state.splitInProgress", False)
+            return
         step_done = True
     except Exception as e:
         train_set = None

@@ -86,8 +86,14 @@ def show_tags(api: sly.Api, task_id, context, state, app_logger):
 
     if state["trainData"] == "images":
         items_count = g.project_info.items_count
+        if items_count == 0:
+            g.my_app.show_modal_window("Project doesn't contain any images", level="warning")
+            return
     else:
         items_count = g.project_stats["objects"]["total"]["objectsInDataset"]
+        if items_count == 0:
+            g.my_app.show_modal_window("Project doesn't contain any objects", level="warning")
+            return
 
     progress = get_progress_cb(progress_index, "Calculate stats", items_count)
     init_cache(state, splits.train_set, "train", progress)
