@@ -52,7 +52,8 @@ def generate_model_config(state):
             head_name = "MultiLabelLinearClsHead"
         elif cfg.model.head.type == "VisionTransformerClsHead":
             head_name = "MultiLabelLinearClsHead"
-            # raise ValueError(f"Unfortunately, ViT models don't support multi-label classifiaction task.")
+            sly.logger.warn("ViT models don't support multi-label classifiaction. The common MultiLabelLinearClsHead module will be used instead.")
+            # raise ValueError(f"Sorry, ViT models don't support multi-label classifiaction task.")
         
         
         py_config = re.sub(r"(head=dict\(\n\s*type)=('\w*')",
