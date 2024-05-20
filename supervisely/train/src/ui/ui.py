@@ -38,6 +38,9 @@ def restart(api: sly.Api, task_id, context, state, app_logger):
     data = {}
     state = {}
 
+    if restart_from_step == 1:
+        data["done1"] = False
+
     if restart_from_step <= 2:
         if restart_from_step == 2:
             train_val_split.restart(data, state)
