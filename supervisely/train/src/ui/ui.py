@@ -35,6 +35,12 @@ def init(data, state):
 @g.my_app.ignore_errors_and_show_dialog_window()
 def restart(api: sly.Api, task_id, context, state, app_logger):
     restart_from_step = state["restartFrom"]
+    allow_restarts = state["allowRestarts"]
+    active_step = state["activeStep"]
+    if not allow_restarts or active_step == 1:
+        g.api.app.set_fields(g.task_id, {"field": "state.restartFrom", "payload": None})
+        return
+
     data = {}
     state = {}
 

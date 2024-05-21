@@ -22,7 +22,7 @@ def init(data, state):
     state["collapsed1"] = False
 
     state["trainData"] = "images"  # "objects"
-    state["allowRestartStep1"] = False
+    state["allowRestarts"] = False
 
 
 def restart(data, state):
@@ -59,7 +59,7 @@ def download(api: sly.Api, task_id, context, state, app_logger):
     }
 
     fields = [
-        {"field": "state.allowRestartStep1", "payload": True},
+        {"field": "state.allowRestarts", "payload": True},
         {"field": "state.restartFrom", "payload": None},
         {"field": "data.done1", "payload": True},
         {"field": "state.collapsed2", "payload": False},
@@ -76,7 +76,7 @@ def get_image_info_from_cache(dataset_name, item_name):
     dataset_fs = project_fs.datasets.get(dataset_name)
     img_info_path = dataset_fs.get_img_info_path(item_name)
     image_info_dict = sly.json.load_json_file(img_info_path)
-    ImageInfo = namedtuple('ImageInfo', image_info_dict)
+    ImageInfo = namedtuple("ImageInfo", image_info_dict)
     info = ImageInfo(**image_info_dict)
 
     # add additional info - helps to save split paths to txt files
