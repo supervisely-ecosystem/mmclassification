@@ -70,7 +70,7 @@
 
     <el-dialog
             title="Restart from this step"
-            :visible.sync="state.restartFrom"
+            :visible.sync="state.restartFrom && state.allowRestartStep1 === true"
             size="tiny">
         <span>This step and all next steps will be reseted</span>
         <span slot="footer" class="dialog-footer">

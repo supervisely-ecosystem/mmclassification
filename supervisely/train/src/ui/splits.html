@@ -38,10 +38,10 @@
                                    style="flex:1; max-width: 99%; margin-left: 15px;"
                                    @input="
                                    state.randomSplit.count.train =
-                                   Math.min(parseInt(data.totalImagesCount * state.randomSplit.percent.train / 100, 10),
-                                            data.totalImagesCount - 1);
+                                   Math.min(parseInt(state.totalImagesCount * state.randomSplit.percent.train / 100, 10),
+                                            state.totalImagesCount - 1);
                                    state.randomSplit.count.train = Math.max(state.randomSplit.count.train, 1)
-                                   state.randomSplit.count.val = data.totalImagesCount - state.randomSplit.count.train;
+                                   state.randomSplit.count.val = state.totalImagesCount - state.randomSplit.count.train;
                                    state.randomSplit.percent.val = 100 - state.randomSplit.percent.train"
                         ></el-slider>
                     </template>

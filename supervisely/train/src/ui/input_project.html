@@ -20,7 +20,7 @@
                         <sly-field title="Training data"
                                    description="">
                             <el-select
-                                v-model="state.trainData" 
+                                v-model="state.trainData"
                                 @change="state.restartFrom = 1"
                                 >
                                 <el-option key="images" label="images" value="images"></el-option>
@@ -148,6 +148,8 @@
                 <div slot="header">
                     <el-button :disabled="data.finished === true"
                                type="primary"
+                               :disabled="state.showPreviewProgress"
+                               :loading="state.showPreviewProgress"
                                @click="command('preview_objects'); state.showEmptyMessage=false; state.showPreviewProgress=true">
                         <i class="zmdi zmdi-grid" style="margin-right: 5px"></i> Preview
                     </el-button>
@@ -167,7 +169,7 @@
                     </template>
                 </sly-grid-gallery>
 
-                <p v-if="!state.showPreviewProgress">Press the button to preview training data</p>
+                <p v-if="!state.showPreviewProgress && data.previewProgress === 0">Press the button to preview training data</p>
                 <el-progress v-if="data.previewProgress !== 100 && state.showPreviewProgress"
                              :percentage="data.previewProgress"></el-progress>
             </sly-card>

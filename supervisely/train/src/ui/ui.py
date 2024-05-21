@@ -20,7 +20,7 @@ def init(data, state):
 
     input_project_objects.init(data, state)
 
-    train_val_split.init(g.project_info, g.project_meta, data, state)
+    train_val_split.init(g.project_meta, data, state)
     tags.init(data, state)
     validate_training_data.init(data, state)
     augs.init(data, state)
@@ -39,13 +39,14 @@ def restart(api: sly.Api, task_id, context, state, app_logger):
     state = {}
 
     if restart_from_step == 1:
-        data["done1"] = False
+        input_project.restart(data, state)
+        input_project_objects.restart(data, state)
 
     if restart_from_step <= 2:
         if restart_from_step == 2:
             train_val_split.restart(data, state)
         else:
-            train_val_split.init(g.project_info, g.project_meta, data, state)
+            train_val_split.init(g.project_meta, data, state)
     if restart_from_step <= 3:
         if restart_from_step == 3:
             tags.restart(data, state)

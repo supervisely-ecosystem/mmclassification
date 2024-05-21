@@ -22,6 +22,12 @@ def init(data, state):
     state["collapsed1"] = False
 
     state["trainData"] = "images"  # "objects"
+    state["allowRestartStep1"] = False
+
+
+def restart(data, state):
+    data["projectImagesCount"] = g.project_info.items_count
+    data["done1"] = False
 
 
 @g.my_app.callback("download_project")
@@ -29,15 +35,12 @@ def init(data, state):
 @g.my_app.ignore_errors_and_show_dialog_window()
 def download(api: sly.Api, task_id, context, state, app_logger):
     try:
-        if sly.fs.dir_exists(g.project_dir):
-            pass
-        else:
-            sly.fs.mkdir(g.project_dir)
-            download_progress = get_progress_cb(progress_index, "Download project", g.project_info.items_count * 2)
-            sly.download_project(g.api, g.project_id, g.project_dir,
-                                 cache=g.my_app.cache, progress_cb=download_progress,
-                                 only_image_tags=True, save_image_info=True)
-            reset_progress(progress_index)
+        sly.fs.mkdir(g.project_dir, remove_content_if_exists=True)
+        download_progress = get_progress_cb(progress_index, "Download project", g.project_info.items_count * 2)
+        sly.download_project(g.api, g.project_id, g.project_dir,
+                                cache=g.my_app.cache, progress_cb=download_progress,
+                                only_image_tags=True, save_image_info=True)
+        reset_progress(progress_index)
 
         global project_fs
         project_fs = sly.Project(g.project_dir, sly.OpenMode.READ)
@@ -45,11 +48,25 @@ def download(api: sly.Api, task_id, context, state, app_logger):
         reset_progress(progress_index)
         raise e
 
+    items_count = project_fs.total_items
+    train_percent = 80
+    train_count = int(items_count / 100 * train_percent)
+    random_split = {
+        "count": {"total": items_count, "train": train_count, "val": items_count - train_count},
+        "percent": {"total": 100, "train": train_percent, "val": 100 - train_percent},
+        "shareImagesBetweenSplits": False,
+        "sliderDisabled": False,
+    }
+
     fields = [
+        {"field": "state.allowRestartStep1", "payload": True},
+        {"field": "state.restartFrom", "payload": None},
         {"field": "data.done1", "payload": True},
         {"field": "state.collapsed2", "payload": False},
         {"field": "state.disabled2", "payload": False},
         {"field": "state.activeStep", "payload": 2},
+        {"field": "state.totalImagesCount", "payload": items_count},
+        {"field": "state.randomSplit", "payload": random_split},
     ]
     g.api.app.set_fields(g.task_id, fields)
 

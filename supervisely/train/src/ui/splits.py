@@ -6,22 +6,23 @@ train_set = None
 val_set = None
 
 
-def init(project_info, project_meta: sly.ProjectMeta, data, state):
+def init(project_meta: sly.ProjectMeta, data, state):
     data["randomSplit"] = [
         {"name": "train", "type": "success"},
         {"name": "val", "type": "primary"},
         {"name": "total", "type": "gray"},
     ]
 
-    data["totalImagesCount"] = project_info.items_count
+    items_count = g.project_info.items_count
+    state["totalImagesCount"] = items_count
 
     train_percent = 80
-    train_count = int(project_info.items_count / 100 * train_percent)
+    train_count = int(items_count / 100 * train_percent)
     state["randomSplit"] = {
         "count": {
-            "total": project_info.items_count,
+            "total": items_count,
             "train": train_count,
-            "val": project_info.items_count - train_count
+            "val": items_count - train_count
         },
         "percent": {
             "total": 100,

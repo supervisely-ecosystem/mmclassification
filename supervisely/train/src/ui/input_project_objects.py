@@ -4,14 +4,15 @@ import random
 from collections import namedtuple
 import supervisely as sly
 import sly_globals as g
-from sly_train_progress import get_progress_cb, reset_progress, init_progress
-from supervisely.io.fs import get_file_name, mkdir, dir_exists, get_file_ext
+from sly_train_progress import get_progress_cb, reset_progress
+from supervisely.io.fs import get_file_ext, get_file_name, mkdir
 from supervisely.io.json import dump_json_file, load_json_file
+
 
 progress_index = 1
 _images_infos = None  # dataset_name -> image_name -> image_info
 _cache_base_filename = os.path.join(g.my_app.data_dir, "images_info")
-_cache_path = f'{_cache_base_filename}.db'
+_cache_path = f"{_cache_base_filename}.db"
 project_fs: sly.Project = None
 _image_id_to_paths = {}
 CNT_GRID_COLUMNS = 3
@@ -45,6 +46,7 @@ def init(data, state):
     state["autoSize"] = True
     state["inputWidth"] = 256
     state["inputHeight"] = 256
+    state["showPreviewProgress"] = False
 
     # preview
     data["progress"] = 0
@@ -52,13 +54,28 @@ def init(data, state):
     data["previewProgress"] = 0
     data["showEmptyMessage"] = False
     data["finished"] = False
-    data["preview"] = {"content": {}, "options": {
-        "opacity": 0.5,
-        "fillRectangle": False,
-        "enableZoom": False,
-        "syncViews": False,
-    }}
+    data["preview"] = {
+        "content": {},
+        "options": {
+            "opacity": 0.5,
+            "fillRectangle": False,
+            "enableZoom": False,
+            "syncViews": False,
+        },
+    }
 
+def restart(data, state):
+    data["preview"] = {
+        "content": {},
+        "options": {
+            "opacity": 0.5,
+            "fillRectangle": False,
+            "enableZoom": False,
+            "syncViews": False,
+        },
+    }
+    data["previewProgress"] = 0
+    state["showPreviewProgress"] = False
 
 def get_selected_classes_from_ui(selected_classes):
     ui_classes = g.api.task.get_field(g.task_id, "data.classes")
@@ -120,9 +137,7 @@ def crop_and_resize_objects(img_nps, anns, app_state, selected_classes, original
             continue
 
         for class_name in selected_classes:
-            objects_crop = sly.aug.instance_crop(
-                img_np, ann, class_name, False, crop_padding
-            )
+            objects_crop = sly.aug.instance_crop(img_np, ann, class_name, False, crop_padding)
             if app_state["autoSize"] is False:
                 resized_crop = []
                 for crop_img, crop_ann in objects_crop:
@@ -154,9 +169,7 @@ def dump_anns(crop_anns, crop_names, ann_dir):
 
 
 def create_img_infos(project_fs):
-    tag_id_map = {
-        tag["name"]: tag["id"] for tag in project_fs.meta.tag_metas.to_json()
-    }
+    tag_id_map = {tag["name"]: tag["id"] for tag in project_fs.meta.tag_metas.to_json()}
     images_infos = []
     for dataset_fs in project_fs:
         img_info_dir = os.path.join(dataset_fs.directory, "img_info")
@@ -167,10 +180,12 @@ def create_img_infos(project_fs):
             item = sly.image.read(item_path)
             h, w = item.shape[:2]
             item_size = os.path.getsize(item_path)
-            created_at = datetime.fromtimestamp(os.stat(item_path).st_ctime, tz=timezone.utc).strftime(
-                "%d-%m-%Y %H:%M:%S")
-            modified_at = datetime.fromtimestamp(os.stat(item_path).st_mtime, tz=timezone.utc).strftime(
-                "%d-%m-%Y %H:%M:%S")
+            created_at = datetime.fromtimestamp(
+                os.stat(item_path).st_ctime, tz=timezone.utc
+            ).strftime("%d-%m-%Y %H:%M:%S")
+            modified_at = datetime.fromtimestamp(
+                os.stat(item_path).st_mtime, tz=timezone.utc
+            ).strftime("%d-%m-%Y %H:%M:%S")
 
             item_ann_path = os.path.join(dataset_fs.ann_dir, f"{item_name}.json")
             ann_json = load_json_file(item_ann_path)
@@ -188,7 +203,7 @@ def create_img_infos(project_fs):
                     "labelerLogin": tag["labelerLogin"],
                     "createdAt": tag["createdAt"],
                     "updatedAt": tag["updatedAt"],
-                    "name": tag["name"]
+                    "name": tag["name"],
                 }
                 tags_img_info.append(tag_info)
 
@@ -209,7 +224,7 @@ def create_img_infos(project_fs):
                 "meta": {},
                 "path_original": "",
                 "full_storage_url": "",
-                "tags": tags_img_info
+                "tags": tags_img_info,
             }
             save_path = os.path.join(img_info_dir, f"{item_name}.json")
             dump_json_file(item_img_info, save_path)
@@ -242,38 +257,48 @@ def copy_tags(crop_anns):
 @g.my_app.ignore_errors_and_show_dialog_window()
 def download_project_objects(api: sly.Api, task_id, context, state, app_logger):
     try:
-        if not dir_exists(g.project_dir):
-            mkdir(g.project_dir)
-            project_meta_path = os.path.join(g.project_dir, "meta.json")
-            g.project_meta = convert_object_tags(g.project_meta)
-            project_meta_json = g.project_meta.to_json()
-            dump_json_file(project_meta_json, project_meta_path)
-            datasets = api.dataset.get_list(g.project_id)
-            for dataset in datasets:
-                ds_dir = os.path.join(g.project_dir, dataset.name)
-                img_dir = os.path.join(ds_dir, "img")
-                ann_dir = os.path.join(ds_dir, "ann")
+        mkdir(g.project_dir, remove_content_if_exists=True)
+        project_meta_path = os.path.join(g.project_dir, "meta.json")
+        g.project_meta = convert_object_tags(g.project_meta)
+        project_meta_json = g.project_meta.to_json()
+        dump_json_file(project_meta_json, project_meta_path)
+        datasets = api.dataset.get_list(g.project_id)
+        for dataset in datasets:
+            ds_dir = os.path.join(g.project_dir, dataset.name)
+            img_dir = os.path.join(ds_dir, "img")
+            ann_dir = os.path.join(ds_dir, "ann")
 
-                mkdir(ds_dir)
-                mkdir(img_dir)
-                mkdir(ann_dir)
-                images_infos = api.image.get_list(dataset.id)
-                download_progress = get_progress_cb(progress_index, "Download project", g.project_info.items_count * 2)
-                for batch in sly.batched(images_infos):
-                    image_ids = [image_info.id for image_info in batch]
-                    image_names = [image_info.name for image_info in batch]
-                    ann_infos = api.annotation.download_batch(dataset.id, image_ids, progress_cb=download_progress)
+            mkdir(ds_dir)
+            mkdir(img_dir)
+            mkdir(ann_dir)
+            images_infos = api.image.get_list(dataset.id)
+            download_progress = get_progress_cb(
+                progress_index, "Download project", g.project_info.items_count * 2
+            )
+            for batch in sly.batched(images_infos):
+                image_ids = [image_info.id for image_info in batch]
+                image_names = [image_info.name for image_info in batch]
+                ann_infos = api.annotation.download_batch(
+                    dataset.id, image_ids, progress_cb=download_progress
+                )
 
-                    image_nps = api.image.download_nps(dataset.id, image_ids, progress_cb=download_progress)
-                    anns = [sly.Annotation.from_json(ann_info.annotation, g.project_meta) for ann_info in ann_infos]
-                    selected_classes = get_selected_classes_from_ui(state["classesSelected"])
-                    crops = crop_and_resize_objects(image_nps, anns, state, selected_classes, image_names)
-                    crop_nps, crop_anns, crop_names = unpack_crops(crops, image_names)
-                    crop_anns = copy_tags(crop_anns)
-                    write_images(crop_nps, crop_names, img_dir)
-                    dump_anns(crop_anns, crop_names, ann_dir)
+                image_nps = api.image.download_nps(
+                    dataset.id, image_ids, progress_cb=download_progress
+                )
+                anns = [
+                    sly.Annotation.from_json(ann_info.annotation, g.project_meta)
+                    for ann_info in ann_infos
+                ]
+                selected_classes = get_selected_classes_from_ui(state["classesSelected"])
+                crops = crop_and_resize_objects(
+                    image_nps, anns, state, selected_classes, image_names
+                )
+                crop_nps, crop_anns, crop_names = unpack_crops(crops, image_names)
+                crop_anns = copy_tags(crop_anns)
+                write_images(crop_nps, crop_names, img_dir)
+                dump_anns(crop_anns, crop_names, ann_dir)
 
-            reset_progress(progress_index)
+        reset_progress(progress_index)
 
         global project_fs
         project_fs = sly.Project(g.project_dir, sly.OpenMode.READ)
@@ -282,30 +307,25 @@ def download_project_objects(api: sly.Api, task_id, context, state, app_logger):
         reset_progress(progress_index)
         raise e
 
-    items_count = g.project_stats["objects"]["total"]["objectsInDataset"]
+    # items_count = g.project_stats["objects"]["total"]["objectsInDataset"]
+    items_count = project_fs.total_items
     train_percent = 80
     train_count = int(items_count / 100 * train_percent)
     random_split = {
-        "count": {
-            "total": items_count,
-            "train": train_count,
-            "val": items_count - train_count
-        },
-        "percent": {
-            "total": 100,
-            "train": train_percent,
-            "val": 100 - train_percent
-        },
+        "count": {"total": items_count, "train": train_count, "val": items_count - train_count},
+        "percent": {"total": 100, "train": train_percent, "val": 100 - train_percent},
         "shareImagesBetweenSplits": False,
         "sliderDisabled": False,
     }
 
     fields = [
+        {"field": "state.allowTestartStep1", "payload": True},
+        {"field": "state.restartFrom", "payload": None},
         {"field": "data.done1", "payload": True},
         {"field": "state.collapsed2", "payload": False},
         {"field": "state.disabled2", "payload": False},
         {"field": "state.activeStep", "payload": 2},
-        {"field": "data.totalImagesCount", "payload": items_count},
+        {"field": "state.totalImagesCount", "payload": items_count},
         {"field": "state.randomSplit", "payload": random_split},
     ]
     g.api.app.set_fields(g.task_id, fields)
@@ -314,9 +334,7 @@ def download_project_objects(api: sly.Api, task_id, context, state, app_logger):
 @sly.timeit
 def upload_preview(crops):
     if len(crops) == 0:
-        g.api.task.set_fields(
-            g.task_id, [{"field": "data.showEmptyMessage", "payload": True}]
-        )
+        g.api.task.set_fields(g.task_id, [{"field": "data.showEmptyMessage", "payload": True}])
         return
 
     upload_src_paths = []
@@ -355,8 +373,13 @@ def upload_preview(crops):
 @g.my_app.callback("preview_objects")
 @sly.timeit
 def preview_objects(api: sly.Api, task_id, context, state, app_logger):
-    api.task.set_fields(task_id, [{"field": "data.previewProgress", "payload": 0}])
-
+    api.task.set_fields(
+        task_id,
+        [
+            {"field": "data.previewProgress", "payload": 0},
+            {"field": "state.showPreviewProgress", "payload": True},
+        ],
+    )
     image_id = random.choice(g.image_ids)
     image_info = api.image.get_info_by_id(image_id)
     image_name = image_info.name
@@ -366,9 +389,7 @@ def preview_objects(api: sly.Api, task_id, context, state, app_logger):
     ann = sly.Annotation.from_json(ann_json, g.project_meta)
 
     selected_classes = get_selected_classes_from_ui(state["classesSelected"])
-    single_crop = crop_and_resize_objects(
-        [img], [ann], state, selected_classes, [image_name]
-    )
+    single_crop = crop_and_resize_objects([img], [ann], state, selected_classes, [image_name])
     single_crop = unpack_single_crop(single_crop, image_name)
     single_crop = [(img, ann)] + single_crop
 
@@ -390,7 +411,7 @@ def preview_objects(api: sly.Api, task_id, context, state, app_logger):
             object_tags_names = []
             for tag in single_crop[idx][1].labels[0].tags.to_json():
                 if tag.get("value") is None:
-                    object_tags_names.append(tag.get('name'))
+                    object_tags_names.append(tag.get("name"))
                 else:
                     object_tags_names.append(f"{tag.get('name')}: {tag.get('value')}")
 
@@ -401,15 +422,16 @@ def preview_objects(api: sly.Api, task_id, context, state, app_logger):
             }
         grid_layout[idx % CNT_GRID_COLUMNS].append(idx)
 
+    fields = []
     if grid_data:
         content = {
             "projectMeta": g.project_meta_json,
             "annotations": grid_data,
             "layout": grid_layout,
         }
-        api.task.set_fields(
-            task_id, [{"field": "data.preview.content", "payload": content}]
-        )
+        fields.append({"field": "data.preview.content", "payload": content})
+    fields.append({"field": "state.showPreviewProgress", "payload": False})
+    api.task.set_fields(task_id, fields)
 
 
 def get_image_info_from_cache(dataset_name, item_name):
@@ -417,7 +439,7 @@ def get_image_info_from_cache(dataset_name, item_name):
     dataset_fs = project_fs.datasets.get(dataset_name)
     img_info_path = dataset_fs.get_img_info_path(item_name)
     image_info_dict = sly.json.load_json_file(img_info_path)
-    ImageInfo = namedtuple('ImageInfo', image_info_dict)
+    ImageInfo = namedtuple("ImageInfo", image_info_dict)
     info = ImageInfo(**image_info_dict)
 
     # add additional info - helps to save split paths to txt files
