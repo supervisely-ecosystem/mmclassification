@@ -241,6 +241,6 @@ def get_random_image():
 
 def upload_img_example_to_files(api, info):
     img_path = os.path.join(g.project_dir, info.dataset_id, "img", info.name)
-    remote_image_path = os.path.join("mmclassification", f"{g.task_id}_{g.project_info.name}", "example_images", info.name)
+    remote_image_path = os.path.join("/mmclassification", f"{g.task_id}_{g.project_info.name}", "example_images", info.name)
     info = api.file.upload(g.team_id, img_path, remote_image_path)
     return info
