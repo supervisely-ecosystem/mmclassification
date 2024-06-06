@@ -1,5 +1,6 @@
 import os
 import supervisely as sly
+from supervisely.nn.checkpoints.mmclassification import MMClassificationCheckpoint
 from sly_train_progress import init_progress
 import sly_globals as g
 from tools.train import main as mm_train
@@ -97,13 +98,28 @@ def upload_artifacts_and_log_progress():
     progress = sly.Progress("Upload directory with training artifacts to Team Files", 0, is_size=True)
     progress_cb = partial(upload_monitor, api=g.api, task_id=g.task_id, progress=progress)
 
-    remote_dir = f"/mmclassification/{g.task_id}_{g.project_info.name}"
+    checkpoint = MMClassificationCheckpoint(g.team_id)
+    model_dir = checkpoint.get_model_dir()
+    remote_artifacts_dir = f"{model_dir}/{g.task_id}_{g.project_info.name}"
+    remote_weights_dir = os.path.join(remote_artifacts_dir, checkpoint.weights_dir)
+    remote_config_path = os.path.join(remote_weights_dir, checkpoint.config_file)
 
     local_files = list_files_recursively(g.artifacts_dir)
-    remote_files = [file.replace(g.artifacts_dir, remote_dir) for file in local_files]
+    remote_files = [file.replace(g.artifacts_dir, remote_artifacts_dir) for file in local_files]
 
     g.api.file.upload_bulk(g.team_id, local_files, remote_files, progress_cb=progress_cb)
-    return remote_dir
+    
+    checkpoint.generate_sly_metadata(
+        app_name=checkpoint.app_name,
+        session_id=g.task_id,
+        session_path=remote_artifacts_dir,
+        weights_dir=remote_weights_dir,
+        training_project_name=g.project_info.name,
+        task_type=checkpoint.task_type,
+        config_path=remote_config_path,
+    )
+    
+    return remote_artifacts_dir
 
 
 @g.my_app.callback("train")
