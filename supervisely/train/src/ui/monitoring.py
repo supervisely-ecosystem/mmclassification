@@ -108,7 +108,7 @@ def upload_artifacts_and_log_progress():
     
     g.sly_mmcls.generate_metadata(
         app_name=g.sly_mmcls.app_name,
-        session_id=g.task_id,
+        task_id=g.task_id,
         artifacts_folder=remote_artifacts_dir,
         weights_folder=remote_weights_dir,
         weights_ext=g.sly_mmcls.weights_ext,
