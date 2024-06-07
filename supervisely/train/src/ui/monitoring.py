@@ -100,7 +100,6 @@ def upload_artifacts_and_log_progress():
     model_dir = g.sly_mmcls.framework_folder
     remote_artifacts_dir = f"{model_dir}/{g.task_id}_{g.project_info.name}"
     remote_weights_dir = os.path.join(remote_artifacts_dir, g.sly_mmcls.weights_folder)
-    remote_config_path = os.path.join(remote_weights_dir, g.sly_mmcls.config_file)
 
     local_files = list_files_recursively(g.artifacts_dir)
     remote_files = [file.replace(g.artifacts_dir, remote_artifacts_dir) for file in local_files]
@@ -115,7 +114,7 @@ def upload_artifacts_and_log_progress():
         weights_ext=g.sly_mmcls.weights_ext,
         project_name=g.project_info.name,
         task_type=g.sly_mmcls.task_type,
-        config_path=remote_config_path,
+        config_path=None,
     )
     
     return remote_artifacts_dir
