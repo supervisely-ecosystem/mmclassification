@@ -55,7 +55,7 @@
                 @input="(val)=>{
                                 state.smoothing = val;
                                 data.chartTrainLoss.options.smoothingWeight = val;
-                                data.chartValAccuracy.options.smoothingWeight = val;
+                                data.chartValF1.options.smoothingWeight = val;
                             }">
             </el-slider>
         </sly-field>
@@ -68,7 +68,7 @@
                     :content="data.chartTrainLoss.series">
                 </sly-line-chart>
                 <sly-line-chart v-if="state.cls_mode == 'one_label'" style="width: 33%;"
-                    :options.sync="data.chartValAccuracy.options" :content="data.chartValAccuracy.series">
+                    :options.sync="data.chartValF1.options" :content="data.chartValF1.series">
                 </sly-line-chart>
                 <sly-line-chart v-if="state.cls_mode == 'multi_label'" style="width: 33%;"
                     :options.sync="data.chartMAP.options" :content="data.chartMAP.series">

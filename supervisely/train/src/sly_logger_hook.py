@@ -99,17 +99,9 @@ class SuperviselyLoggerHook(TextLoggerHook):
                     "payload": [[log_dict["epoch"], log_dict["mAP"]]], "append": True},
                 ])
             else:
-                if "accuracy_top-1" in log_dict:
-                    fields.extend([
-                        {"field": "data.chartValAccuracy.series[0].data",
-                        "payload": [[log_dict["epoch"], log_dict["accuracy_top-1"]]], "append": True},
-                        {"field": "data.chartValAccuracy.series[1].data",
-                        "payload": [[log_dict["epoch"], log_dict["accuracy_top-5"]]], "append": True},
-                    ])
-                elif "f1_score" in log_dict:
-                    fields.extend([
-                        {"field": "data.chartValAccuracy.series[2].data",
-                        "payload": [[log_dict["epoch"], log_dict["f1_score"]]], "append": True},
-                    ])
+                fields.extend([
+                    {"field": "data.chartValF1.series[0].data",
+                    "payload": [[log_dict["epoch"], log_dict["f1_score"]]], "append": True},
+                ])
 
         g.api.app.set_fields(g.task_id, fields)

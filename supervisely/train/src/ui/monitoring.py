@@ -60,8 +60,7 @@ def init_charts(data, state):
                                  decimals=6, xdecimals=2)
     data["chartTrainLoss"] = init_chart("Train Loss", names=["train"], xs=[[]], ys=[[]], smoothing=0.6, decimals=6, xdecimals=2)
 
-    data["chartValAccuracy"] = init_chart("Val Metrics", names=["acc-top-1", "acc-top-5", "f1-score"], xs=[[], [], []], ys=[[], [], []], decimals=6, smoothing=0.6)
-    # data["chartF1"] = init_chart("Val F1-score", names=["f1-score"], xs=[[]], ys=[[]],  decimals=6, smoothing=0.6)
+    data["chartValF1"] = init_chart("Val F1-score", names=["f1-score"], xs=[[]], ys=[[]], decimals=6, smoothing=0.6)
     data["chartMAP"] = init_chart("mAP score", names=["val"], xs=[[]], ys=[[]], decimals=6, smoothing=0.6)
     data["chartC"] = init_chart("Per-class average val metrics", names=["precision", "recall", "F1"], xs=[[], [], []], ys=[[], [], []], decimals=6, smoothing=0.6)
     data["chartO"] = init_chart("Overall val metrics", names=["precision", "recall", "F1"], xs=[[], [], []], ys=[[], [], []], decimals=6, smoothing=0.6)
