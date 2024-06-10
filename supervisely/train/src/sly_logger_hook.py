@@ -99,6 +99,8 @@ class SuperviselyLoggerHook(TextLoggerHook):
                     "payload": [[log_dict["epoch"], log_dict["mAP"]]], "append": True},
                 ])
             else:
+                print("-------------------------Keys----------------------")
+                print(log_dict.keys())
                 fields.extend([
                     {"field": "data.chartValAccuracy.series[0].data",
                     "payload": [[log_dict["epoch"], log_dict["accuracy_top-1"]]], "append": True},
