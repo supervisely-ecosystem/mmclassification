@@ -79,7 +79,7 @@ class SuperviselyLoggerHook(TextLoggerHook):
         if log_dict['mode'] == 'val':
             multi_label = True
             for key in log_dict.keys():
-                if key.startswith("accuracy"):
+                if key.startswith("accuracy") or key.startswith("f1_score"):
                     multi_label = False
             if multi_label:
                 fields.extend([
