@@ -49,4 +49,4 @@ data = dict(
         data_prefix='test',
         pipeline=test_pipeline),
 )
-evaluation = dict(interval=validation_interval, save_best=save_best, metric='f1-score', rule='greater')
+evaluation = dict(interval=validation_interval, save_best=save_best, metric='f1_score', rule='greater')
