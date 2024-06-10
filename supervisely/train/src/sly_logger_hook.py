@@ -108,7 +108,7 @@ class SuperviselyLoggerHook(TextLoggerHook):
                     ])
                 elif "f1_score" in log_dict:
                     fields.extend([
-                        {"field": "data.chartF1.series[0].data",
+                        {"field": "data.chartValAccuracy.series[2].data",
                         "payload": [[log_dict["epoch"], log_dict["f1_score"]]], "append": True},
                     ])
 

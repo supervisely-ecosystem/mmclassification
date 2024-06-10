@@ -68,7 +68,7 @@
                     :content="data.chartTrainLoss.series">
                 </sly-line-chart>
                 <sly-line-chart v-if="state.cls_mode == 'one_label'" style="width: 33%;"
-                    :options.sync="data.chartF1.options" :content="data.chartF1.series">
+                    :options.sync="data.chartValAccuracy.options" :content="data.chartValAccuracy.series">
                 </sly-line-chart>
                 <sly-line-chart v-if="state.cls_mode == 'multi_label'" style="width: 33%;"
                     :options.sync="data.chartMAP.options" :content="data.chartMAP.series">
