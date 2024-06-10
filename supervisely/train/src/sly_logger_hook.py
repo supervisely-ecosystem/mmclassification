@@ -79,7 +79,7 @@ class SuperviselyLoggerHook(TextLoggerHook):
         if log_dict['mode'] == 'val':
             multi_label = True
             for key in log_dict.keys():
-                if key.startswith("accuracy"):
+                if key.startswith("accuracy") or key.startswith("f1_score"):
                     multi_label = False
             if multi_label:
                 fields.extend([
@@ -100,10 +100,8 @@ class SuperviselyLoggerHook(TextLoggerHook):
                 ])
             else:
                 fields.extend([
-                    {"field": "data.chartValAccuracy.series[0].data",
-                    "payload": [[log_dict["epoch"], log_dict["accuracy_top-1"]]], "append": True},
-                    {"field": "data.chartValAccuracy.series[1].data",
-                    "payload": [[log_dict["epoch"], log_dict["accuracy_top-5"]]], "append": True},
+                    {"field": "data.chartValF1.series[0].data",
+                    "payload": [[log_dict["epoch"], log_dict["f1_score"]]], "append": True},
                 ])
 
         g.api.app.set_fields(g.task_id, fields)
