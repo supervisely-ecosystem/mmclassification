@@ -168,16 +168,6 @@ def inference_batch_ids(api: sly.Api, task_id, context, state, app_logger):
 
 
 def _inference_images_ids_async(api: sly.Api, state: Dict, inference_request_uuid: str, app_logger):
-    inference_request = g.inference_requests[inference_request_uuid]
-    images_ids=state["images_ids"]
-    rectangles=state.get('rectangles')
-    padding=state.get('pad', 0)
-    topn=state.get('topn', 5)
-
-    sly_progress: Progress = inference_request["progress"]
-    sly_progress.total = len(images_ids)
-
-    # download images
     batch_size = 16
     download_executor = ThreadPoolExecutor(batch_size)
     def _download_images(image_ids: List[int]):
@@ -188,16 +178,27 @@ def _inference_images_ids_async(api: sly.Api, state: Dict, inference_request_uui
                 image_id,
             )
         download_executor.shutdown(wait=True)
-
-    download_images_thread = threading.Thread(target=_download_images, args=(images_ids,))
-    download_images_thread.start()
-
+    download_images_thread = None
+    inference_request = None
     try:
+        inference_request = g.inference_requests[inference_request_uuid]
+        images_ids=state["images_ids"]
+        rectangles=state.get('rectangles')
+        padding=state.get('pad', 0)
+        topn=state.get('topn', 5)
+
+        sly_progress: Progress = inference_request["progress"]
+        sly_progress.total = len(images_ids)
+
+        # download images
+        download_images_thread = threading.Thread(target=_download_images, args=(images_ids,))
+        download_images_thread.start()
+
         result = []
         for batch_ids in batched(images_ids, batch_size=batch_size):
             if inference_request["cancel_inference"]:
                 app_logger.debug(
-                    f"Cancelling inference project...",
+                    "Cancelling inference project...",
                     extra={"inference_request_uuid": inference_request_uuid},
                 )
                 result = []
@@ -217,13 +218,16 @@ def _inference_images_ids_async(api: sly.Api, state: Dict, inference_request_uui
 
         inference_request["result"] = result
     except Exception as e:
-        inference_request["exception"] = str(e)
+        if inference_request is not None:
+            inference_request["exception"] = str(e)
         app_logger.error(f"Error in _inference_images_ids_async function: {e}", exc_info=True)
         raise
     finally:
         download_executor.shutdown(wait=False)
-        download_images_thread.join()
-        inference_request["is_inferring"] = False
+        if download_images_thread is not None:
+            download_images_thread.join()
+        if inference_request is not None:
+            inference_request["is_inferring"] = False
 
 
 def _on_async_inference_start(inference_request_uuid: str):
