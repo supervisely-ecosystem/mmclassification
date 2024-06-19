@@ -341,6 +341,32 @@ def clear_inference_request(api: sly.Api, task_id, context, state, app_logger):
     g.my_app.send_response(context["request_id"], data={"message": "Inference request removed.", "success": True})
 
 
+@g.my_app.callback("get_inference_progress")
+def get_inference_progress(api: sly.Api, task_id, context, state, app_logger):
+    inference_request_uuid = state.get("inference_request_uuid")
+    if inference_request_uuid is None:
+        raise ValueError("Error: 'inference_request_uuid' is required.")
+    if inference_request_uuid not in g.inference_requests:
+        raise ValueError(f"Inference request with uuid '{inference_request_uuid}' not found")
+
+    inference_request = g.inference_requests[inference_request_uuid].copy()
+    inference_request["progress"] = _convert_sly_progress_to_dict(
+        inference_request["progress"]
+    )
+
+    # Logging
+    log_extra = _get_log_extra_for_inference_request(
+        inference_request_uuid, inference_request
+    )
+    app_logger.debug(
+        "Sending inference progress with uuid:",
+        extra=log_extra,
+    )
+
+    # Ger rid of `pending_results` to less response size
+    inference_request["pending_results"] = []
+    g.my_app.send_response(context["request_id"], data=inference_request)
+
 # def debug_inference1():
 #     image_id = 927270
 #     image_path = f"./data/images/{image_id}.jpg"
