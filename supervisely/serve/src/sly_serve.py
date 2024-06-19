@@ -195,6 +195,13 @@ def _inference_images_ids_async(api: sly.Api, state: Dict, inference_request_uui
     try:
         result = []
         for batch_ids in batched(images_ids, batch_size=batch_size):
+            if inference_request["cancel_inference"]:
+                app_logger.debug(
+                    f"Cancelling inference project...",
+                    extra={"inference_request_uuid": inference_request_uuid},
+                )
+                result = []
+                break
             images_nps = np.asarray([g.cache.download_image(api, im_id) for im_id in batch_ids])
             images_to_process = f.crop_images(images_nps=images_nps, rectangles=rectangles, padding=padding)
             images_indexes_to_process = np.asarray([index for index, img_np in enumerate(images_to_process) if img_np is not None])
@@ -216,7 +223,7 @@ def _inference_images_ids_async(api: sly.Api, state: Dict, inference_request_uui
     finally:
         download_executor.shutdown(wait=False)
         download_images_thread.join()
-
+        inference_request["is_inferring"] = False
 
 
 def _on_async_inference_start(inference_request_uuid: str):
