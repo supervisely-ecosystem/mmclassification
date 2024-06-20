@@ -3,6 +3,9 @@ import sys
 import pathlib
 import supervisely as sly
 from supervisely.app.v1.app_service import AppService
+from supervisely.nn.inference.cache import InferenceImageCache
+import supervisely.io.env as env
+
 
 root_source_path = str(pathlib.Path(sys.argv[0]).parents[3])
 sly.logger.info(f"Root source directory: {root_source_path}")
@@ -51,5 +54,10 @@ meta: sly.ProjectMeta = None
 gt_labels = None  # name -> index
 labels_urls = None
 cls_mode = "one_label"
-
-
+inference_requests = {}
+cache = InferenceImageCache(
+    maxsize=env.smart_cache_size(),
+    ttl=env.smart_cache_ttl(),
+    is_persistent=True,
+    base_folder=env.smart_cache_container_dir(),
+)
