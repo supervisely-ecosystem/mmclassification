@@ -10,4 +10,4 @@ RUN pip install urllib3>=1.26.15
 RUN pip install requests-toolbelt==1.0.0
 RUN pip install yapf==0.40.1
 
-RUN pip install supervisely==6.73.112
+RUN pip install supervisely==6.73.119
