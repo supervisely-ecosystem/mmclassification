@@ -4,7 +4,7 @@ from sly_train_progress import init_progress
 import sly_globals as g
 from tools.train import main as mm_train
 from supervisely.io.fs import list_files_recursively
-
+import workflow as w
 
 _open_lnk_name = "open_app.lnk"
 
@@ -106,7 +106,7 @@ def upload_artifacts_and_log_progress():
 
     g.api.file.upload_bulk(g.team_id, local_files, remote_files, progress_cb=progress_cb)
     
-    g.sly_mmcls.generate_metadata(
+    g.sly_mmdet_generated_metadata = g.sly_mmcls.generate_metadata(
         app_name=g.sly_mmcls.app_name,
         task_id=g.task_id,
         artifacts_folder=remote_artifacts_dir,
@@ -129,7 +129,7 @@ def train(api: sly.Api, task_id, context, state, app_logger):
 
         init_script_arguments(state)
         mm_train()
-
+        w.workflow_input(api, g.project_info, state)
         # hide progress bars and eta
         fields = [
             {"field": "data.progressEpoch", "payload": None},
@@ -154,5 +154,6 @@ def train(api: sly.Api, task_id, context, state, app_logger):
         api.app.set_field(task_id, "state.started", False)
         raise e  # app will handle this error and show modal window
 
+    w.workflow_output(api, g.sly_mmdet_generated_metadata, state)
     # stop application
     g.my_app.stop()

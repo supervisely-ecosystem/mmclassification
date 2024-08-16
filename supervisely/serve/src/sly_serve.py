@@ -20,6 +20,7 @@ from supervisely.nn.inference.inference import update_meta_and_ann, update_class
 import globals as g
 import functions as f
 import nn_utils
+import workflow as w
 
 
 @lru_cache(maxsize=10)
@@ -409,7 +410,7 @@ def main():
     nn_utils.download_model_and_configs()
     nn_utils.construct_model_meta()
     nn_utils.deploy_model()
-
+    w.workflow_input(g.api, g.remote_weights_path)
     # debug_inference1()
     # debug_inference2()
     # debug_inference3()
