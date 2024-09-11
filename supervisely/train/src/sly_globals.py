@@ -46,7 +46,7 @@ project_dir = os.path.join(my_app.data_dir, "sly_project")
 project_meta = sly.ProjectMeta.from_json(api.project.get_meta(project_id))
 project_meta_json = project_meta.to_json()
 
-image_ids = api.image.get_list(project_id=project_info.id)
+image_ids = [image_info.id for image_info in api.image.get_list(project_id=project_info.id)]
 images_infos = None
 my_app.logger.info("Image ids are initialized", extra={"count": len(image_ids)})
 
