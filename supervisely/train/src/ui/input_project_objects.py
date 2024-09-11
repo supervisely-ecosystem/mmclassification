@@ -262,7 +262,7 @@ def download_project_objects(api: sly.Api, task_id, context, state, app_logger):
         g.project_meta = convert_object_tags(g.project_meta)
         project_meta_json = g.project_meta.to_json()
         dump_json_file(project_meta_json, project_meta_path)
-        datasets = api.dataset.get_list(g.project_id)
+        datasets = api.dataset.get_list(g.project_id, recursive=True)
         for dataset in datasets:
             ds_dir = os.path.join(g.project_dir, dataset.name)
             img_dir = os.path.join(ds_dir, "img")
