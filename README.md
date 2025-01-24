@@ -1,6 +1,6 @@
 # Overview 
 🚀 This collection is designed to cover classification task in 
-[**Supervisely**](https://supervise.ly/). Before using these apps 
+[**Supervisely**](https://supervisely.com/). Before using these apps 
 we recommend to try end-to-end working demo (retail labeling use case) - data and explanations are provided.
 
 # Table of Contents
@@ -17,7 +17,7 @@ we recommend to try end-to-end working demo (retail labeling use case) - data an
 
 # 🔥 About Supervisely
 
-You can think of [Supervisely](https://supervise.ly/) as an Operating System available via Web Browser to help you solve Computer Vision tasks. The idea is to unify all the relevant tools that may be needed to make the development process as smooth and fast as possible. 
+You can think of [Supervisely](https://supervisely.com/) as an Operating System available via Web Browser to help you solve Computer Vision tasks. The idea is to unify all the relevant tools that may be needed to make the development process as smooth and fast as possible. 
 
 More concretely, Supervisely includes the following functionality:
  - Data labeling for images, videos, 3D point cloud and volumetric medical images (dicom)
@@ -56,18 +56,18 @@ To learn more about how to use every app, please go to app's readme page (links 
 Collection consists of the following apps: 
 
 ## Demo data and synthetic data
-- [Snacks catalog](https://ecosystem.supervise.ly/projects/snacks-catalog) - catalog of 83 
+- [Snacks catalog](https://ecosystem.supervisely.com/projects/snacks-catalog) - catalog of 83 
   snack items. All products are labeled and tagged. Will be used to generate synthetic training 
   dataset for object classification model  
 
     <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/snacks-catalog" src="https://i.imgur.com/Jc6wZSJ.png" width="350px"/>
 
-- [Grocery store shelves](https://ecosystem.supervise.ly/projects/grocery-store-shelves) - images 
+- [Grocery store shelves](https://ecosystem.supervisely.com/projects/grocery-store-shelves) - images 
   with products on shelves, will be used to test classification model on real data
 
     <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/grocery-store-shelves" src="https://i.imgur.com/Mqqqs4c.png" width="350px"/>
 
-- [Synthetic retail products](https://ecosystem.supervise.ly/apps/supervisely-ecosystem%252Fyolov5%252Fsupervisely%252Ftrain) - 
+- [Synthetic retail products](https://ecosystem.supervisely.com/apps/supervisely-ecosystem%252Fyolov5%252Fsupervisely%252Ftrain) - 
   app generates synthetic images for product classification from only a few labeled examples 
 
     <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/synthetic-retail-products" src="https://i.imgur.com/vkPOCER.png" width="350px"/>
@@ -77,7 +77,7 @@ Collection consists of the following apps:
 [OpenMMLab](https://openmmlab.com/) is building great deep leaning toolboxes for different kind of tasks in computer vision. 
 In this collections we completely integrated [MMClassification](https://github.com/open-mmlab/mmclassification) toolbox into Supervisely.
 
-- [Train MMClassification](https://ecosystem.supervise.ly/apps/supervisely-ecosystem%252Fmmclassification%252Fsupervisely%252Ftrain) - 
+- [Train MMClassification](https://ecosystem.supervisely.com/apps/supervisely-ecosystem%252Fmmclassification%252Fsupervisely%252Ftrain) - 
   start training on your custom data. Just run app from the context menu of your project, 
   choose tags of interest, train/val splits, configure training metaparameters and 
   augmentations, and monitor training metrics in realtime. App automatically validates 
@@ -128,7 +128,7 @@ In this collections we completely integrated [MMClassification](https://github.c
 | Swin-Transformer small|   49.61   |   8.52   | 83.02 | 96.29 | 
 | Swin-Transformer base |   87.77   |  15.14   | 83.36 | 96.44 | 
 
-- [Serve MMClassification](https://ecosystem.supervise.ly/apps/supervisely-ecosystem%252Fmmclassification%252Fsupervisely%252Fserve) - 
+- [Serve MMClassification](https://ecosystem.supervisely.com/apps/supervisely-ecosystem%252Fmmclassification%252Fsupervisely%252Fserve) - 
    serve model as Rest API service. You can run custom model weights trained in Supervisely. 
    Thus other apps from Ecosystem can get predictions from the deployed model. Also developers 
    can send inference requiests in a few lines of python code or use source code as an example 
@@ -138,7 +138,7 @@ In this collections we completely integrated [MMClassification](https://github.c
 
 ## Integration into labeling tool
 
-- [AI assisted classification](https://ecosystem.supervise.ly/apps/ai-assisted-classification) - 
+- [AI assisted classification](https://ecosystem.supervisely.com/apps/ai-assisted-classification) - 
   app connects to deployed classification model, shows model info and classes (with image examples),
   allows to get top N predictions from model for image / object in real time, also can be used to 
   review attached tags to perform quality assurance. It significantly speeds up labeling time especially
@@ -148,33 +148,33 @@ In this collections we completely integrated [MMClassification](https://github.c
 
 ## Auxiliary apps
 
-- [Tags co-occurrence matrix](https://ecosystem.supervise.ly/apps/tags-co-occurrence-matrix) - 
+- [Tags co-occurrence matrix](https://ecosystem.supervisely.com/apps/tags-co-occurrence-matrix) - 
   helps to explore tags on images and find some collisions in data before you train image 
   classification model  
 
     <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/tags-co-occurrence-matrix" src="https://i.imgur.com/YAWNGSt.png" width="350px"/>
 
-- [Unpack key-value tags](https://ecosystem.supervise.ly/apps/unpack-key-value-tags) - 
+- [Unpack key-value tags](https://ecosystem.supervisely.com/apps/unpack-key-value-tags) - 
   if you label images with key-value tag (single tag with multiple possible values) you can convert this tags to tags 
   without value (for example, `fruit`:`lemon` to a unique tag `fruit_lemon` and then use created project to train 
   classification model)  
 
     <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/unpack-key-value-tags" src="https://i.imgur.com/OB90OrK.png" width="350px"/>
 
-- [Copy image tags to objects](https://ecosystem.supervise.ly/apps/copy-image-tags-to-objects) - 
+- [Copy image tags to objects](https://ecosystem.supervisely.com/apps/copy-image-tags-to-objects) - 
   may be helpful when you tagged images and then labeled 
   objects on them and would like to assign to image tag to all objects on image 
   (for example, for generating synthetic data for retail) 
 
     <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/tags-co-occurrence-matrix" src="https://i.imgur.com/MBuF2sm.png" width="350px"/>
 
-- [Visual tagging](https://ecosystem.supervise.ly/apps/visual-tagging) - manually assign tags 
+- [Visual tagging](https://ecosystem.supervisely.com/apps/visual-tagging) - manually assign tags 
   using image examples for visual matching, app helps labelers to 
   navigate in large and/or complex classes to avoid mistakes when classes are similar    
 
     <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/visual-tagging" src="https://i.imgur.com/HnQVi32.png" width="350px"/>
 
-- [Tags to image URLs](https://ecosystem.supervise.ly/apps/tags-to-image-urls) - creates mapping 
+- [Tags to image URLs](https://ecosystem.supervisely.com/apps/tags-to-image-urls) - creates mapping 
   between tag name and all images with this tags and saves results to a `json` file. If you 
   trained classification model on synthetic data we recommend in training artifacts 
   directory backup original file `./info/tag2urls.json` by renaming it and replace it 
@@ -191,5 +191,5 @@ In this collections we completely integrated [MMClassification](https://github.c
 # Contact & Questions & Suggestions
 
 - for technical support please leave issues, questions or suggestions in our [repo](https://github.com/supervisely-ecosystem/mmclassification). Our team will try to help.
-- also we can chat in slack channel [![](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://supervise.ly/slack) 
-- if you are interested in Supervisely Enterprise Edition (EE) please send us a [request](https://supervise.ly/enterprise/?demo) or email Yuri Borisov at [sales@supervise.ly](sales@supervise.ly)
+- also we can chat in slack channel [![](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://supervisely.com/slack) 
+- if you are interested in Supervisely Enterprise Edition (EE) please send us a [request](https://supervisely.com/enterprise/?demo) or email Yuri Borisov at [sales@supervisely.com](sales@supervisely.com)
