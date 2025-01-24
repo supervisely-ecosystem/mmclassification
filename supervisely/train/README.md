@@ -14,11 +14,11 @@
 </p>
 
 
-[![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](https://ecosystem.supervise.ly/apps/supervisely-ecosystem/mmclassification/supervisely/train)
-[![](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://supervise.ly/slack)
+[![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](https://ecosystem.supervisely.com/apps/supervisely-ecosystem/mmclassification/supervisely/train)
+[![](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://supervisely.com/slack)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/supervisely-ecosystem/mmclassification)
-[![views](https://app.supervise.ly/img/badges/views/supervisely-ecosystem/mmclassification/supervisely/train.png)](https://supervise.ly)
-[![runs](https://app.supervise.ly/img/badges/runs/supervisely-ecosystem/mmclassification/supervisely/train.png)](https://supervise.ly)
+[![views](https://app.supervisely.com/img/badges/views/supervisely-ecosystem/mmclassification/supervisely/train.png)](https://supervisely.com)
+[![runs](https://app.supervisely.com/img/badges/runs/supervisely-ecosystem/mmclassification/supervisely/train.png)](https://supervisely.com)
 
 </div>
 
@@ -46,19 +46,19 @@ Watch [how-to video](https://youtu.be/R9sbH3biCmQ) for more details:
 
 You can try training multi-label classification model on project from:
 
-- [Movie genre from its poster](https://ecosystem.supervise.ly/apps/import-movie-genre-from-its-poster) - Application imports kaggle dataset to supervisely. The movie posters are obtained from IMDB website. Every image in the dataset labeled with multiple tags.
+- [Movie genre from its poster](https://ecosystem.supervisely.com/apps/import-movie-genre-from-its-poster) - Application imports kaggle dataset to supervisely. The movie posters are obtained from IMDB website. Every image in the dataset labeled with multiple tags.
 
     <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/import-movie-genre-from-its-poster" src="https://user-images.githubusercontent.com/97401023/201332341-77a66ccf-f3dd-4a44-abe5-d4358a943ecd.png" width="500px"/>
 
 ### v1.2.0
 
-By default, classification model trains on the tagged images. There are cases, when user need to use tagged objects as training examples. To cover this scenario, we added additional mode to training dashboard. Now user can run training on images or objects crops. If user selects `training on objects` mode, then the additional settings with preview will be available. It means that user dont't need to run [Crop objects on images](https://ecosystem.supervise.ly/apps/crop-objects-on-images) app before training and prepare temporary project with objects crops, now it will be done automatically in training dashboard. 
+By default, classification model trains on the tagged images. There are cases, when user need to use tagged objects as training examples. To cover this scenario, we added additional mode to training dashboard. Now user can run training on images or objects crops. If user selects `training on objects` mode, then the additional settings with preview will be available. It means that user dont't need to run [Crop objects on images](https://ecosystem.supervisely.com/apps/crop-objects-on-images) app before training and prepare temporary project with objects crops, now it will be done automatically in training dashboard. 
 
 Here is the UI screenshot with settings and preview if `training on objects` mode is selected:
 
 <img src="https://github.com/supervisely-ecosystem/mmclassification/releases/download/v0.0.1/train-objects-mode.png" style="width:150%;"/>
 
-Other features, like saving image examples for every class for trained classification model also supports new mode, technically it is achieved by saving images with other training artifacts (like checkpoints and metrics) in resulting directory in `Team Files`. [Serve MMClassification](https://app.supervise.ly/ecosystem/apps/supervisely-ecosystem%252Fmmclassification%252Fsupervisely%252Fserve) app can correctly use them with other inference applications from ecosystem: 
+Other features, like saving image examples for every class for trained classification model also supports new mode, technically it is achieved by saving images with other training artifacts (like checkpoints and metrics) in resulting directory in `Team Files`. [Serve MMClassification](https://app.supervisely.com/ecosystem/apps/supervisely-ecosystem%252Fmmclassification%252Fsupervisely%252Fserve) app can correctly use them with other inference applications from ecosystem: 
 
 <img src="https://github.com/supervisely-ecosystem/mmclassification/releases/download/v0.0.1/train-resulting-dir.png">
 
@@ -93,7 +93,7 @@ Other features, like saving image examples for every class for trained classific
    - use one of the predefined pipelines
    <img src="https://i.imgur.com/tJpY1uc.png"/>
    - or use custom augs.  To create custom augmentation pipeline use app 
-   "[ImgAug Studio](https://ecosystem.supervise.ly/apps/imgaug-studio)" from Supervisely Ecosystem. This app allows to 
+   "[ImgAug Studio](https://ecosystem.supervisely.com/apps/imgaug-studio)" from Supervisely Ecosystem. This app allows to 
    export pipeline in several formats. To use custom augs just provide the path to JSON config in team files.
      <a data-key="sly-embeded-video-link" href="https://youtu.be/ZkZ7krcKq1c" data-video-code="ZkZ7krcKq1c">
          <img src="https://i.imgur.com/HFEhrdl.png" alt="SLY_EMBEDED_VIDEO_LINK"  style="max-width:100%;">
