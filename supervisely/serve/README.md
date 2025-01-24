@@ -10,11 +10,11 @@
   <a href="#For-Developers">For Developers</a>
 </p>
 
-[![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](https://ecosystem.supervise.ly/apps/supervisely-ecosystem/mmclassification/supervisely/serve)
-[![](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://supervise.ly/slack)
+[![](https://img.shields.io/badge/supervisely-ecosystem-brightgreen)](https://ecosystem.supervisely.com/apps/supervisely-ecosystem/mmclassification/supervisely/serve)
+[![](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://supervisely.com/slack)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/supervisely-ecosystem/mmclassification)
-[![views](https://app.supervise.ly/img/badges/views/supervisely-ecosystem/mmclassification/supervisely/serve.png)](https://supervise.ly)
-[![runs](https://app.supervise.ly/img/badges/runs/supervisely-ecosystem/mmclassification/supervisely/serve.png)](https://supervise.ly)
+[![views](https://app.supervisely.com/img/badges/views/supervisely-ecosystem/mmclassification/supervisely/serve.png)](https://supervisely.com)
+[![runs](https://app.supervisely.com/img/badges/runs/supervisely-ecosystem/mmclassification/supervisely/serve.png)](https://supervisely.com)
 
 </div>
 
@@ -23,7 +23,7 @@
 App deploys MMClassification model trained in Supervisely as REST API service. Serve app is the simplest way how any model 
 can be integrated into Supervisely. Once model is deployed, user gets the following benefits:
 
-1. Use out of the box apps for inference - [AI assisted classification and tagging](https://ecosystem.supervise.ly/apps/ai-assisted-classification)
+1. Use out of the box apps for inference - [AI assisted classification and tagging](https://ecosystem.supervisely.com/apps/ai-assisted-classification)
 2. Apps from Supervisely Ecosystem can use NN predictions: for visualization, for analysis, performance evaluation, etc ...
 3. Communicate with NN in custom python script (see section <a href="#For-developers">for developers</a>)
 4. App illustrates how to use NN weights. For example: you can train model in Supervisely, download its weights and use 
