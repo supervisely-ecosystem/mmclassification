@@ -9,7 +9,7 @@ def get_gpu_devices():
             "Unable to import Torch. Please, run 'pip install torch' to resolve the issue.",
             extra={"error message": str(ie)},
         )
-        return {"label": "cuda:0", "value": "0", "right_text": None}
+        return [{"label": "cuda:0", "value": "0", "right_text": None}]
 
     try:
         cuda.init()
@@ -17,9 +17,9 @@ def get_gpu_devices():
             raise RuntimeError("CUDA is not available")
     except Exception as e:
         sly.logger.warning(f"Failed to initialize CUDA: {e}")
-        return {"label": "0", "right_text": None}
+        return [{"label": "cuda:0", "value": "0", "right_text": None}]
     try:
-        devices = {}
+        devices = []
         for idx in range(cuda.device_count()):
             current_device = f"cuda:{idx}"
             full_device_name = f"{cuda.get_device_name(idx)} ({current_device})"
@@ -32,4 +32,4 @@ def get_gpu_devices():
         return devices
     except Exception as e:
         sly.logger.warning(repr(e))
-        return {"label": "0", "right_text": None}
+        return [{"label": "cuda:0", "value": "0", "right_text": None}]
