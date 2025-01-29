@@ -8,7 +8,7 @@
     <sly-field title="GPU device id"
                description="Run nvidia-smi or check agent page to see how many devices your machine has or keep by default">
 <!--        <el-input v-model="state.gpusId" style="width:250px;"></el-input>-->
-        <el-select v-model="state.gpusId">
+        <el-select v-model="state.gpusId" :disabled="data.done7">
             <el-option
             v-for="item in state.devices"
             :key="item.value"
