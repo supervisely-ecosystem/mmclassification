@@ -8,8 +8,16 @@
     <sly-field title="GPU device id"
                description="Run nvidia-smi or check agent page to see how many devices your machine has or keep by default">
 <!--        <el-input v-model="state.gpusId" style="width:250px;"></el-input>-->
-        <el-select v-model="state.gpusId" :disabled="true">
-            <el-option key="0" label="0" value="0"></el-option>
+        <el-select v-model="state.gpusId" :disabled="data.done7">
+            <el-option
+            v-for="item in state.devices"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+            >
+                <span v-if="item.right_text !== null" style="float: left">{{ item.label }}</span>
+                <span v-if="item.right_text !== null" style="float: right; color: #8492a6; font-size: 13px">{{ item.right_text }}</span>
+            </el-option>
         </el-select>
     </sly-field>
     <sly-field title="Number of epochs">

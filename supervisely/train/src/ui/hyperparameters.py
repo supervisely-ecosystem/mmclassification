@@ -6,11 +6,12 @@ import splits
 
 def init(data, state):
     state["epochs"] = 5
-    state["gpusId"] = '0'
+    state["gpusId"] = "0"
+    state["devices"] = g.devices
 
     state["imgSize"] = 224
     state["batchSizePerGPU"] = 32
-    state["workersPerGPU"] = 2  #@TODO: 0 - for debug
+    state["workersPerGPU"] = 2  # @TODO: 0 - for debug
     state["valInterval"] = 1
     state["metricsPeriod"] = 10
     state["checkpointInterval"] = 1
