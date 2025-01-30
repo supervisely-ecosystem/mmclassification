@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 import sys
+import sly_functions as func
 import supervisely as sly
 from supervisely.app.v1.app_service import AppService
 from supervisely.nn.artifacts.mmclassification import MMClassification
@@ -59,3 +60,5 @@ checkpoints_dir = os.path.join(artifacts_dir, "checkpoints")
 sly.fs.mkdir(checkpoints_dir)
 
 sly_mmdet_generated_metadata = None # for project Workflow purposes
+
+devices = func.get_gpu_devices()
