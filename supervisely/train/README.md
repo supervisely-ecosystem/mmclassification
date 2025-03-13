@@ -209,11 +209,9 @@ for advanced user who would like ot export models and use them outside Supervise
    }
   ```   
 
-- `open_app.lnk` - link to finished session, you can open finished training dashboard at any time and check all settings and visualizations   
+- `open_app.lnk` - link to finished session, you can open finished training dashboard at any time and check all settings and visualizations
    <img src="https://i.imgur.com/BVtNo7E.png"/>
-  
 
 # How To Use Your Trained Model Outside Supervisely
 
 You can use your trained models outside Supervisely platform without any dependencies on Supervisely SDK. You just need to download config files and model weights (.pth) from Team Files, and then you can build and use the model as a normal model in mmcls/mmpretrain. See this [Jupyter Notebook](https://github.com/supervisely-ecosystem/mmclassification/blob/master/inference_outside_supervisely.ipynb) for details.
-
