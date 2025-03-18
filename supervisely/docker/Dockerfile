@@ -1,4 +1,4 @@
-FROM supervisely/base-pytorch:6.0.22
+FROM supervisely/base-py-sdk:6.73.332
 
 # RUN pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 --extra-index-url https://download.pytorch.org/whl/cu113
 # RUN pip install mmcv==1.3.5
