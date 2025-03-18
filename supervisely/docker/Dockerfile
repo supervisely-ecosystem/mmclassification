@@ -2,7 +2,7 @@ FROM supervisely/base-pytorch:6.0.22
 
 RUN pip install torch==2.1.0 torchvision==0.16.0 --extra-index-url https://download.pytorch.org/whl/cu118
 
-RUN pip install openmim
+RUN pip install -U openmim
 RUN pip install mmcv==2.2.0 -f https://download.openmmlab.com/mmcv/dist/cu118/torch2.1/index.html
 RUN pip install mmengine
 
