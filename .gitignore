@@ -147,3 +147,7 @@ checkpoint
 model_params.txt
 *.ckpt*
 results.txt
+
+# sly
+app_data
+supervisely/train/src/debug

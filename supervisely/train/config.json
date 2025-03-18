@@ -8,7 +8,7 @@
     "train"
   ],
   "description": "Dashboard to configure, start and monitor training",
-  "docker_image": "supervisely/mmcls:1.0.8",
+  "docker_image": "supervisely/mmcls:dev",
   "instance_version": "6.10.0",
   "main_script": "supervisely/train/src/sly_train.py",
   "gui_template": "supervisely/train/src/gui.html",
@@ -30,6 +30,6 @@
   "poster": "https://user-images.githubusercontent.com/106374579/186635809-18aaf088-44a0-4ccc-8e68-f0ac97ce603b.png",
   "community_agent": false,
   "license": {
-    "type": "Apache-2.0" 
+    "type": "Apache-2.0"
   }
 }
