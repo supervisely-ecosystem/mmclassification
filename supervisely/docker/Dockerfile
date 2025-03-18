@@ -5,9 +5,10 @@ RUN pip install opencv-python-headless==4.8.1.78
 RUN pip install opencv-python==4.8.1.78
 RUN pip install imgaug==0.4.0 imagecorruptions==1.1.2
 
-RUN pip install -U openmim && \
+RUN pip install --upgrade pip && \
+    pip install -U openmim && \
     mim install mmengine==0.10.3 && \
-    mim install mmcv-full==2.1.0 && \
+    pip install mmcv==2.0.1 -f https://download.openmmlab.com/mmcv/dist/cu118/torch2.1/index.html && \
     mim install mmpretrain==1.2.0
 
 RUN pip install urllib3>=1.26.15 \
