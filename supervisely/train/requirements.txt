@@ -3,17 +3,17 @@
 supervisely==6.73.332
 
 # AUGS
-# imgaug==0.4.0
-# imagecorruptions==1.1.2
+imgaug
+imagecorruptions
 
 # MM
 # mmengine
 # mmcv
 # openmim
 
-# importlib_metadata
-# modelindex==0.0.2
-# einops==0.8.1
-# mat4py==0.6.0
-# matplotlib
-# rich
+importlib_metadata
+modelindex
+einops
+mat4py
+matplotlib
+rich
