@@ -1,13 +1,15 @@
 import os
-import supervisely as sly
+
 import sly_globals as g
 import splits
+
+import supervisely as sly
 
 
 def init(data, state):
     state["epochs"] = 5
     state["gpusId"] = "0"
-    state["devices"] = g.devices
+    state["devices"] = []  # g.devices
 
     state["imgSize"] = 224
     state["batchSizePerGPU"] = 32

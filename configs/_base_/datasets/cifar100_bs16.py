@@ -1,32 +1,45 @@
 # dataset settings
 dataset_type = 'CIFAR100'
-img_norm_cfg = dict(
+data_preprocessor = dict(
+    num_classes=100,
+    # RGB format normalization parameters
     mean=[129.304, 124.070, 112.434],
     std=[68.170, 65.392, 70.418],
-    to_rgb=True)
+    # loaded images are already RGB format
+    to_rgb=False)
+
 train_pipeline = [
-    dict(type='RandomCrop', size=32, padding=4),
-    dict(type='RandomFlip', flip_prob=0.5, direction='horizontal'),
-    dict(type='Normalize', **img_norm_cfg),
-    dict(type='ImageToTensor', keys=['img']),
-    dict(type='ToTensor', keys=['gt_label']),
-    dict(type='Collect', keys=['img', 'gt_label'])
+    dict(type='RandomCrop', crop_size=32, padding=4),
+    dict(type='RandomFlip', prob=0.5, direction='horizontal'),
+    dict(type='PackInputs'),
 ]
+
 test_pipeline = [
-    dict(type='Normalize', **img_norm_cfg),
-    dict(type='ImageToTensor', keys=['img']),
-    dict(type='Collect', keys=['img'])
+    dict(type='PackInputs'),
 ]
-data = dict(
-    samples_per_gpu=16,
-    workers_per_gpu=2,
-    train=dict(
+
+train_dataloader = dict(
+    batch_size=16,
+    num_workers=2,
+    dataset=dict(
         type=dataset_type,
-        data_prefix='data/cifar100',
+        data_root='data/cifar100',
+        split='train',
         pipeline=train_pipeline),
-    val=dict(
-        type=dataset_type, data_prefix='data/cifar100',
+    sampler=dict(type='DefaultSampler', shuffle=True),
+)
+
+val_dataloader = dict(
+    batch_size=16,
+    num_workers=2,
+    dataset=dict(
+        type=dataset_type,
+        data_root='data/cifar100/',
+        split='test',
         pipeline=test_pipeline),
-    test=dict(
-        type=dataset_type, data_prefix='data/cifar100',
-        pipeline=test_pipeline))
+    sampler=dict(type='DefaultSampler', shuffle=False),
+)
+val_evaluator = dict(type='Accuracy', topk=(1, ))
+
+test_dataloader = val_dataloader
+test_evaluator = val_evaluator

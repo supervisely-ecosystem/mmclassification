@@ -1,17 +1,17 @@
-import os
 import copy
-import numpy as np
-import supervisely as sly
+import os
 
-from mmcls.datasets.base_dataset import BaseDataset
-from mmcls.datasets.multi_label import MultiLabelDataset
-from mmcls.datasets.builder import DATASETS
+import numpy as np
+import sly_globals as g
+
+import supervisely as sly
+from mmpretrain.datasets.base_dataset import BaseDataset
+from mmpretrain.datasets.builder import DATASETS
+from mmpretrain.datasets.multi_label import MultiLabelDataset
 
 
 @DATASETS.register_module()
 class Supervisely(BaseDataset):
-    """`Supervisely <https://supervise.ly/>`_ Dataset.
-    """
 
     CLASSES = None
 
@@ -19,44 +19,53 @@ class Supervisely(BaseDataset):
         self.gt_labels = sly.json.load_json_file(os.path.join(project_dir, "gt_labels.json"))
         Supervisely.CLASSES = sorted(self.gt_labels, key=self.gt_labels.get)
         self.split_name = data_prefix
-        self.items = sly.json.load_json_file(os.path.join(project_dir, "splits.json"))[self.split_name]
+        self.items = sly.json.load_json_file(os.path.join(project_dir, "splits.json"))[
+            self.split_name
+        ]
         self.project_fs = sly.Project(project_dir, sly.OpenMode.READ)
-        super(Supervisely, self).__init__(data_prefix=self.split_name, pipeline=pipeline, test_mode=test_mode)
+        mm_ann = self.create_mm_ann()
+        mm_ann_path = os.path.join(project_dir, f"{self.split_name}_mm_ann.json")
+        sly.json.dump_json_file(mm_ann, mm_ann_path)
 
-    def load_annotations(self):
+        super(Supervisely, self).__init__(
+            ann_file=mm_ann_path,
+            data_prefix=self.split_name,
+            pipeline=pipeline,
+            test_mode=test_mode,
+        )
+
+    def create_mm_ann(self):
         classes_set = set(Supervisely.CLASSES)
-        data_infos = []
+        data_list = []
         for paths in self.items:
-            img_path = paths["img_path"]
-            ann_path = paths["ann_path"]
+            img_path = os.path.join(g.root_source_dir, paths["img_path"])
+            ann_path = os.path.join(g.root_source_dir, paths["ann_path"])
             if not sly.fs.file_exists(img_path):
-                sly.logger.warn(f"File {img_path} not found and item will be skipped")
+                sly.logger.warning(f"File {img_path} not found and item will be skipped")
                 continue
             if not sly.fs.file_exists(ann_path):
-                sly.logger.warn(f"File {ann_path} not found and item will be skipped")
+                sly.logger.warning(f"File {ann_path} not found and item will be skipped")
                 continue
+
             ann = sly.Annotation.load_json_file(ann_path, self.project_fs.meta)
             img_tags = {tag.name for tag in ann.img_tags}
+            valid_tags = list(img_tags.intersection(classes_set))
 
-            gt_label = list(img_tags.intersection(classes_set))
-            if len(gt_label) != 1:
-                sly.logger.warn(f"File {ann_path} has {len(gt_label)} gt labels")
+            if len(valid_tags) != 1:
+                sly.logger.warning(
+                    f"File {ann_path} has {len(valid_tags)} gt labels, expected exactly 1"
+                )
                 continue
-            else:
-                gt_label = gt_label[0]
-
+            gt_label = valid_tags[0]
             gt_index = self.gt_labels[gt_label]
-            data_infos.append({
-                "img_prefix": self.split_name,
-                "img_info": {'filename': img_path},
-                "gt_label": np.array(gt_index, dtype=np.int64)
-            })
-        return data_infos
+            data_list.append({"img_path": img_path, "gt_label": gt_index})
+
+        mm_annotations = {"metainfo": {"classes": Supervisely.CLASSES}, "data_list": data_list}
+        return mm_annotations
+
 
 @DATASETS.register_module()
 class SuperviselyMultiLabel(MultiLabelDataset):
-    """`Supervisely <https://supervise.ly/>`_ Dataset.
-    """
 
     CLASSES = None
 
@@ -64,36 +73,44 @@ class SuperviselyMultiLabel(MultiLabelDataset):
         self.gt_labels = sly.json.load_json_file(os.path.join(project_dir, "gt_labels.json"))
         SuperviselyMultiLabel.CLASSES = sorted(self.gt_labels, key=self.gt_labels.get)
         self.split_name = data_prefix
-        self.items = sly.json.load_json_file(os.path.join(project_dir, "splits.json"))[self.split_name]
+        self.items = sly.json.load_json_file(os.path.join(project_dir, "splits.json"))[
+            self.split_name
+        ]
         self.project_fs = sly.Project(project_dir, sly.OpenMode.READ)
-        super(SuperviselyMultiLabel, self).__init__(data_prefix=self.split_name, pipeline=pipeline, test_mode=test_mode)
+        mm_ann = self.create_mm_ann()
+        mm_ann_path = os.path.join(project_dir, f"{self.split_name}_mm_ann.json")
+        sly.json.dump_json_file(mm_ann, mm_ann_path)
+        super(SuperviselyMultiLabel, self).__init__(
+            ann_file=mm_ann_path,
+            data_prefix=self.split_name,
+            pipeline=pipeline,
+            test_mode=test_mode,
+        )
 
-    def load_annotations(self):
-        classes_set = set(self.CLASSES)
-        data_infos = []
+    def create_mm_ann(self):
+        classes_set = set(Supervisely.CLASSES)
+        data_list = []
         for paths in self.items:
-            img_path = paths["img_path"]
-            ann_path = paths["ann_path"]
+            img_path = os.path.join(g.root_source_dir, paths["img_path"])
+            ann_path = os.path.join(g.root_source_dir, paths["ann_path"])
             if not sly.fs.file_exists(img_path):
-                sly.logger.warn(f"File {img_path} not found and item will be skipped")
+                sly.logger.warning(f"File {img_path} not found and item will be skipped")
                 continue
             if not sly.fs.file_exists(ann_path):
-                sly.logger.warn(f"File {ann_path} not found and item will be skipped")
+                sly.logger.warning(f"File {ann_path} not found and item will be skipped")
                 continue
+
             ann = sly.Annotation.load_json_file(ann_path, self.project_fs.meta)
             img_tags = {tag.name for tag in ann.img_tags}
+            gt_labels = []
+            for tag in img_tags:
+                if tag in classes_set:
+                    gt_labels.append(self.gt_labels[tag])
 
-            gt_label = list(img_tags.intersection(classes_set))
-            gt_index = []
-            for label in gt_label:
-                gt_index.append(self.gt_labels[label])
+            if not gt_labels:
+                sly.logger.warning(f"File {ann_path} has no valid tags")
+                continue
 
-            gt_label = np.zeros(len(self.CLASSES),dtype=np.int64)
-            gt_label[gt_index] = 1
-
-            data_infos.append({
-                "img_prefix": self.split_name,
-                "img_info": {'filename': img_path},
-                "gt_label": gt_label
-            })
-        return data_infos
+            data_list.append({"img_path": img_path, "gt_label": gt_labels})
+        mm_annotations = {"metainfo": {"classes": Supervisely.CLASSES}, "data_list": data_list}
+        return mm_annotations

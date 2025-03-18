@@ -1,195 +1,339 @@
-# Overview 
-🚀 This collection is designed to cover classification task in 
-[**Supervisely**](https://supervisely.com/). Before using these apps 
-we recommend to try end-to-end working demo (retail labeling use case) - data and explanations are provided.
+<div align="center">
 
-# Table of Contents
+<img src="resources/mmpt-logo.png" width="600"/>
+  <div>&nbsp;</div>
+  <div align="center">
+    <b><font size="5">OpenMMLab website</font></b>
+    <sup>
+      <a href="https://openmmlab.com">
+        <i><font size="4">HOT</font></i>
+      </a>
+    </sup>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <b><font size="5">OpenMMLab platform</font></b>
+    <sup>
+      <a href="https://platform.openmmlab.com">
+        <i><font size="4">TRY IT OUT</font></i>
+      </a>
+    </sup>
+  </div>
+  <div>&nbsp;</div>
 
-1. [About Supervisely](#-about-supervisely)
-2. [Prerequisites](#Prerequisites)
-3. [Apps Collection for Classification](#-apps-collection-for-classification)
-    - [Demo data and synthetic data generation](#demo-data-and-synthetic-data)
-    - [Neural Networks](#neural-networks)
-    - [Integration into labeling tool](#integration-into-labeling-tool)
-    - [Auxiliary apps](#auxiliary-apps)
-8. [For developers](#For-developers)
-9. [Contact & Questions & Suggestions](#contact--questions--suggestions)
+[![PyPI](https://img.shields.io/pypi/v/mmpretrain)](https://pypi.org/project/mmpretrain)
+[![Docs](https://img.shields.io/badge/docs-latest-blue)](https://mmpretrain.readthedocs.io/en/latest/)
+[![Build Status](https://github.com/open-mmlab/mmpretrain/workflows/build/badge.svg)](https://github.com/open-mmlab/mmpretrain/actions)
+[![codecov](https://codecov.io/gh/open-mmlab/mmpretrain/branch/main/graph/badge.svg)](https://codecov.io/gh/open-mmlab/mmpretrain)
+[![license](https://img.shields.io/github/license/open-mmlab/mmpretrain.svg)](https://github.com/open-mmlab/mmpretrain/blob/main/LICENSE)
+[![open issues](https://isitmaintained.com/badge/open/open-mmlab/mmpretrain.svg)](https://github.com/open-mmlab/mmpretrain/issues)
+[![issue resolution](https://isitmaintained.com/badge/resolution/open-mmlab/mmpretrain.svg)](https://github.com/open-mmlab/mmpretrain/issues)
 
-# 🔥 About Supervisely
+[📘 Documentation](https://mmpretrain.readthedocs.io/en/latest/) |
+[🛠️ Installation](https://mmpretrain.readthedocs.io/en/latest/get_started.html#installation) |
+[👀 Model Zoo](https://mmpretrain.readthedocs.io/en/latest/modelzoo_statistics.html) |
+[🆕 Update News](https://mmpretrain.readthedocs.io/en/latest/notes/changelog.html) |
+[🤔 Reporting Issues](https://github.com/open-mmlab/mmpretrain/issues/new/choose)
 
-You can think of [Supervisely](https://supervisely.com/) as an Operating System available via Web Browser to help you solve Computer Vision tasks. The idea is to unify all the relevant tools that may be needed to make the development process as smooth and fast as possible. 
+<img src="https://user-images.githubusercontent.com/36138628/230307505-4727ad0a-7d71-4069-939d-b499c7e272b7.png" width="400"/>
 
-More concretely, Supervisely includes the following functionality:
- - Data labeling for images, videos, 3D point cloud and volumetric medical images (dicom)
- - Data visualization and quality control
- - State-Of-The-Art Deep Learning models for segmentation, detection, classification and other tasks
- - Interactive tools for model performance analysis
- - Specialized Deep Learning models to speed up data labeling (aka AI-assisted labeling)
- - Synthetic data generation tools
- - Instruments to make it easier to collaborate for data scientists, data labelers, domain experts and software engineers
+English | [简体中文](/README_zh-CN.md)
 
-One challenge is to make it possible for everyone to train and apply SOTA Deep Learning models directly from the Web Browser. To address it, we introduce an open sourced Supervisely Agent. All you need to do is to execute a single command on your machine with the GPU that installs the Agent. After that, you keep working in the browser and all the GPU related computations will be performed on the connected machine(s).
+</div>
 
+</div>
 
-# Prerequisites
-You should connect computer with GPU to your Supervisely account. If you already have Supervisely Agent running on your computer, you can skip this step.
+<div align="center">
+  <a href="https://openmmlab.medium.com/" style="text-decoration:none;">
+    <img src="https://user-images.githubusercontent.com/25839884/219255827-67c1a27f-f8c5-46a9-811d-5e57448c61d1.png" width="3%" alt="" /></a>
+  <img src="https://user-images.githubusercontent.com/25839884/218346358-56cc8e2f-a2b8-487f-9088-32480cceabcf.png" width="3%" alt="" />
+  <a href="https://discord.gg/raweFPmdzG" style="text-decoration:none;">
+    <img src="https://user-images.githubusercontent.com/25839884/218347213-c080267f-cbb6-443e-8532-8e1ed9a58ea9.png" width="3%" alt="" /></a>
+  <img src="https://user-images.githubusercontent.com/25839884/218346358-56cc8e2f-a2b8-487f-9088-32480cceabcf.png" width="3%" alt="" />
+  <a href="https://twitter.com/OpenMMLab" style="text-decoration:none;">
+    <img src="https://user-images.githubusercontent.com/25839884/218346637-d30c8a0f-3eba-4699-8131-512fb06d46db.png" width="3%" alt="" /></a>
+  <img src="https://user-images.githubusercontent.com/25839884/218346358-56cc8e2f-a2b8-487f-9088-32480cceabcf.png" width="3%" alt="" />
+  <a href="https://www.youtube.com/openmmlab" style="text-decoration:none;">
+    <img src="https://user-images.githubusercontent.com/25839884/218346691-ceb2116a-465a-40af-8424-9f30d2348ca9.png" width="3%" alt="" /></a>
+  <img src="https://user-images.githubusercontent.com/25839884/218346358-56cc8e2f-a2b8-487f-9088-32480cceabcf.png" width="3%" alt="" />
+  <a href="https://space.bilibili.com/1293512903" style="text-decoration:none;">
+    <img src="https://user-images.githubusercontent.com/25839884/219026751-d7d14cce-a7c9-4e82-9942-8375fca65b99.png" width="3%" alt="" /></a>
+  <img src="https://user-images.githubusercontent.com/25839884/218346358-56cc8e2f-a2b8-487f-9088-32480cceabcf.png" width="3%" alt="" />
+  <a href="https://www.zhihu.com/people/openmmlab" style="text-decoration:none;">
+    <img src="https://user-images.githubusercontent.com/25839884/219026120-ba71e48b-6e94-4bd4-b4e9-b7d175b5e362.png" width="3%" alt="" /></a>
+</div>
 
- Several tools have to be installed on your computer:
+## Introduction
 
-- Nvidia drives + [CUDA Toolkit](https://developer.nvidia.com/cuda-downloads)
-- [Docker](https://docs.docker.com/engine/install/)
-- [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker)
+MMPreTrain is an open source pre-training toolbox based on PyTorch. It is a part of the [OpenMMLab](https://openmmlab.com/) project.
 
-Once your computer is ready just add agent to your team and execute automatically generated running command in terminal. Watch how-to video:
+The `main` branch works with **PyTorch 1.8+**.
 
-<a data-key="sly-embeded-video-link" href="https://youtu.be/aDqQiYycqyk" data-video-code="aDqQiYycqyk">
-    <img src="https://i.imgur.com/X9NTc5X.png" alt="SLY_EMBEDED_VIDEO_LINK"  style="width:50%;">
-</a>
+### Major features
 
+- Various backbones and pretrained models
+- Rich training strategies (supervised learning, self-supervised learning, multi-modality learning etc.)
+- Bag of training tricks
+- Large-scale training configs
+- High efficiency and extensibility
+- Powerful toolkits for model analysis and experiments
+- Various out-of-box inference tasks.
+  - Image Classification
+  - Image Caption
+  - Visual Question Answering
+  - Visual Grounding
+  - Retrieval (Image-To-Image, Text-To-Image, Image-To-Text)
 
-# 🎉 Apps Collection for classification
+https://github.com/open-mmlab/mmpretrain/assets/26739999/e4dcd3a2-f895-4d1b-a351-fbc74a04e904
 
-To learn more about how to use every app, please go to app's readme page (links are provided). Just add the apps to your team to start using them.
+## What's new
 
-<img src="https://i.imgur.com/xc8Q2dt.png"/>
+🌟 v1.2.0 was released in 04/01/2023
 
-Collection consists of the following apps: 
+- Support LLaVA 1.5.
+- Implement of RAM with a gradio interface.
 
-## Demo data and synthetic data
-- [Snacks catalog](https://ecosystem.supervisely.com/projects/snacks-catalog) - catalog of 83 
-  snack items. All products are labeled and tagged. Will be used to generate synthetic training 
-  dataset for object classification model  
+🌟 v1.1.0 was released in 12/10/2023
 
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/snacks-catalog" src="https://i.imgur.com/Jc6wZSJ.png" width="350px"/>
+- Support Mini-GPT4 training and provide a Chinese model (based on Baichuan-7B)
+- Support zero-shot classification based on CLIP.
 
-- [Grocery store shelves](https://ecosystem.supervisely.com/projects/grocery-store-shelves) - images 
-  with products on shelves, will be used to test classification model on real data
+🌟 v1.0.0 was released in 04/07/2023
 
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/grocery-store-shelves" src="https://i.imgur.com/Mqqqs4c.png" width="350px"/>
+- Support inference of more **multi-modal** algorithms, such as [**LLaVA**](./configs/llava/), [**MiniGPT-4**](./configs/minigpt4), [**Otter**](./configs/otter/), etc.
+- Support around **10 multi-modal** datasets!
+- Add [**iTPN**](./configs/itpn/), [**SparK**](./configs/spark/) self-supervised learning algorithms.
+- Provide examples of [New Config](./mmpretrain/configs/) and [DeepSpeed/FSDP with FlexibleRunner](./configs/mae/benchmarks/). Here are the documentation links of [New Config](https://mmengine.readthedocs.io/en/latest/advanced_tutorials/config.html#a-pure-python-style-configuration-file-beta) and [DeepSpeed/FSDP with FlexibleRunner](https://mmengine.readthedocs.io/en/latest/api/generated/mmengine.runner.FlexibleRunner.html#mmengine.runner.FlexibleRunner).
 
-- [Synthetic retail products](https://ecosystem.supervisely.com/apps/supervisely-ecosystem%252Fyolov5%252Fsupervisely%252Ftrain) - 
-  app generates synthetic images for product classification from only a few labeled examples 
+🌟 Upgrade from MMClassification to MMPreTrain
 
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/synthetic-retail-products" src="https://i.imgur.com/vkPOCER.png" width="350px"/>
+- Integrated Self-supervised learning algorithms from **MMSelfSup**, such as **MAE**, **BEiT**, etc.
+- Support **RIFormer**, a simple but effective vision backbone by removing token mixer.
+- Refactor dataset pipeline visualization.
+- Support **LeViT**, **XCiT**, **ViG**, **ConvNeXt-V2**, **EVA**, **RevViT**, **EfficientnetV2**, **CLIP**, **TinyViT** and **MixMIM** backbones.
 
-## Neural networks
+This release introduced a brand new and flexible training & test engine, but it's still in progress. Welcome
+to try according to [the documentation](https://mmpretrain.readthedocs.io/en/latest/).
 
-[OpenMMLab](https://openmmlab.com/) is building great deep leaning toolboxes for different kind of tasks in computer vision. 
-In this collections we completely integrated [MMClassification](https://github.com/open-mmlab/mmclassification) toolbox into Supervisely.
+And there are some BC-breaking changes. Please check [the migration tutorial](https://mmpretrain.readthedocs.io/en/latest/migration.html).
 
-- [Train MMClassification](https://ecosystem.supervisely.com/apps/supervisely-ecosystem%252Fmmclassification%252Fsupervisely%252Ftrain) - 
-  start training on your custom data. Just run app from the context menu of your project, 
-  choose tags of interest, train/val splits, configure training metaparameters and 
-  augmentations, and monitor training metrics in realtime. App automatically validates 
-  training data and perform augmentations on the fly. All training artifacts including 
-  model weights will be saved to Team Files and can be easily downloaded. Conigs for 
-  MMClassification also saved and can be used to train models outside Supervisely (advanced usage) 
-  
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/mmclassification/supervisely/train" src="https://i.imgur.com/mXG6njU.png" width="350px"/>
-    
-  The following models are available:
+Please refer to [changelog](https://mmpretrain.readthedocs.io/en/latest/notes/changelog.html) for more details and other release history.
 
-|         Model         | Params(M) | Flops(G) | Top-1 (%) | Top-5 (%) |
-|:---------------------:|:---------:|:--------:|:---------:|:---------:|
-| VGG-11 | 132.86 | 7.63 | 68.75 | 88.87 |
-| VGG-13 | 133.05 | 11.34 | 70.02 | 89.46 | 
-| VGG-16 | 138.36 | 15.5 | 71.62 | 90.49 | 
-| VGG-19 | 143.67 | 19.67 | 72.41 | 90.80 | 
-| VGG-11-BN | 132.87 | 7.64 | 70.75 | 90.12 | 
-| VGG-13-BN | 133.05 | 11.36 | 72.15 | 90.71 | 
-| VGG-16-BN | 138.37 | 15.53 | 73.72 | 91.68 | 
-| VGG-19-BN | 143.68 | 19.7 | 74.70 | 92.24 | 
-| ResNet-18             | 11.69     | 1.82     | 70.07 | 89.44 | 
-| ResNet-34             | 21.8      | 3.68     | 73.85 | 91.53 | 
-| ResNet-50             | 25.56     | 4.12     | 76.55 | 93.15 | 
-| ResNet-101            | 44.55     | 7.85     | 78.18 | 94.03 | 
-| ResNet-152            | 60.19     | 11.58    | 78.63 | 94.16 | 
-| ResNeSt-50*           | 27.48     | 5.41     | 81.13 | 95.59 | 
-| ResNeSt-101*          | 48.28     | 10.27    | 82.32 | 96.24 | 
-| ResNeSt-200*          | 70.2      | 17.53    | 82.41 | 96.22 | 
-| ResNeSt-269*          | 110.93    | 22.58    | 82.70 | 96.28 | 
-| ResNetV1D-50          | 25.58     | 4.36     | 77.54  | 93.57 | 
-| ResNetV1D-101         | 44.57     | 8.09     | 78.93 | 94.48 | 
-| ResNetV1D-152         | 60.21     | 11.82    | 79.41 | 94.7 | 
-| ResNeXt-32x4d-50      | 25.03     | 4.27     | 77.90 | 93.66 | 
-| ResNeXt-32x4d-101     | 44.18     | 8.03     | 78.71  | 94.12 | 
-| ResNeXt-32x8d-101     | 88.79     | 16.5     | 79.23 | 94.58 | 
-| ResNeXt-32x4d-152     | 59.95     | 11.8     | 78.93 | 94.41 | 
-| SE-ResNet-50          | 28.09     | 4.13     | 77.74 | 93.84 | 
-| SE-ResNet-101         | 49.33     | 7.86     | 78.26 | 94.07 | 
-| ShuffleNetV1 1.0x (group=3)   | 1.87      | 0.146    | 68.13 | 87.81 | 
-| ShuffleNetV2 1.0x     | 2.28      | 0.149    | 69.55 | 88.92 | 
-| MobileNet V2          | 3.5       | 0.319    | 71.86 | 90.42 | 
-| ViT-B/16*             | 86.86     | 33.03    | 84.20 | 97.18 | 
-| ViT-B/32*             | 88.3      | 8.56     | 81.73 | 96.13 | 
-| ViT-L/16*             | 304.72    | 116.68   | 85.08 | 97.38 | 
-| ViT-L/32*             | 306.63    | 29.66    | 81.52 | 96.06 | 
-| Swin-Transformer tiny |   28.29   |   4.36   | 81.18 | 95.61 | 
-| Swin-Transformer small|   49.61   |   8.52   | 83.02 | 96.29 | 
-| Swin-Transformer base |   87.77   |  15.14   | 83.36 | 96.44 | 
+## Installation
 
-- [Serve MMClassification](https://ecosystem.supervisely.com/apps/supervisely-ecosystem%252Fmmclassification%252Fsupervisely%252Fserve) - 
-   serve model as Rest API service. You can run custom model weights trained in Supervisely. 
-   Thus other apps from Ecosystem can get predictions from the deployed model. Also developers 
-   can send inference requiests in a few lines of python code or use source code as an example 
-   how to load model and apply it to image and how to interpret model predictions. 
-   
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/mmclassification/supervisely/serve" src="https://i.imgur.com/CU8XHdQ.png" width="350px"/>
+Below are quick steps for installation:
 
-## Integration into labeling tool
+```shell
+conda create -n open-mmlab python=3.8 pytorch==1.10.1 torchvision==0.11.2 cudatoolkit=11.3 -c pytorch -y
+conda activate open-mmlab
+pip install openmim
+git clone https://github.com/open-mmlab/mmpretrain.git
+cd mmpretrain
+mim install -e .
+```
 
-- [AI assisted classification](https://ecosystem.supervisely.com/apps/ai-assisted-classification) - 
-  app connects to deployed classification model, shows model info and classes (with image examples),
-  allows to get top N predictions from model for image / object in real time, also can be used to 
-  review attached tags to perform quality assurance. It significantly speeds up labeling time especially
-  when labelers wotk with large number of classes and can be also used for pre labeling.
-   
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/ai-assisted-classification" src="https://i.imgur.com/bKqVnZQ.png" width="350px"/>
+Please refer to [installation documentation](https://mmpretrain.readthedocs.io/en/latest/get_started.html) for more detailed installation and dataset preparation.
 
-## Auxiliary apps
+For multi-modality models support, please install the extra dependencies by:
 
-- [Tags co-occurrence matrix](https://ecosystem.supervisely.com/apps/tags-co-occurrence-matrix) - 
-  helps to explore tags on images and find some collisions in data before you train image 
-  classification model  
+```shell
+mim install -e ".[multimodal]"
+```
 
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/tags-co-occurrence-matrix" src="https://i.imgur.com/YAWNGSt.png" width="350px"/>
+## User Guides
 
-- [Unpack key-value tags](https://ecosystem.supervisely.com/apps/unpack-key-value-tags) - 
-  if you label images with key-value tag (single tag with multiple possible values) you can convert this tags to tags 
-  without value (for example, `fruit`:`lemon` to a unique tag `fruit_lemon` and then use created project to train 
-  classification model)  
+We provided a series of tutorials about the basic usage of MMPreTrain for new users:
 
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/unpack-key-value-tags" src="https://i.imgur.com/OB90OrK.png" width="350px"/>
+- [Learn about Configs](https://mmpretrain.readthedocs.io/en/latest/user_guides/config.html)
+- [Prepare Dataset](https://mmpretrain.readthedocs.io/en/latest/user_guides/dataset_prepare.html)
+- [Inference with existing models](https://mmpretrain.readthedocs.io/en/latest/user_guides/inference.html)
+- [Train](https://mmpretrain.readthedocs.io/en/latest/user_guides/train.html)
+- [Test](https://mmpretrain.readthedocs.io/en/latest/user_guides/test.html)
+- [Downstream tasks](https://mmpretrain.readthedocs.io/en/latest/user_guides/downstream.html)
 
-- [Copy image tags to objects](https://ecosystem.supervisely.com/apps/copy-image-tags-to-objects) - 
-  may be helpful when you tagged images and then labeled 
-  objects on them and would like to assign to image tag to all objects on image 
-  (for example, for generating synthetic data for retail) 
+For more information, please refer to [our documentation](https://mmpretrain.readthedocs.io/en/latest/).
 
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/tags-co-occurrence-matrix" src="https://i.imgur.com/MBuF2sm.png" width="350px"/>
+## Model zoo
 
-- [Visual tagging](https://ecosystem.supervisely.com/apps/visual-tagging) - manually assign tags 
-  using image examples for visual matching, app helps labelers to 
-  navigate in large and/or complex classes to avoid mistakes when classes are similar    
+Results and models are available in the [model zoo](https://mmpretrain.readthedocs.io/en/latest/modelzoo_statistics.html).
 
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/visual-tagging" src="https://i.imgur.com/HnQVi32.png" width="350px"/>
+<div align="center">
+  <b>Overview</b>
+</div>
+<table align="center">
+  <tbody>
+    <tr align="center" valign="bottom">
+      <td>
+        <b>Supported Backbones</b>
+      </td>
+      <td>
+        <b>Self-supervised Learning</b>
+      </td>
+      <td>
+        <b>Multi-Modality Algorithms</b>
+      </td>
+      <td>
+        <b>Others</b>
+      </td>
+    </tr>
+    <tr valign="top">
+      <td>
+        <ul>
+        <li><a href="configs/vgg">VGG</a></li>
+        <li><a href="configs/resnet">ResNet</a></li>
+        <li><a href="configs/resnext">ResNeXt</a></li>
+        <li><a href="configs/seresnet">SE-ResNet</a></li>
+        <li><a href="configs/seresnet">SE-ResNeXt</a></li>
+        <li><a href="configs/regnet">RegNet</a></li>
+        <li><a href="configs/shufflenet_v1">ShuffleNet V1</a></li>
+        <li><a href="configs/shufflenet_v2">ShuffleNet V2</a></li>
+        <li><a href="configs/mobilenet_v2">MobileNet V2</a></li>
+        <li><a href="configs/mobilenet_v3">MobileNet V3</a></li>
+        <li><a href="configs/swin_transformer">Swin-Transformer</a></li>
+        <li><a href="configs/swin_transformer_v2">Swin-Transformer V2</a></li>
+        <li><a href="configs/repvgg">RepVGG</a></li>
+        <li><a href="configs/vision_transformer">Vision-Transformer</a></li>
+        <li><a href="configs/tnt">Transformer-in-Transformer</a></li>
+        <li><a href="configs/res2net">Res2Net</a></li>
+        <li><a href="configs/mlp_mixer">MLP-Mixer</a></li>
+        <li><a href="configs/deit">DeiT</a></li>
+        <li><a href="configs/deit3">DeiT-3</a></li>
+        <li><a href="configs/conformer">Conformer</a></li>
+        <li><a href="configs/t2t_vit">T2T-ViT</a></li>
+        <li><a href="configs/twins">Twins</a></li>
+        <li><a href="configs/efficientnet">EfficientNet</a></li>
+        <li><a href="configs/edgenext">EdgeNeXt</a></li>
+        <li><a href="configs/convnext">ConvNeXt</a></li>
+        <li><a href="configs/hrnet">HRNet</a></li>
+        <li><a href="configs/van">VAN</a></li>
+        <li><a href="configs/convmixer">ConvMixer</a></li>
+        <li><a href="configs/cspnet">CSPNet</a></li>
+        <li><a href="configs/poolformer">PoolFormer</a></li>
+        <li><a href="configs/inception_v3">Inception V3</a></li>
+        <li><a href="configs/mobileone">MobileOne</a></li>
+        <li><a href="configs/efficientformer">EfficientFormer</a></li>
+        <li><a href="configs/mvit">MViT</a></li>
+        <li><a href="configs/hornet">HorNet</a></li>
+        <li><a href="configs/mobilevit">MobileViT</a></li>
+        <li><a href="configs/davit">DaViT</a></li>
+        <li><a href="configs/replknet">RepLKNet</a></li>
+        <li><a href="configs/beit">BEiT</a></li>
+        <li><a href="configs/mixmim">MixMIM</a></li>
+        <li><a href="configs/efficientnet_v2">EfficientNet V2</a></li>
+        <li><a href="configs/revvit">RevViT</a></li>
+        <li><a href="configs/convnext_v2">ConvNeXt V2</a></li>
+        <li><a href="configs/vig">ViG</a></li>
+        <li><a href="configs/xcit">XCiT</a></li>
+        <li><a href="configs/levit">LeViT</a></li>
+        <li><a href="configs/riformer">RIFormer</a></li>
+        <li><a href="configs/glip">GLIP</a></li>
+        <li><a href="configs/sam">ViT SAM</a></li>
+        <li><a href="configs/eva02">EVA02</a></li>
+        <li><a href="configs/dinov2">DINO V2</a></li>
+        <li><a href="configs/hivit">HiViT</a></li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+        <li><a href="configs/mocov2">MoCo V1 (CVPR'2020)</a></li>
+        <li><a href="configs/simclr">SimCLR (ICML'2020)</a></li>
+        <li><a href="configs/mocov2">MoCo V2 (arXiv'2020)</a></li>
+        <li><a href="configs/byol">BYOL (NeurIPS'2020)</a></li>
+        <li><a href="configs/swav">SwAV (NeurIPS'2020)</a></li>
+        <li><a href="configs/densecl">DenseCL (CVPR'2021)</a></li>
+        <li><a href="configs/simsiam">SimSiam (CVPR'2021)</a></li>
+        <li><a href="configs/barlowtwins">Barlow Twins (ICML'2021)</a></li>
+        <li><a href="configs/mocov3">MoCo V3 (ICCV'2021)</a></li>
+        <li><a href="configs/beit">BEiT (ICLR'2022)</a></li>
+        <li><a href="configs/mae">MAE (CVPR'2022)</a></li>
+        <li><a href="configs/simmim">SimMIM (CVPR'2022)</a></li>
+        <li><a href="configs/maskfeat">MaskFeat (CVPR'2022)</a></li>
+        <li><a href="configs/cae">CAE (arXiv'2022)</a></li>
+        <li><a href="configs/milan">MILAN (arXiv'2022)</a></li>
+        <li><a href="configs/beitv2">BEiT V2 (arXiv'2022)</a></li>
+        <li><a href="configs/eva">EVA (CVPR'2023)</a></li>
+        <li><a href="configs/mixmim">MixMIM (arXiv'2022)</a></li>
+        <li><a href="configs/itpn">iTPN (CVPR'2023)</a></li>
+        <li><a href="configs/spark">SparK (ICLR'2023)</a></li>
+        <li><a href="configs/mff">MFF (ICCV'2023)</a></li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+        <li><a href="configs/blip">BLIP (arxiv'2022)</a></li>
+        <li><a href="configs/blip2">BLIP-2 (arxiv'2023)</a></li>
+        <li><a href="configs/ofa">OFA (CoRR'2022)</a></li>
+        <li><a href="configs/flamingo">Flamingo (NeurIPS'2022)</a></li>
+        <li><a href="configs/chinese_clip">Chinese CLIP (arxiv'2022)</a></li>
+        <li><a href="configs/minigpt4">MiniGPT-4 (arxiv'2023)</a></li>
+        <li><a href="configs/llava">LLaVA (arxiv'2023)</a></li>
+        <li><a href="configs/otter">Otter (arxiv'2023)</a></li>
+        </ul>
+      </td>
+      <td>
+      Image Retrieval Task:
+        <ul>
+        <li><a href="configs/arcface">ArcFace (CVPR'2019)</a></li>
+        </ul>
+      Training&Test Tips:
+        <ul>
+        <li><a href="https://arxiv.org/abs/1909.13719">RandAug</a></li>
+        <li><a href="https://arxiv.org/abs/1805.09501">AutoAug</a></li>
+        <li><a href="mmpretrain/datasets/samplers/repeat_aug.py">RepeatAugSampler</a></li>
+        <li><a href="mmpretrain/models/tta/score_tta.py">TTA</a></li>
+        <li>...</li>
+        </ul>
+      </td>
+  </tbody>
+</table>
 
-- [Tags to image URLs](https://ecosystem.supervisely.com/apps/tags-to-image-urls) - creates mapping 
-  between tag name and all images with this tags and saves results to a `json` file. If you 
-  trained classification model on synthetic data we recommend in training artifacts 
-  directory backup original file `./info/tag2urls.json` by renaming it and replace it 
-  with `json` file generated by this application. It will help labelers to visually compare 
-  model predictions with images / objects by using nice-looking images instead of 
-  synthetically generated.   
+## Contributing
 
-    <img data-key="sly-module-link" data-module-slug="supervisely-ecosystem/tags-to-image-urls" src="https://i.imgur.com/30GDLMh.png" width="350px"/>
+We appreciate all contributions to improve MMPreTrain.
+Please refer to [CONTRUBUTING](https://mmpretrain.readthedocs.io/en/latest/notes/contribution_guide.html) for the contributing guideline.
 
-# For Developers
-- you can use sources of [Serve MMClassification app](https://github.com/supervisely-ecosystem/mmclassification/tree/master/supervisely/serve) as example of how to prepare weights, initialize model and apply it to an image and how to correctly interpret predictions
-- NN apps are based on the original [MMClassification](https://github.com/open-mmlab/mmclassification). Official updates will be synchronized with from time to time or by request.
+## Acknowledgement
 
-# Contact & Questions & Suggestions
+MMPreTrain is an open source project that is contributed by researchers and engineers from various colleges and companies. We appreciate all the contributors who implement their methods or add new features, as well as users who give valuable feedbacks.
+We wish that the toolbox and benchmark could serve the growing research community by providing a flexible toolkit to reimplement existing methods and supporting their own academic research.
 
-- for technical support please leave issues, questions or suggestions in our [repo](https://github.com/supervisely-ecosystem/mmclassification). Our team will try to help.
-- also we can chat in slack channel [![](https://img.shields.io/badge/slack-chat-green.svg?logo=slack)](https://supervisely.com/slack) 
-- if you are interested in Supervisely Enterprise Edition (EE) please send us a [request](https://supervisely.com/enterprise/?demo) or email Yuri Borisov at [sales@supervisely.com](sales@supervisely.com)
+## Citation
+
+If you find this project useful in your research, please consider cite:
+
+```BibTeX
+@misc{2023mmpretrain,
+    title={OpenMMLab's Pre-training Toolbox and Benchmark},
+    author={MMPreTrain Contributors},
+    howpublished = {\url{https://github.com/open-mmlab/mmpretrain}},
+    year={2023}
+}
+```
+
+## License
+
+This project is released under the [Apache 2.0 license](LICENSE).
+
+## Projects in OpenMMLab
+
+- [MMEngine](https://github.com/open-mmlab/mmengine): OpenMMLab foundational library for training deep learning models.
+- [MMCV](https://github.com/open-mmlab/mmcv): OpenMMLab foundational library for computer vision.
+- [MIM](https://github.com/open-mmlab/mim): MIM installs OpenMMLab packages.
+- [MMEval](https://github.com/open-mmlab/mmeval): A unified evaluation library for multiple machine learning libraries.
+- [MMPreTrain](https://github.com/open-mmlab/mmpretrain): OpenMMLab pre-training toolbox and benchmark.
+- [MMDetection](https://github.com/open-mmlab/mmdetection): OpenMMLab detection toolbox and benchmark.
+- [MMDetection3D](https://github.com/open-mmlab/mmdetection3d): OpenMMLab's next-generation platform for general 3D object detection.
+- [MMRotate](https://github.com/open-mmlab/mmrotate): OpenMMLab rotated object detection toolbox and benchmark.
+- [MMYOLO](https://github.com/open-mmlab/mmyolo): OpenMMLab YOLO series toolbox and benchmark.
+- [MMSegmentation](https://github.com/open-mmlab/mmsegmentation): OpenMMLab semantic segmentation toolbox and benchmark.
+- [MMOCR](https://github.com/open-mmlab/mmocr): OpenMMLab text detection, recognition, and understanding toolbox.
+- [MMPose](https://github.com/open-mmlab/mmpose): OpenMMLab pose estimation toolbox and benchmark.
+- [MMHuman3D](https://github.com/open-mmlab/mmhuman3d): OpenMMLab 3D human parametric model toolbox and benchmark.
+- [MMSelfSup](https://github.com/open-mmlab/mmselfsup): OpenMMLab self-supervised learning toolbox and benchmark.
+- [MMRazor](https://github.com/open-mmlab/mmrazor): OpenMMLab model compression toolbox and benchmark.
+- [MMFewShot](https://github.com/open-mmlab/mmfewshot): OpenMMLab fewshot learning toolbox and benchmark.
+- [MMAction2](https://github.com/open-mmlab/mmaction2): OpenMMLab's next-generation action understanding toolbox and benchmark.
+- [MMTracking](https://github.com/open-mmlab/mmtracking): OpenMMLab video perception toolbox and benchmark.
+- [MMFlow](https://github.com/open-mmlab/mmflow): OpenMMLab optical flow toolbox and benchmark.
+- [MMagic](https://github.com/open-mmlab/mmagic): Open**MM**Lab **A**dvanced, **G**enerative and **I**ntelligent **C**reation toolbox.
+- [MMGeneration](https://github.com/open-mmlab/mmgeneration): OpenMMLab image and video generative models toolbox.
+- [MMDeploy](https://github.com/open-mmlab/mmdeploy): OpenMMLab model deployment framework.
+- [Playground](https://github.com/open-mmlab/playground): A central hub for gathering and showcasing amazing projects built upon OpenMMLab.

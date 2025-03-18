@@ -1,8 +1,10 @@
 import os
 from collections import namedtuple
-import supervisely as sly
+
 import sly_globals as g
-from sly_train_progress import get_progress_cb, reset_progress, init_progress
+from sly_train_progress import get_progress_cb, init_progress, reset_progress
+
+import supervisely as sly
 
 progress_index = 1
 _images_infos = None  # dataset_name -> image_name -> image_info
@@ -16,7 +18,9 @@ def init(data, state):
     data["projectId"] = g.project_info.id
     data["projectName"] = g.project_info.name
     data["projectImagesCount"] = g.project_info.items_count
-    data["projectPreviewUrl"] = g.api.image.preview_url(g.project_info.reference_image_url, 100, 100)
+    data["projectPreviewUrl"] = g.api.image.preview_url(
+        g.project_info.reference_image_url, 100, 100
+    )
     init_progress(progress_index, data)
     data["done1"] = False
     state["collapsed1"] = False
@@ -36,10 +40,18 @@ def restart(data, state):
 def download(api: sly.Api, task_id, context, state, app_logger):
     try:
         sly.fs.mkdir(g.project_dir, remove_content_if_exists=True)
-        download_progress = get_progress_cb(progress_index, "Download project", g.project_info.items_count * 2)
-        sly.download_project(g.api, g.project_id, g.project_dir,
-                                cache=g.my_app.cache, progress_cb=download_progress,
-                                only_image_tags=True, save_image_info=True)
+        download_progress = get_progress_cb(
+            progress_index, "Download project", g.project_info.items_count * 2
+        )
+        sly.download_project(
+            g.api,
+            g.project_id,
+            g.project_dir,
+            cache=g.my_app.cache,
+            progress_cb=download_progress,
+            only_image_tags=True,
+            save_image_info=True,
+        )
         reset_progress(progress_index)
 
         global project_fs

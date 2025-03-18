@@ -1,20 +1,20 @@
+# start point to search module for all registries
+default_scope = "mmpretrain"
+
 # checkpoint saving
 checkpoint_config = dict(interval=1)
 
 log_interval = 10
 # yapf:disable
 log_config = dict(
-    interval=log_interval,
-    hooks=[
-        dict(type='TextLoggerHook'),
-        dict(type='SuperviselyLoggerHook')
-    ])
+    interval=log_interval, hooks=[dict(type="TextLoggerHook"), dict(type="SuperviselyLoggerHook")]
+)
 # yapf:enable
 
-dist_params = dict(backend='nccl')
-log_level = 'INFO'
+dist_params = dict(backend="nccl")
+log_level = "INFO"
 load_from = None
 resume_from = None
-workflow = [('train', 1)]
+workflow = [("train", 1)]
 
-classification_mode = 'one_label'
+classification_mode = "one_label"

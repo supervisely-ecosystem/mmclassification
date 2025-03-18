@@ -1,17 +1,27 @@
-import supervisely as sly
+import os
+import sys
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import sly_globals as g
-import ui as ui
-import sly_logger_hook  # to register hook
-import sly_imgaugs  # to register first part of the pipeline
+import sly_imgaugs
+import sly_logger_hook
+from dotenv import load_dotenv
 from sly_dataset import Supervisely
+from src.ui import architectures, ui
+
+import supervisely as sly
 
 
 def main():
-    sly.logger.info("Script arguments", extra={
-        "context.teamId": g.team_id,
-        "context.workspaceId": g.workspace_id,
-        "modal.state.slyProjectId": g.project_id,
-    })
+    sly.logger.info(
+        "Script arguments",
+        extra={
+            "context.teamId": g.team_id,
+            "context.workspaceId": g.workspace_id,
+            "modal.state.slyProjectId": g.project_id,
+        },
+    )
 
     g.my_app.compile_template(g.root_source_dir)
 
