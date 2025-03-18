@@ -11,9 +11,6 @@ from sly_train_progress import (
 
 import supervisely as sly
 
-# from mmpretrain.registry import HOOKS
-
-
 @HOOKS.register_module()
 class SuperviselyLoggerHook(LoggerHook):
     def __init__(

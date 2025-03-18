@@ -1,12 +1,13 @@
 FROM supervisely/base-pytorch:6.0.22
 
-RUN pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 --extra-index-url https://download.pytorch.org/whl/cu113
-RUN pip install opencv-python-headless==4.5.5.64
-RUN pip install opencv-python==4.5.5.64
+RUN pip install torch==2.1.0 torchvision==0.16.0 --index-url https://download.pytorch.org/whl/cu118
+RUN pip install opencv-python-headless==4.8.1.78
+RUN pip install opencv-python==4.8.1.78
 RUN pip install imgaug==0.4.0 imagecorruptions==1.1.2
 
-RUN pip install mmcv==2.2.0\
-    mmengine==0.10.7
+RUN pip install mmcv==2.1.0 \
+    mmengine==0.10.3 \
+    mmpretrain==1.2.0
 
 RUN pip install urllib3>=1.26.15 \
     requests-toolbelt==1.0.0 \

@@ -48,9 +48,13 @@ def generate_model_config(state):
     if state["cls_mode"] == "multi_label":
         head_name = cfg.model.head.type
         if cfg.model.head.type == "ClsHead":
-            head_name = "MultiLabelClsHead"
-        elif cfg.model.head.type == "LinearClsHead":
-            head_name = "MultiLabelLinearClsHead"
+            py_config = py_config.replace(
+                "type='ClsHead'", "type='MultiLabelLinearClsHead'"
+            )
+        elif cfg.model.head.type == "CSRAClsHead":
+            py_config = py_config.replace(
+                "type='CSRAClsHead'", "type='CSRAHead'"
+            )
         elif cfg.model.head.type == "VisionTransformerClsHead":
             head_name = "MultiLabelLinearClsHead"
             sly.logger.warning(

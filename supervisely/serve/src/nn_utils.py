@@ -4,8 +4,8 @@ import globals as g
 import mmcv
 import numpy as np
 import torch
-from mmcls.apis import init_model
-from mmcls.datasets.pipelines import Compose
+from mmpretrain.apis import init_model
+from mmpretrain.datasets.transforms import Compose
 from mmcv.parallel import collate, scatter
 
 import supervisely as sly
