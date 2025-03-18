@@ -12,7 +12,10 @@ RUN pip install yapf==0.40.1
 RUN pip install cachetools==4.2.4
 
 # Torch
-RUN pip install torch==2.6.0 torchvision==0.21.0
+RUN pip install --no-cache-dir \
+    setuptools==69.5.1 \
+    torch==2.6.0 \
+    torchvision==0.21.0
 
 # AUGS
 RUN pip install imgaug==0.4.0 imagecorruptions==1.1.2
