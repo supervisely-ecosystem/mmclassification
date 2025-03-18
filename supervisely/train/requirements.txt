@@ -7,9 +7,9 @@ imgaug==0.4.0
 imagecorruptions==1.1.2
 
 # MM
-mmengine==0.10.7
-mmcv==2.2.0
-openmim==0.3.9
+mmengine
+mmcv
+openmim
 
 importlib_metadata
 modelindex==0.0.2
