@@ -64,5 +64,5 @@ sly.fs.mkdir(checkpoints_dir)
 
 sly_mmdet_generated_metadata = None  # for project Workflow purposes
 
-# devices = func.get_gpu_devices()
+devices = func.get_gpu_devices()
 local_weights_path = None
