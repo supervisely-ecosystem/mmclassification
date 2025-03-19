@@ -22,14 +22,10 @@ class SuperviselyLoggerHook(LoggerHook):
         self.progress_epoch = None
         self.progress_iter = None
         self._lrs = []
-        sly.logger.info("SuperviselyLoggerHook initialized", extra={"task_id": g.task_id})
 
     def _log_info(self, log_dict, runner):
         super(SuperviselyLoggerHook, self)._log_info(log_dict, runner)
 
-        # Detailed log of incoming data
-        sly.logger.debug("Log dict received", extra={"log_dict": log_dict})
-        
         log_dict["max_iters"] = runner.max_iters
         if log_dict["mode"] == "train" and "time" in log_dict.keys():
             temp = self.time_sec_tot + (log_dict["time"] * self.interval)
@@ -38,52 +34,23 @@ class SuperviselyLoggerHook(LoggerHook):
             eta_str = str(datetime.timedelta(seconds=int(eta_sec)))
             log_dict["sly_eta"] = eta_str
 
-        # Debug progress information
-        sly.logger.debug(
-            "Progress info", 
-            extra={
-                "max_epochs": runner.max_epochs,
-                "train_dataloader_len": len(runner.train_dataloader),
-            }
-        )
-        
         if self.progress_epoch is None:
             self.progress_epoch = sly.Progress("Epochs", runner.max_epochs)
-            sly.logger.debug("Created progress_epoch", extra={"total": runner.max_epochs})
         if self.progress_iter is None:
             self.progress_iter = sly.Progress("Iterations", len(runner.train_dataloader))
-            sly.logger.debug("Created progress_iter", extra={"total": len(runner.train_dataloader)})
 
         fields = []
         if log_dict["mode"] == "val":
             self.progress_epoch.set_current_value(log_dict["epoch"])
             self.progress_iter.set_current_value(0)
-            sly.logger.debug("Validation mode progress update", extra={"current_epoch": log_dict["epoch"]})
         else:
             self.progress_iter.set_current_value(log_dict["iter"])
             fields.append({"field": "data.eta", "payload": log_dict["sly_eta"]})
-            sly.logger.debug("Train mode progress update", extra={"current_iter": log_dict["iter"]})
 
         fields.append({"field": "state.isValidation", "payload": log_dict["mode"] == "val"})
 
-        # Check before adding progress
-        sly.logger.debug("Progress before add_progress_to_request", 
-                        extra={
-                            "epoch_progress": {
-                                "current": self.progress_epoch.current,
-                                "total": self.progress_epoch.total
-                            },
-                            "iter_progress": {
-                                "current": self.progress_iter.current,
-                                "total": self.progress_iter.total
-                            }
-                        })
-                        
         add_progress_to_request(fields, "Epoch", self.progress_epoch)
         add_progress_to_request(fields, "Iter", self.progress_iter)
-        
-        # Check after adding progress
-        sly.logger.debug("Progress fields after add_progress_to_request", extra={"fields": fields})
 
         epoch_float = float(self.progress_epoch.current) + float(
             self.progress_iter.current
@@ -141,88 +108,55 @@ class SuperviselyLoggerHook(LoggerHook):
             for key in log_dict.keys():
                 if key.startswith("accuracy") or key.startswith("f1_score"):
                     multi_label = False
-            
-            sly.logger.debug("Validation metrics detection", extra={
-                "multi_label": multi_label,
-                "keys": list(log_dict.keys())
-            })
-                
             if multi_label:
-                # Check for required keys
-                required_keys = ["CP", "CR", "CF1", "OP", "OR", "OF1", "mAP"]
-                missing_keys = [key for key in required_keys if key not in log_dict]
-                if missing_keys:
-                    sly.logger.warning(f"Missing validation metrics keys: {missing_keys}")
-                    
                 fields.extend(
                     [
                         {
                             "field": "data.chartC.series[0].data",
-                            "payload": [[log_dict["epoch"], log_dict.get("CP", 0)]],
+                            "payload": [[log_dict["epoch"], log_dict["CP"]]],
                             "append": True,
                         },
                         {
                             "field": "data.chartC.series[1].data",
-                            "payload": [[log_dict["epoch"], log_dict.get("CR", 0)]],
+                            "payload": [[log_dict["epoch"], log_dict["CR"]]],
                             "append": True,
                         },
                         {
                             "field": "data.chartC.series[2].data",
-                            "payload": [[log_dict["epoch"], log_dict.get("CF1", 0)]],
+                            "payload": [[log_dict["epoch"], log_dict["CF1"]]],
                             "append": True,
                         },
                         {
                             "field": "data.chartO.series[0].data",
-                            "payload": [[log_dict["epoch"], log_dict.get("OP", 0)]],
+                            "payload": [[log_dict["epoch"], log_dict["OP"]]],
                             "append": True,
                         },
                         {
                             "field": "data.chartO.series[1].data",
-                            "payload": [[log_dict["epoch"], log_dict.get("OR", 0)]],
+                            "payload": [[log_dict["epoch"], log_dict["OR"]]],
                             "append": True,
                         },
                         {
                             "field": "data.chartO.series[2].data",
-                            "payload": [[log_dict["epoch"], log_dict.get("OF1", 0)]],
+                            "payload": [[log_dict["epoch"], log_dict["OF1"]]],
                             "append": True,
                         },
                         {
                             "field": "data.chartMAP.series[0].data",
-                            "payload": [[log_dict["epoch"], log_dict.get("mAP", 0)]],
+                            "payload": [[log_dict["epoch"], log_dict["mAP"]]],
                             "append": True,
                         },
                     ]
                 )
             else:
-                # Check for f1_score key
-                if "f1_score" not in log_dict:
-                    sly.logger.warning("Missing f1_score key in validation metrics")
-                    
                 fields.extend(
                     [
                         {
                             "field": "data.chartValF1.series[0].data",
-                            "payload": [[log_dict["epoch"], log_dict.get("f1_score", 0)]],
+                            "payload": [[log_dict["epoch"], log_dict["f1_score"]]],
                             "append": True,
                         },
                     ]
                 )
 
-        # Check before API call
-        sly.logger.debug("Before API call", extra={
-            "task_id": g.task_id,
-            "fields_count": len(fields),
-        })
-        
-        try:
-            g.api.app.set_fields(g.task_id, fields)
-            sly.logger.debug("API call successful")
-        except Exception as e:
-            sly.logger.error(f"Error setting fields via API: {str(e)}", exc_info=True)
-            
-    def before_train(self, runner):
-        super().before_train(runner)
-        sly.logger.info("Training started", extra={
-            "max_epochs": runner.max_epochs,
-            "max_iters": runner.max_iters,
-        })
+        g.api.app.set_fields(g.task_id, fields)
