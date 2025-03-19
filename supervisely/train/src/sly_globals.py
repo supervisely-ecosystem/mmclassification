@@ -25,7 +25,8 @@ sly.logger.info(f"Added to sys.path: {ui_sources_dir}")
 from dotenv import load_dotenv
 
 if sly.is_development():
-    load_dotenv(os.path.expanduser("~/supervisely.env"))
+    sly_env_path = os.path.join(root_source_dir, "supervisely", "train", "supervisely.env")
+    load_dotenv(sly_env_path)
     debug_env_path = os.path.join(root_source_dir, "supervisely", "train", "local.env")
     load_dotenv(debug_env_path)
 

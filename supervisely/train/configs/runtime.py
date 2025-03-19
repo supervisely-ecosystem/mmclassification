@@ -2,7 +2,9 @@
 default_scope = "mmpretrain"
 
 # checkpoint saving
-checkpoint_config = dict(interval=1)
+validation_interval = 1
+save_best = 'auto'
+checkpoint_config = dict(interval=validation_interval, save_best=save_best)
 
 log_interval = 10
 # yapf:disable

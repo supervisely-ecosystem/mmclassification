@@ -162,18 +162,9 @@ def generate_dataset_config(state):
             0,
             re.MULTILINE,
         )
-        multi_label_metrics = ["mAP", "CP", "OP", "CR", "OR", "CF1", "OF1"]
-        py_config = re.sub(
-            r"metric=('\w+')",
-            lambda m: _replace_function("metric", str(multi_label_metrics), "{}={}", m),
-            py_config,
-            0,
-            re.MULTILINE,
-        )
     else:
         ds_name = "Supervisely"
 
-    # Define train_dataloader
     train_dataloader = f"""
 train_dataloader = dict(
     batch_size={state['batchSizePerGPU']},
@@ -189,7 +180,6 @@ train_dataloader = dict(
 """
     py_config += train_dataloader
 
-    # Define val_dataloader
     val_dataloader = f"""
 val_dataloader = dict(
     batch_size={state['batchSizePerGPU']},
@@ -205,7 +195,6 @@ val_dataloader = dict(
 """
     py_config += val_dataloader
 
-    # Define test_dataloader
     test_dataloader = f"""
 test_dataloader = dict(
     batch_size={state['batchSizePerGPU']},
@@ -221,12 +210,16 @@ test_dataloader = dict(
 """
     py_config += test_dataloader
 
-    # Define val_cfg, val_evaluator, test_cfg, test_evaluator
+    num_tags = len(state["selectedTags"])
+    eval_topk = (1,5) if num_tags >= 5 else (1,)
+    
+    sly.logger.info(f"Number of tags: {num_tags}, using topk={eval_topk}")
+    
     if state["cls_mode"] == "multi_label":
         multi_label_metrics = ["mAP", "CP", "OP", "CR", "OR", "CF1", "OF1"]
         evaluator = f"dict(type='MultiLabelMetric', metrics={multi_label_metrics})"
     else:
-        evaluator = "dict(type='Accuracy', topk=(1, 5))"
+        evaluator = f"dict(type='Accuracy', topk={eval_topk})"
 
     val_cfg = "val_cfg = dict(type='ValLoop')"
     val_evaluator = f"val_evaluator = {evaluator}"
@@ -311,12 +304,15 @@ def generate_runtime_config(state):
         flag = True if state_flag is None else state[state_flag]
         if flag is True:
             add_ckpt_to_config.append(True)
+            if arg_name == "save_best" and state[state_field] is True:
+                return f" {arg_name}='auto'{suffix}"
             return f" {arg_name}={state[state_field]}{suffix}"
         return ""
 
     checkpoint = "checkpoint_config = dict({interval}{max_keep_ckpts}{save_last})".format(
         interval=_get_ckpt_arg("interval", None, "checkpointInterval"),
         max_keep_ckpts=_get_ckpt_arg("max_keep_ckpts", "maxKeepCkptsEnabled", "maxKeepCkpts"),
+        save_best=_get_ckpt_arg("save_best", "saveBest", "saveBest", suffix=""),
         save_last=_get_ckpt_arg("save_last", "saveLast", "saveLast", suffix=""),
     )
     py_config = re.sub(

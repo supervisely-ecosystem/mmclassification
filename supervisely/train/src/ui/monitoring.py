@@ -94,8 +94,7 @@ def upload_artifacts_and_log_progress():
             progress.set_current_value(monitor.bytes_read, report=False)
         _update_progress_ui("UploadDir", g.api, g.task_id, progress)
 
-    progress = sly.Progress("Upload directory with training artifacts to Team Files", 0, is_size=True)
-    progress_cb = partial(upload_monitor, api=g.api, task_id=g.task_id, progress=progress)
+
 
     model_dir = g.sly_mmcls.framework_folder
     remote_artifacts_dir = f"{model_dir}/{g.task_id}_{g.project_info.name}"
@@ -103,7 +102,10 @@ def upload_artifacts_and_log_progress():
 
     local_files = list_files_recursively(g.artifacts_dir)
     remote_files = [file.replace(g.artifacts_dir, remote_artifacts_dir) for file in local_files]
+    total_size = sum([sly.fs.get_file_size(file_path) for file_path in local_files])
 
+    progress = sly.Progress("Upload directory with training artifacts to Team Files", total_size, is_size=True)
+    progress_cb = partial(upload_monitor, api=g.api, task_id=g.task_id, progress=progress)
     g.api.file.upload_bulk(g.team_id, local_files, remote_files, progress_cb=progress_cb)
     
     g.sly_mmdet_generated_metadata = g.sly_mmcls.generate_metadata(
