@@ -16,17 +16,14 @@ train_pipeline = [
     dict(type="SlyImgAugs", config_path=augs_config_path),
     dict(type="Resize", scale=(input_size, input_size)),
     dict(type="Normalize", **img_norm_cfg),
-    dict(type="ImageToTensor", keys=["img"]),
-    dict(type="ToTensor", keys=["gt_label"]),
-    dict(type="Collect", keys=["img", "gt_label"]),
+    dict(type='PackInputs'),
 ]
 
 test_pipeline = [
     dict(type="LoadImageFromFile"),
     dict(type="Resize", scale=(input_size, input_size)),
     dict(type="Normalize", **img_norm_cfg),
-    dict(type="ImageToTensor", keys=["img"]),
-    dict(type="Collect", keys=["img"]),
+    dict(type='PackInputs'),
 ]
 
 data = dict(

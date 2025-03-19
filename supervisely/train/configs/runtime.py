@@ -7,7 +7,7 @@ checkpoint_config = dict(interval=1)
 log_interval = 10
 # yapf:disable
 log_config = dict(
-    interval=log_interval, hooks=[dict(type="TextLoggerHook"), dict(type="SuperviselyLoggerHook")]
+    interval=log_interval, hooks=[dict(type="LoggerHook"), dict(type="SuperviselyLoggerHook")]
 )
 # yapf:enable
 
