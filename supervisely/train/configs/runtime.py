@@ -1,15 +1,19 @@
 # start point to search module for all registries
 default_scope = "mmpretrain"
 
-# checkpoint saving
-validation_interval = 1
-save_best = 'auto'
-checkpoint_config = dict(interval=validation_interval, save_best=save_best)
-
+ckpt_interval = 1
 log_interval = 10
+
 # yapf:disable
-log_config = dict(
-    interval=log_interval, hooks=[dict(type="LoggerHook"), dict(type="SuperviselyLoggerHook")]
+default_hooks = dict(
+    # Iteration time measurement and ETA calculation
+    timer=dict(type='IterTimerHook'),
+    # Optimizer parameters management (learning rate and etc.)
+    param_scheduler=dict(type='ParamSchedulerHook'),
+    # Save checkpoints
+    checkpoint=dict(type='CheckpointHook', interval=ckpt_interval),
+    # Main logger for Supervisely
+    supervisely_logger=dict(type='SuperviselyLoggerHook', interval=log_interval)
 )
 # yapf:enable
 

@@ -7,7 +7,6 @@ from src.ui import architectures
 
 import supervisely as sly
 
-# Configuration file names and paths
 model_config_name = "model_config.py"
 dataset_config_name = "dataset_config.py"
 schedule_config_name = "schedule_config.py"
@@ -21,7 +20,6 @@ schedule_config_path = os.path.join(configs_dir, schedule_config_name)
 runtime_config_path = os.path.join(configs_dir, runtime_config_name)
 main_config_path = os.path.join(configs_dir, main_config_name)
 
-# Main configuration template
 main_config_template = f"""
 _base_ = [
     './{model_config_name}', './{dataset_config_name}',
@@ -31,13 +29,9 @@ _base_ = [
 
 sly.fs.mkdir(configs_dir)
 
-
-# Helper function for replacing configuration values
 def _replace_function(var_name, var_value, template, match):
     return template.format(var_name, var_value)
 
-
-# Generate model configuration (unchanged)
 def generate_model_config(state):
     model_name = state["selectedModel"]
     model_info = architectures.get_model_info_by_name(model_name)
@@ -243,12 +237,10 @@ test_dataloader = dict(
 
 
 def generate_schedule_config(state):
-    # Define optim_wrapper with optimizer and clip_grad
     optim_wrapper = "optim_wrapper = dict(\n"
     optim_wrapper += "    optimizer=dict(\n"
     optim_wrapper += f"        type='{state['optimizer']}',\n"
     optim_wrapper += f"        lr={state['lr']},\n"
-    # Fix momentum to use a float value if provided
     if state["optimizer"] == "SGD" and "momentum" in state and state["momentum"] is not None:
         optim_wrapper += f"        momentum={state['momentum']},\n"
     optim_wrapper += f"        weight_decay={state['weightDecay']},\n"
@@ -261,7 +253,6 @@ def generate_schedule_config(state):
         optim_wrapper += "    clip_grad=None,\n"
     optim_wrapper += ")\n"
 
-    # Define param_scheduler
     param_scheduler = ""
     if state["lrPolicyEnabled"] is True:
         py_text = state["lrPolicyPyConfig"]
@@ -281,10 +272,7 @@ def generate_schedule_config(state):
     if param_scheduler == "":
         param_scheduler = "param_scheduler = dict(type='ConstantLR', factor=1.0)"
 
-    # Define train_cfg
     train_cfg = f"train_cfg = dict(type='EpochBasedTrainLoop', max_epochs={state['epochs']})"
-
-    # Combine all parts into py_config
     py_config = optim_wrapper + os.linesep + param_scheduler + os.linesep + train_cfg + os.linesep
 
     with open(schedule_config_path, "w") as f:
@@ -292,37 +280,51 @@ def generate_schedule_config(state):
     return schedule_config_path, py_config
 
 
-# Generate runtime configuration (unchanged)
 def generate_runtime_config(state):
     config_path = os.path.join(g.root_source_dir, "supervisely/train/configs/runtime.py")
     with open(config_path) as f:
         py_config = f.read()
 
-    add_ckpt_to_config = []
-
-    def _get_ckpt_arg(arg_name, state_flag, state_field, suffix=","):
-        flag = True if state_flag is None else state[state_flag]
-        if flag is True:
-            add_ckpt_to_config.append(True)
-            if arg_name == "save_best" and state[state_field] is True:
-                return f" {arg_name}='auto'{suffix}"
-            return f" {arg_name}={state[state_field]}{suffix}"
-        return ""
-
-    checkpoint = "checkpoint_config = dict({interval}{max_keep_ckpts}{save_last})".format(
-        interval=_get_ckpt_arg("interval", None, "checkpointInterval"),
-        max_keep_ckpts=_get_ckpt_arg("max_keep_ckpts", "maxKeepCkptsEnabled", "maxKeepCkpts"),
-        save_best=_get_ckpt_arg("save_best", "saveBest", "saveBest", suffix=""),
-        save_last=_get_ckpt_arg("save_last", "saveLast", "saveLast", suffix=""),
-    )
+    sly.logger.info(f"Checkpoint interval: {state.get('checkpointInterval', 1)}")
+    sly.logger.info(f"Save best: {state.get('saveBest', False)}")
+    
     py_config = re.sub(
-        r"(checkpoint_config = dict\(interval=1\))",
-        lambda m: checkpoint,
+        r"ckpt_interval\s*=\s*(\d+)",
+        lambda m: _replace_function("ckpt_interval", state["checkpointInterval"], "{} = {}", m),
         py_config,
         0,
         re.MULTILINE,
     )
-
+    
+    checkpoint_args = []
+    if state.get('saveBest', False):
+        checkpoint_args.append("save_best='auto'")
+    
+    if state.get('maxKeepCkptsEnabled', False):
+        checkpoint_args.append(f"max_keep_ckpts={state.get('maxKeepCkpts', 5)}")
+    
+    if state.get('saveLast', False):
+        checkpoint_args.append("save_last=True")
+    
+    if checkpoint_args:
+        old_checkpoint = f"checkpoint_config = dict(interval=ckpt_interval, {', '.join(checkpoint_args)})"
+        py_config = re.sub(
+            r"checkpoint_config\s*=\s*dict\(interval=ckpt_interval(?:[^)]*)\)",
+            lambda m: old_checkpoint,
+            py_config,
+            0,
+            re.MULTILINE,
+        )
+        
+        new_checkpoint = f"checkpoint=dict(type='CheckpointHook', interval=ckpt_interval, {', '.join(checkpoint_args)})"
+        py_config = re.sub(
+            r"checkpoint=dict\(type='CheckpointHook', interval=ckpt_interval(?:[^)]*)\)",
+            lambda m: new_checkpoint,
+            py_config,
+            0,
+            re.MULTILINE,
+        )
+    
     py_config = re.sub(
         r"log_interval\s*=\s*(\d+)",
         lambda m: _replace_function("log_interval", state["metricsPeriod"], "{} = {}", m),
@@ -351,15 +353,11 @@ def generate_runtime_config(state):
         f.write(py_config)
     return runtime_config_path, py_config
 
-
-# Generate main configuration (unchanged)
 def generate_main_config(state):
     with open(main_config_path, "w") as f:
         f.write(main_config_template)
     return main_config_path, str(main_config_template)
 
-
-# Save configurations from state (unchanged)
 def save_from_state(state):
     with open(model_config_path, "w") as f:
         f.write(state["modelPyConfig"])
