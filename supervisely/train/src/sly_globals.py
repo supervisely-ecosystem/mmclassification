@@ -8,8 +8,6 @@ from supervisely.nn.artifacts.mmclassification import MMClassification
 
 import supervisely as sly
 
-os.environ["CUDA_VISIBLE_DEVICES"] = ""
-
 root_source_dir = str(Path(sys.argv[0]).parents[3])
 sly.logger.info(f"Root source directory: {root_source_dir}")
 sys.path.append(root_source_dir)
@@ -65,5 +63,6 @@ sly.fs.mkdir(checkpoints_dir)
 
 sly_mmdet_generated_metadata = None  # for project Workflow purposes
 
+cls_mode = "one_label"
 devices = func.get_gpu_devices()
 local_weights_path = None

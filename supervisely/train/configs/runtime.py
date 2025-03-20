@@ -1,4 +1,4 @@
-# start point to search module for all registries
+# Start point to search module for all registries
 default_scope = "mmpretrain"
 
 ckpt_interval = 1
@@ -22,5 +22,4 @@ log_level = "INFO"
 load_from = None
 resume_from = None
 workflow = [("train", 1)]
-
-classification_mode = "one_label"
+classification_mode = 'one_label'

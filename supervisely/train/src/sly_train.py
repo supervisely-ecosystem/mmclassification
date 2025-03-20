@@ -6,8 +6,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import sly_globals as g
 import sly_imgaugs
 import sly_logger_hook
+import sly_dataset
 from dotenv import load_dotenv
-from sly_dataset import Supervisely
 from src.ui import architectures, ui
 
 import supervisely as sly

@@ -1,6 +1,3 @@
-# dataset settings
-dataset_type = 'Supervisely'
-
 input_size = 256
 batch_size_per_gpu = 32
 num_workers_per_gpu = 2
@@ -22,5 +19,3 @@ test_pipeline = [
     dict(type='Normalize', **img_norm_cfg),
     dict(type='PackInputs'),
 ]
-
-# Dataloader and evaluator blocks will be added through train_config.py

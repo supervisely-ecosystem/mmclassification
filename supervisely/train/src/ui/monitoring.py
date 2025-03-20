@@ -3,7 +3,7 @@ import supervisely as sly
 from sly_train_progress import init_progress
 import sly_globals as g
 from tools.train import main as mm_train
-from supervisely.io.fs import list_files_recursively
+from supervisely.io.fs import list_files_recursively, list_files
 import workflow as w
 
 _open_lnk_name = "open_app.lnk"
@@ -56,15 +56,9 @@ def init_chart(title, names, xs, ys, smoothing=None, yrange=None, decimals=None,
 def init_charts(data, state):
     # demo_x = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]]
     # demo_y = [[0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001]]
-    data["chartLR"] = init_chart("LR", names=["LR"], xs = [[]], ys = [[]], smoothing=None,
-                                 decimals=6, xdecimals=2)
+    data["chartLR"] = init_chart("LR", names=["LR"], xs = [[]], ys = [[]], smoothing=None, decimals=6, xdecimals=2)
     data["chartTrainLoss"] = init_chart("Train Loss", names=["train"], xs=[[]], ys=[[]], smoothing=0.6, decimals=6, xdecimals=2)
-
-    data["chartValF1"] = init_chart("Val F1-score", names=["f1-score"], xs=[[]], ys=[[]], decimals=6, smoothing=0.6)
-    data["chartMAP"] = init_chart("mAP score", names=["val"], xs=[[]], ys=[[]], decimals=6, smoothing=0.6)
-    data["chartC"] = init_chart("Per-class average val metrics", names=["precision", "recall", "F1"], xs=[[], [], []], ys=[[], [], []], decimals=6, smoothing=0.6)
-    data["chartO"] = init_chart("Overall val metrics", names=["precision", "recall", "F1"], xs=[[], [], []], ys=[[], [], []], decimals=6, smoothing=0.6)
-
+    data["chartValMetrics"] = init_chart("Val metrics", names=["precision", "recall", "F1"], xs=[[], [], []], ys=[[], [], []], decimals=6, smoothing=0.6)
     data["chartTime"] = init_chart("Time", names=["time"], xs=[[]], ys=[[]], xdecimals=2)
     data["chartDataTime"] = init_chart("Data Time", names=["data_time"], xs=[[]], ys=[[]], xdecimals=2)
     data["chartMemory"] = init_chart("Memory", names=["memory"], xs=[[]], ys=[[]], xdecimals=2)
@@ -94,13 +88,17 @@ def upload_artifacts_and_log_progress():
             progress.set_current_value(monitor.bytes_read, report=False)
         _update_progress_ui("UploadDir", g.api, g.task_id, progress)
 
-
-
     model_dir = g.sly_mmcls.framework_folder
     remote_artifacts_dir = f"{model_dir}/{g.task_id}_{g.project_info.name}"
     remote_weights_dir = os.path.join(remote_artifacts_dir, g.sly_mmcls.weights_folder)
 
-    local_files = list_files_recursively(g.artifacts_dir)
+    local_files = list_files(g.artifacts_dir)
+    for dir in os.listdir(g.artifacts_dir):
+        if dir == "checkpoints":
+            local_files += list_files(os.path.join(g.artifacts_dir, dir), valid_extensions=[".pth", ".py"])
+        else:
+            local_files += list_files_recursively(os.path.join(g.artifacts_dir, dir))
+
     remote_files = [file.replace(g.artifacts_dir, remote_artifacts_dir) for file in local_files]
     total_size = sum([sly.fs.get_file_size(file_path) for file_path in local_files])
 
@@ -128,6 +126,7 @@ def upload_artifacts_and_log_progress():
 def train(api: sly.Api, task_id, context, state, app_logger):
     try:
         sly.json.dump_json_file(state, os.path.join(g.info_dir, "ui_state.json"))
+        g.cls_mode = state["cls_mode"]
 
         init_script_arguments(state)
         mm_train()

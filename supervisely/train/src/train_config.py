@@ -56,11 +56,10 @@ def generate_model_config(state):
             )
 
         py_config = re.sub(
-            r"(head=dict\(\n\s*type)=('\w*')",
+            r"(head=dict\(\n\s*type)=['\"]?(\w*)['\"]?",
             lambda m: _replace_function("head=dict(type", head_name, "{}='{}'", m),
             py_config,
-            0,
-            re.MULTILINE,
+            flags=re.MULTILINE,
         )
         py_config = re.sub(r"topk=\(\d+,\s*\d*\),\n\s*", "", py_config, 0, re.MULTILINE)
 
@@ -91,11 +90,10 @@ def generate_dataset_config(state):
 
     if augs.augs_config_path is not None:
         py_config = re.sub(
-            r"augs_config_path\s*=\s*(None)",
+            r"augs_config_path\s*=\s*['\"]?(None|[\w\/\.]*)['\"]?",
             lambda m: _replace_function("augs_config_path", augs.augs_config_path, "{} = '{}'", m),
             py_config,
-            0,
-            re.MULTILINE,
+            flags=re.MULTILINE,
         )
 
     py_config = re.sub(
@@ -132,32 +130,29 @@ def generate_dataset_config(state):
 
     save_best = None if state["saveBest"] is False else "'auto'"
     py_config = re.sub(
-        r"save_best\s*=\s*([a-zA-Z]+)\s",
+        r"save_best\s*=\s*['\"]?([a-zA-Z]+)['\"]?\s",
         lambda m: _replace_function("save_best", save_best, "{} = {}\n", m),
         py_config,
-        0,
-        re.MULTILINE,
+        flags=re.MULTILINE,
     )
 
     py_config = re.sub(
-        r"project_dir\s*=\s*(None)",
+        r"project_dir\s*=\s*['\"]?(None|[\w\/\.]*)['\"]?",
         lambda m: _replace_function("project_dir", g.project_dir, "{} = '{}'", m),
         py_config,
-        0,
-        re.MULTILINE,
+        flags=re.MULTILINE,
     )
 
     if state["cls_mode"] == "multi_label":
         ds_name = "SuperviselyMultiLabel"
         py_config = re.sub(
-            r"dataset_type\s*=\s*('\w*')",
+            r"dataset_type\s*=\s*['\"]?(\w*)['\"]?",
             lambda m: _replace_function("dataset_type", ds_name, "{} = '{}'", m),
             py_config,
-            0,
-            re.MULTILINE,
+            flags=re.MULTILINE,
         )
     else:
-        ds_name = "Supervisely"
+        ds_name = "SuperviselySingleLabel"
 
     train_dataloader = f"""
 train_dataloader = dict(
@@ -210,10 +205,9 @@ test_dataloader = dict(
     sly.logger.info(f"Number of tags: {num_tags}, using topk={eval_topk}")
     
     if state["cls_mode"] == "multi_label":
-        multi_label_metrics = ["mAP", "CP", "OP", "CR", "OR", "CF1", "OF1"]
-        evaluator = f"dict(type='MultiLabelMetric', metrics={multi_label_metrics})"
+        evaluator = f"dict(type='MultiLabelMetric')"
     else:
-        evaluator = f"dict(type='Accuracy', topk={eval_topk})"
+        evaluator = f"dict(type='SingleLabelMetric')"
 
     val_cfg = "val_cfg = dict(type='ValLoop')"
     val_evaluator = f"val_evaluator = {evaluator}"
@@ -334,19 +328,17 @@ def generate_runtime_config(state):
     )
 
     py_config = re.sub(
-        r"load_from\s*=\s*(None)",
+        r"load_from\s*=\s*['\"]?(None|[\w\/\.]*)['\"]?",
         lambda m: _replace_function("load_from", g.local_weights_path, "{} = '{}'", m),
         py_config,
-        0,
-        re.MULTILINE,
+        flags=re.MULTILINE,
     )
 
     py_config = re.sub(
-        r"classification_mode\s*=\s*('\w*')",
+        r"classification_mode\s*=\s*['\"]?(\w*)['\"]?",
         lambda m: _replace_function("classification_mode", state["cls_mode"], "{} = '{}'", m),
         py_config,
-        0,
-        re.MULTILINE,
+        flags=re.MULTILINE,
     )
 
     with open(runtime_config_path, "w") as f:
