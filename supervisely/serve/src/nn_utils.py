@@ -1,14 +1,17 @@
 import os
-
-import globals as g
-import mmcv
+import cv2
 import numpy as np
 import torch
-from mmpretrain.apis import init_model
-from mmpretrain.datasets.transforms import Compose
-from mmcv.parallel import collate, scatter
+from torchvision import transforms
+from mmengine.config import Config
+from mmengine.runner import load_checkpoint
+
+from mmpretrain.structures import DataSample
+from mmpretrain.registry import MODELS
+
 
 import supervisely as sly
+import globals as g
 
 
 @sly.timeit
@@ -65,122 +68,141 @@ def construct_model_meta():
 
 @sly.timeit
 def deploy_model():
-    cfg = mmcv.Config.fromfile(g.local_model_config_path)
+    cfg = Config.fromfile(g.local_model_config_path)
+    g.cfg = cfg
     if hasattr(cfg, "classification_mode"):
         g.cls_mode = cfg.classification_mode
-    # g.model = init_model(cfg, g.local_weights_path, device=g.device)
-    g.model = init_model(cfg, g.local_weights_path, device="cpu")
-
-    g.model.CLASSES = sorted(g.gt_labels, key=g.gt_labels.get)
+    
+    model = MODELS.build(cfg.model)
+    checkpoint = load_checkpoint(model, g.local_weights_path, map_location=g.device)
+    model = _load_classes(model, checkpoint)
+    model = model.to(g.device)
+    model.eval()
+    g.model = model
     sly.logger.info("🟩 Model has been successfully deployed")
 
 
-def inference_model(model, img, topn=5):
-    """Inference image(s) with the classifier.
-
-    Args:
-        model (nn.Module): The loaded classifier.
-        img (str/ndarray): The image filename or loaded image.
-
-    Returns:
-        result (list of dict): The classification results that contains
-            `class_name`, `pred_label` and `pred_score`.
-    """
-    cfg = model.cfg
-    device = next(model.parameters()).device  # model device
-    # build the data pipeline
-    if isinstance(img, str):
-        if cfg.data.test.pipeline[0]["type"] != "LoadImageFromFile":
-            cfg.data.test.pipeline.insert(0, dict(type="LoadImageFromFile"))
-        data = dict(img_info=dict(filename=img), img_prefix=None)
+def perform_inference(model, img, topn=5):
+    input_tensor = _preprocess_image(img)
+    results, is_datasample = _predict_with_model(model, input_tensor)
+    if is_datasample:
+        return _process_datasample_results(results, topn)
     else:
-        if cfg.data.test.pipeline[0]["type"] == "LoadImageFromFile":
-            cfg.data.test.pipeline.pop(0)
-        data = dict(img=img)
-    test_pipeline = Compose(cfg.data.test.pipeline)
-    data = test_pipeline(data)
-    data = collate([data], samples_per_gpu=1)
-    if next(model.parameters()).is_cuda:
-        # scatter to specified GPU
-        data = scatter(data, [device])[0]
-
-    # forward the model
-    with torch.no_grad():
-        scores = model(return_loss=False, **data)
-        model_out = scores[0]
-        result = []
-        if topn is None:  # multi-label
-            top_labels = model_out.argsort()  # [::-1]
-            top_labels = top_labels[model_out[top_labels] > 0.5][::-1]
-            top_scores = model_out[top_labels]
-        else:  # one-label with top-n
-            top_scores = model_out[model_out.argsort()[-topn:]][::-1]
-            top_labels = model_out.argsort()[-topn:][::-1]
-
-        for label, score in zip(top_labels, top_scores):
-            result.append(
-                {"label": int(label), "score": float(score), "class": model.CLASSES[label]}
-            )
-    return result
+        return _process_tensor_results(results, topn)
 
 
-def inference_model_batch(model, images_nps, topn=5):
-    """Inference image(s) with the classifier.
-
-    Args:
-        model (nn.Module): The loaded classifier.
-        img (str/ndarray): The image filename or loaded image.
-
-    Returns:
-        result (list of dict): The classification results that contains
-            `class_name`, `pred_label` and `pred_score`.
-    """
-    cfg = model.cfg
-    device = next(model.parameters()).device  # model device
-    # build the data pipeline
-    if cfg.data.test.pipeline[0]["type"] == "LoadImageFromFile":
-        cfg.data.test.pipeline.pop(0)
-
-    test_pipeline = Compose(cfg.data.test.pipeline)
-
-    with torch.no_grad():
-
-        inference_results = []
-        for images_batch in sly.batched(images_nps, g.batch_size):
-            data = [dict(img=img) for img in images_batch]
-
-            data = [test_pipeline(row) for row in data]
-            data = collate(data, samples_per_gpu=1)
-
-            if next(model.parameters()).is_cuda:
-                # scatter to specified GPU
-                data = scatter(data, [device])[0]
-
-            batch_scores = np.asarray(model(return_loss=False, **data))
-            if topn is not None:  # one-label with top-n
-                batch_top_indexes = batch_scores.argsort(axis=1)[:, -topn:][:, ::-1]
-                for scores, top_indexes in zip(batch_scores, batch_top_indexes):
-                    inference_results.append(
-                        {
-                            "label": top_indexes.astype(int).tolist(),
-                            "score": scores[top_indexes].astype(float).tolist(),
-                            "class": np.asarray(model.CLASSES)[top_indexes].tolist(),
-                        }
-                    )
-            else:  # multi-label
-                batch_top_indexes = batch_scores.argsort(axis=1)
-
-                batch_top_indexes = [
-                    sample_inds[batch_scores[i][sample_inds] > 0.5][::-1]
-                    for i, sample_inds in enumerate(batch_top_indexes)
-                ]
-                for scores, top_indexes in zip(batch_scores, batch_top_indexes):
-                    inference_results.append(
-                        {
-                            "label": top_indexes.astype(int).tolist(),
-                            "score": scores[top_indexes].astype(float).tolist(),
-                            "class": np.asarray(model.CLASSES)[top_indexes].tolist(),
-                        }
-                    )
-
+def perform_inference_batch(model, images_nps, topn=5):
+    inference_results = []
+    for images_batch in sly.batched(images_nps, g.batch_size):
+        input_tensors = torch.cat([_preprocess_image(img) for img in images_batch], dim=0)
+        data_samples = [DataSample().to(g.device) for _ in range(len(images_batch))]
+        results, is_datasample = _predict_with_model_batch(model, input_tensors, data_samples)
+        batch_results = _process_batch_results(results, is_datasample, topn)
+        inference_results.extend(batch_results)
+        
     return inference_results
+
+def _predict_with_model(model, input_tensor):
+    with torch.no_grad():
+        data_samples = [DataSample().to(g.device)]
+        results = model(input_tensor, data_samples=data_samples, mode='predict')
+        is_datasample = isinstance(results, list) and isinstance(results[0], DataSample)
+        return results, is_datasample
+    
+def _load_classes(model, checkpoint):
+    if 'meta' in checkpoint and 'CLASSES' in checkpoint['meta']:
+        model.CLASSES = checkpoint['meta']['CLASSES']
+    else:
+        model.CLASSES = sorted(g.gt_labels, key=g.gt_labels.get)
+    return model
+
+
+def _preprocess_image(img):
+    if isinstance(img, str):
+        image = cv2.imread(img)
+        if image is None:
+            raise ValueError(f"Failed to load image from path: {img}")
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    else:
+        image = img
+    
+    preprocess = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Resize((224, 224)),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    ])
+    return preprocess(image).unsqueeze(0).to(g.device)
+
+
+def _process_datasample_results(results, topn=5):
+    output_list = []
+    for sample in results:
+        if hasattr(sample, 'pred_score'):
+            scores = sample.pred_score.cpu().numpy()
+            if topn is None:  # multi-label
+                indices = np.where(scores > 0.5)[0]
+                for idx in indices:
+                    class_name = g.gt_index_to_labels.get(idx, None)
+                    output_list.append({
+                        "label": int(idx),
+                        "score": float(scores[idx]),
+                        "class": class_name
+                    })
+            else:  # single-label top-n
+                top_indices = scores.argsort()[-topn:][::-1]
+                for idx in top_indices:
+                    class_name = g.gt_index_to_labels.get(idx, None)
+                    output_list.append({
+                        "label": int(idx),
+                        "score": float(scores[idx]),
+                        "class": class_name
+                    })
+    return output_list
+
+
+def _process_tensor_results(results, topn=5):
+    scores = results[0].cpu().numpy() if isinstance(results[0], torch.Tensor) else results[0]
+    output_list = []
+    
+    if topn is None:  # multi-label
+        indices = np.where(scores > 0.5)[0]
+        for idx in indices:
+            class_name = g.gt_index_to_labels.get(idx, None)
+            output_list.append({
+                "label": int(idx),
+                "score": float(scores[idx]),
+                "class": class_name
+            })
+    else:  # single-label top-n
+        top_indices = scores.argsort()[-topn:][::-1]
+        for idx in top_indices:
+            class_name = g.gt_index_to_labels.get(idx, None)
+            output_list.append({
+                "label": int(idx),
+                "score": float(scores[idx]),
+                "class": class_name
+            })
+    
+    return output_list
+
+def _predict_with_model_batch(model, input_tensor, data_samples):
+    with torch.no_grad():
+        results = model(input_tensor, data_samples=data_samples, mode='predict')
+        is_datasample = isinstance(results, list) and isinstance(results[0], DataSample)
+        return results, is_datasample
+
+def _process_batch_results(results, is_datasample, topn=5):
+    if is_datasample:
+        return [_process_datasample_results([sample], topn) for sample in results]
+    else:
+        if isinstance(results, torch.Tensor):
+            batch_scores = results.cpu().numpy()
+        elif isinstance(results, list) and isinstance(results[0], torch.Tensor):
+            batch_scores = np.array([tensor.cpu().numpy() for tensor in results])
+        else:
+            batch_scores = np.array(results)
+        batch_results = []
+        for scores in batch_scores:
+            single_result = [scores]
+            batch_results.append(_process_tensor_results(single_result, topn))
+        return batch_results

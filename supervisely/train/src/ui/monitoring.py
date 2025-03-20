@@ -95,7 +95,7 @@ def upload_artifacts_and_log_progress():
     local_files = list_files(g.artifacts_dir)
     for dir in os.listdir(g.artifacts_dir):
         if dir == "checkpoints":
-            local_files += list_files(os.path.join(g.artifacts_dir, dir), valid_extensions=[".pth", ".py"])
+            local_files += list_files(os.path.join(g.artifacts_dir, dir), valid_extensions=[".pth"])
         else:
             local_files += list_files_recursively(os.path.join(g.artifacts_dir, dir))
 

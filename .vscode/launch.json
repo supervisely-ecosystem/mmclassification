@@ -2,17 +2,43 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Python: Current File",
+			"name": "Train MMPretrain",
 			"type": "debugpy",
 			"request": "launch",
-			"program": "${file}",
+			"program": "${workspaceFolder}/supervisely/train/src/sly_train.py",
 			"console": "integratedTerminal",
 			"justMyCode": false,
 			"env": {
-				"PYTHONPATH": "${workspaceFolder}:${PYTHONPATH}",
-				"LOG_LEVEL": "DEBUG",
-				"DEBUG_APP_DIR": "app_data",
-			}
+				"PYTHONPATH": "${workspaceFolder}",
+				"LOG_LEVEL": "DEBUG"
+			},
+			"args": []
+		},
+		{
+			"name": "Serve MMPretrain",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}/supervisely/serve/src/sly_serve.py",
+			"console": "integratedTerminal",
+			"justMyCode": false,
+			"env": {
+				"PYTHONPATH": "${workspaceFolder}",
+				"LOG_LEVEL": "DEBUG"
+			},
+			"args": []
+		},
+		{
+			"name": "Serve API request",
+			"type": "debugpy",
+			"request": "launch",
+			"program": "${workspaceFolder}/supervisely/serve/src/demo_api_requests.py",
+			"console": "integratedTerminal",
+			"justMyCode": false,
+			"env": {
+				"PYTHONPATH": "${workspaceFolder}",
+				"LOG_LEVEL": "DEBUG"
+			},
+			"args": []
 		}
 	]
 }

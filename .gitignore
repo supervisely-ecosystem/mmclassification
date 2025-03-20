@@ -150,5 +150,9 @@ results.txt
 
 # sly
 app_data
+
 supervisely/train/src/debug
 supervisely/train/supervisely.env
+
+supervisely/serve/src/debug
+supervisely/serve/supervisely.env

@@ -1,7 +1,7 @@
 import os
 import pathlib
 import sys
-
+import torch
 import supervisely.io.env as env
 from supervisely.app.v1.app_service import AppService
 from supervisely.nn.inference.cache import InferenceImageCache
@@ -23,8 +23,14 @@ sys.path.append(serve_source_path)
 from dotenv import load_dotenv
 
 if sly.is_development():
-    load_dotenv("local.env")
-    load_dotenv(os.path.expanduser("~/supervisely.env"))
+    debug_env_path = os.path.join(root_source_path, "supervisely", "serve", "local.env")
+    load_dotenv(debug_env_path)
+    sly_env_path = os.path.join(root_source_path, "supervisely", "serve", "supervisely.env")
+    load_dotenv(sly_env_path)
+
+# if sly.is_development():
+#     load_dotenv("local.env")
+#     load_dotenv(os.path.expanduser("~/supervisely.env"))
 
 my_app = AppService()
 api = my_app.public_api
@@ -34,8 +40,15 @@ task_id = my_app.task_id
 
 team_id = sly.env.team_id()
 workspace_id = sly.env.workspace_id()
-remote_weights_path = sly.env.file(raise_not_found=False)
-device = os.environ["modal.state.device"]
+
+device_str = os.environ["modal.state.device"]
+if device_str == "cpu":
+    device = torch.device(device_str)
+else:
+    device = torch.device(int(device_str))
+
+
+remote_weights_path = os.environ["modal.state.slyFile"]
 batch_size = int(os.getenv("modal.state.batch_size", 256))
 
 remote_exp_dir = str(pathlib.Path(remote_weights_path).parents[1])
@@ -54,9 +67,13 @@ sly.fs.mkdir(local_info_dir)
 local_gt_labels_path = os.path.join(local_info_dir, "gt_labels.json")
 local_labels_urls_path = os.path.join(local_info_dir, "tag2urls.json")
 
+
 model = None
+cfg = None
+
 meta: sly.ProjectMeta = None
 gt_labels = None  # name -> index
+gt_index_to_labels = None  # index -> name
 labels_urls = None
 cls_mode = "one_label"
 inference_requests = {}
