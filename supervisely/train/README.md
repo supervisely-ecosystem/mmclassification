@@ -41,7 +41,7 @@ Watch [how-to video](https://youtu.be/R9sbH3biCmQ) for more details:
 
 ### v1.5.0
 
-App updated to [MMPretrain](https://github.com/open-mmlab/mmpretrain) API. 
+App updated to [MMPretrain](https://github.com/open-mmlab/mmpretrain) API from legacy MMClassification API. MMPretrain is the new generation of MMClassification that includes more up-to-date models and improvements.
 
 Added models:
 
