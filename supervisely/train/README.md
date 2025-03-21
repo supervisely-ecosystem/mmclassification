@@ -24,7 +24,7 @@
 
 # Overview
 
-Train models from [MMClassification](https://github.com/open-mmlab/mmclassification) toolbox on your custom data (Supervisely format is supported). 
+Train models from [MMPretrain](https://github.com/open-mmlab/mmpretrain) (ex [MMClassification](https://github.com/open-mmlab/mmclassification)) toolbox on your custom data (Supervisely format is supported). 
 - Configure Train / Validation splits, model architecture and training hyperparameters
 - Visualize and validate training data 
 - App automatically generates training py configs in MMClassification format
@@ -38,6 +38,20 @@ Watch [how-to video](https://youtu.be/R9sbH3biCmQ) for more details:
 </a>
 
 # Updates
+
+### v1.5.0
+
+App updated to [MMPretrain](https://github.com/open-mmlab/mmpretrain) API. 
+
+Added models:
+
+- MobileNetV3
+- EfficientNetV2
+- SwinTransformerV2
+- DeiT3
+- ConvNeXt
+- ConvNeXtV2
+- MViT
 
 ### v1.3.0
 📊 Application supports Multi-label classification. Trained multi-label model will predict some of labels for every image with confidence score > 0.5. You can choose multi-label mode at the end of step 3:
