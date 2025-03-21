@@ -1,3 +1,20 @@
-git+https://github.com/supervisely/supervisely.git@some-test-branch
+# git+https://github.com/supervisely/supervisely.git@some-test-branch
 
-supervisely==6.73.158
+# See Dockerfile for exact versions
+supervisely==6.73.332
+
+# AUGS
+imgaug
+imagecorruptions
+
+# MM
+# mmengine
+# mmcv
+# openmim
+
+importlib_metadata
+modelindex
+einops
+mat4py
+matplotlib
+rich
