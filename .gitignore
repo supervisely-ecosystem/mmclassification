@@ -152,8 +152,5 @@ results.txt
 app_data
 debug
 
-supervisely/train/src/debug
 supervisely/train/supervisely.env
-
-supervisely/serve/src/debug
 supervisely/serve/supervisely.env
