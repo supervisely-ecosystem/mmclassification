@@ -1,4 +1,4 @@
-FROM supervisely/base-pytorch:6.0.22
+FROM supervisely/base-py-sdk:6.73.332
 
 RUN pip install torch==2.1.0 torchvision==0.16.0 \
     --extra-index-url https://download.pytorch.org/whl/cu118
