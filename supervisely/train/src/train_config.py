@@ -209,6 +209,16 @@ test_dataloader = dict(
     else:
         evaluator = f"dict(type='SingleLabelMetric')"
 
+    data_preprocessor = f"""
+data_preprocessor = dict(
+    num_classes={len(state['selectedTags'])},
+    mean=[123.675, 116.28, 103.53],
+    std=[58.395, 57.12, 57.375],
+    to_rgb=True, # from BGR in cv2 to RGB in PIL
+)
+"""
+    py_config += data_preprocessor
+
     val_cfg = "val_cfg = dict(type='ValLoop')"
     val_evaluator = f"val_evaluator = {evaluator}"
     test_cfg = "test_cfg = dict(type='TestLoop')"

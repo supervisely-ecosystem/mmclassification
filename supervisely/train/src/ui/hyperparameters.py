@@ -7,7 +7,7 @@ import supervisely as sly
 
 
 def init(data, state):
-    state["epochs"] = 5
+    state["epochs"] = 20
     state["gpusId"] = "0"
     state["devices"] = g.devices
 
