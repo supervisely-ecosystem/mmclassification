@@ -5,7 +5,7 @@ import sly_globals as g
 from tools.train import main as mm_train
 from supervisely.io.fs import list_files_recursively
 from supervisely.io.json import dump_json_file
-from supervisely.nn.artifacts import TrainInfo
+from supervisely.nn.artifacts.artifacts import TrainInfo
 import workflow as w
 
 _open_lnk_name = "open_app.lnk"
