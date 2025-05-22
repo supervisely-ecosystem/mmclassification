@@ -474,7 +474,6 @@ def download_weights(api: sly.Api, task_id, context, state, app_logger):
         sly.logger.error(f"Failed to download weights: {str(e)}")
         raise e
 
-    g.local_weights_path = local_weights_path
     fields = [
         {"field": "data.done6", "payload": True},
         {"field": "state.collapsed7", "payload": False},
