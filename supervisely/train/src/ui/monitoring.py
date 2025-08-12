@@ -123,6 +123,7 @@ def upload_artifacts_and_log_progress():
 
     return remote_artifacts_dir
 
+
 def create_experiment(model_name, remote_dir):
     train_info = TrainInfo(**g.sly_mmdet_generated_metadata)
     experiment_info = g.sly_mmcls.convert_train_to_experiment_info(train_info)
@@ -136,12 +137,13 @@ def create_experiment(model_name, remote_dir):
     experiment_info_json["project_preview"] = g.project_info.image_preview_url
     g.api.task.set_output_experiment(g.task_id, experiment_info_json)
     experiment_info_json.pop("project_preview")
-    
+
     experiment_info_path = os.path.join(g.artifacts_dir, "experiment_info.json")
     remote_experiment_info_path = os.path.join(remote_dir, "experiment_info.json")
     dump_json_file(experiment_info_json, experiment_info_path)
     g.api.file.upload(g.team_id, experiment_info_path, remote_experiment_info_path)
-    
+
+
 @g.my_app.callback("train")
 @sly.timeit
 @g.my_app.ignore_errors_and_show_dialog_window()
@@ -166,7 +168,7 @@ def train(api: sly.Api, task_id, context, state, app_logger):
             sly.logger.info("Creating experiment info")
             create_experiment(state["selectedModel"], remote_dir)
         except Exception as e:
-            sly.logger.warning(f"Couldn't create experiment, this training session will not appear in experiments table. Error: {e}")
+            sly.logger.error(f"Couldn't create experiment, this training session will not appear in the experiments table. Error: {e}")
             
         file_info = api.file.get_info_by_path(g.team_id, os.path.join(remote_dir, _open_lnk_name))
         api.task.set_output_directory(task_id, file_info.id, remote_dir)
