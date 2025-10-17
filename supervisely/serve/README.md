@@ -23,7 +23,7 @@
 App deploys MMClassification model trained in Supervisely as REST API service. Serve app is the simplest way how any model 
 can be integrated into Supervisely. Once model is deployed, user gets the following benefits:
 
-1. Use out of the box apps for inference - [AI assisted classification and tagging](../../../../supervisely-ecosystem/ai-assisted-classification)
+1. Use out of the box apps for inference - [AI assisted classification and tagging](https://ecosystem.supervisely.com/apps/ai-assisted-classification)
 2. Apps from Supervisely Ecosystem can use NN predictions: for visualization, for analysis, performance evaluation, etc ...
 3. Communicate with NN in custom python script (see section <a href="#For-developers">for developers</a>)
 4. App illustrates how to use NN weights. For example: you can train model in Supervisely, download its weights and use 
