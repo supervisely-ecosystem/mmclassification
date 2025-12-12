@@ -11,4 +11,6 @@ RUN pip install requests-toolbelt==1.0.0
 RUN pip install yapf==0.40.1
 RUN pip install cachetools==4.2.4
 
-RUN pip install supervisely==6.73.424
+RUN pip install supervisely==6.73.485
+
+LABEL python_sdk_version="6.73.485"
